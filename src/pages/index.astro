@@ -1,11 +1,112 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import Hero from '../components/Hero.astro';
+import PoemCard from '../components/PoemCard.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// In a real app, these would come from content collections or JSON loader
+import poemsData from '../content/poems.json';
+import writersData from '../content/writers.json';
+import categoriesData from '../content/categories.json';
+
+const featuredPoems = poemsData.slice(0, 6);
+const trendingCategories = categoriesData;
+const featuredWriters = writersData;
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Home" description="Welcome to Linepedia - The ultimate sanctuary for poetic souls.">
+	<Navbar />
+	
+	<main>
+		<Hero />
+
+		<!-- Trending Categories Grid -->
+		<section class="container mx-auto px-4 py-16">
+			<div class="flex items-end justify-between mb-8">
+				<div>
+					<h2 class="text-3xl font-serif font-black text-primary">Trending Categories</h2>
+					<p class="text-primary/50 mt-1">Explore curated themes and moods</p>
+				</div>
+				<a href="/categories" class="text-accent font-bold text-sm uppercase tracking-widest hover:underline">View All</a>
+			</div>
+			
+			<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+				{trendingCategories.map(cat => (
+					<a href={`/${cat.slug}`} class="group relative aspect-[4/3] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all h-full">
+						<div class="absolute inset-0 bg-primary/20 group-hover:bg-primary/40 transition-colors z-10" />
+						<img 
+							src={`https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=400&auto=format&fit=crop`} 
+							class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+							alt={cat.name}
+						/>
+						<div class="absolute inset-x-0 bottom-0 p-6 z-20">
+							<h3 class="text-white text-xl font-serif font-bold group-hover:text-accent transition-colors">{cat.name}</h3>
+							<p class="text-white/70 text-xs hidden md:block mt-1">{cat.description.slice(0, 40)}...</p>
+						</div>
+					</a>
+				))}
+			</div>
+		</section>
+
+		<!-- Featured Writers Carousel (Simple Grid for now) -->
+		<section class="bg-indigo-50/50 py-16">
+			<div class="container mx-auto px-4">
+				<div class="flex items-end justify-between mb-12">
+					<div>
+						<h2 class="text-3xl font-serif font-black text-primary">Featured Poets</h2>
+						<p class="text-primary/50 mt-1">The masters of the spoken word</p>
+					</div>
+					<a href="/writers" class="text-accent font-bold text-sm uppercase tracking-widest hover:underline">See All</a>
+				</div>
+
+				<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
+					{featuredWriters.map(writer => (
+						<a href={`/${writer.slug}`} class="flex flex-col items-center group">
+							<div class="relative w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-white shadow-lg card-hover mb-4">
+								<img src={writer.photo} alt={writer.name} class="w-full h-full object-cover" />
+							</div>
+							<h3 class="text-lg font-bold text-primary group-hover:text-accent transition-colors">{writer.name}</h3>
+							<span class="text-xs text-primary/40 font-medium uppercase tracking-widest">{writer.stats.poems} Poems</span>
+						</a>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<!-- Latest Lines Masonry Grid (Simple Grid for now) -->
+		<section class="container mx-auto px-4 py-16">
+			<div class="flex items-end justify-between mb-12">
+				<div>
+					<h2 class="text-3xl font-serif font-black text-primary">Latest Lines</h2>
+					<p class="text-primary/50 mt-1">Freshly curated poetry and shayari</p>
+				</div>
+				<div class="flex space-x-2">
+					<button class="px-4 py-2 bg-primary text-white text-xs font-bold rounded-full">All</button>
+					<button class="px-4 py-2 bg-white text-primary/60 text-xs font-bold rounded-full border border-indigo-50 hover:bg-indigo-50 transition-all">New</button>
+					<button class="px-4 py-2 bg-white text-primary/60 text-xs font-bold rounded-full border border-indigo-50 hover:bg-indigo-50 transition-all">Popular</button>
+				</div>
+			</div>
+
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+				{featuredPoems.map(poem => (
+					<PoemCard 
+						id={poem.id}
+						slug={poem.slug}
+						content={poem.content}
+						writer={poem.writer}
+						writerName={writersData.find(w => w.slug === poem.writer)?.name || poem.writer}
+					/>
+				))}
+			</div>
+			
+			<div class="mt-16 flex justify-center">
+				<button class="px-12 py-4 bg-white border border-indigo-100 rounded-full text-primary font-bold shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
+					Load More Discovery
+				</button>
+			</div>
+		</section>
+	</main>
+
+	<Footer />
 </Layout>
