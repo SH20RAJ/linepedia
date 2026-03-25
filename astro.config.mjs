@@ -6,6 +6,7 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
   site: 'https://linespedia.com',
   output: 'server',
+  trailingSlash: 'never',
   adapter: cloudflare({
     mode: 'directory',
   }),
