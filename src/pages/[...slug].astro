@@ -10,62 +10,71 @@ import SEOIntro from '../components/SEOIntro.astro';
 import DigitalPoster from '../components/DigitalPoster.astro';
 import { Share2, Copy, Heart, BookOpen, Quote, ChevronRight, Bookmark, Download } from 'lucide-astro';
 
-export async function getStaticPaths() {
-	const poemsData = (await import('../content/poems.json')).default;
-	const writersData = (await import('../content/writers.json')).default;
-	const categoriesData = (await import('../content/categories.json')).default;
-	const collectionsData = (await import('../content/collections.json')).default;
+import { getCollection, getEntry } from "astro:content";
 
-	const paths = [];
+export const prerender = false;
 
-	// 1. Individual Line Pages — /line/:slug
-	poemsData.forEach(poem => {
-		const writer = writersData.find(w => w.slug === poem.writer);
-		paths.push({
-			params: { slug: `line/${poem.slug}` },
-			props: { type: 'line', data: poem, writer, allPoems: poemsData, allWriters: writersData }
-		});
-	});
+const { slug } = Astro.params;
 
-	// 2. Writer Pages — /:writer-slug
-	writersData.forEach(writer => {
-		const writerPoems = poemsData.filter(p => p.writer === writer.slug);
-		paths.push({
-			params: { slug: writer.slug },
-			props: { type: 'writer', data: writer, poems: writerPoems, allWriters: writersData }
-		});
-	});
+// SSR Data Fetching Logic
+async function getPageData(pathSlug: string | undefined) {
+    const writersData = (await import('../content/writers.json')).default;
+    const categoriesData = (await import('../content/categories.json')).default;
+    const collectionsData = (await import('../content/collections.json')).default;
 
-	// 3. Category Pages — /:category-slug
-	categoriesData.forEach(cat => {
-		const catPoems = poemsData.filter(p => p.category.includes(cat.slug));
-		paths.push({
-			params: { slug: cat.slug },
-			props: { type: 'category', data: cat, poems: catPoems, allWriters: writersData }
-		});
-	});
+    if (!pathSlug) return null;
 
-	// 4. Collection Pages (keyword multiplier output) — /:collection-slug
-	collectionsData.forEach(col => {
-		let colPoems = poemsData;
-		if (col.filter?.category) {
-			colPoems = colPoems.filter(p => p.category.includes(col.filter.category));
-		}
-		if (col.filter?.mood) {
-			colPoems = colPoems.filter(p => p.mood.includes(col.filter.mood));
-		}
-		paths.push({
-			params: { slug: col.slug },
-			props: { type: 'collection', data: col, poems: colPoems, allWriters: writersData }
-		});
-	});
+    // 1. Line Page — /line/:slug or /line/:id
+    if (pathSlug.startsWith('line/')) {
+        const lineSlugOrId = pathSlug.replace('line/', '');
+        // Search by slug first (Astro 6 content collections use IDs as default, but we have a slug field)
+        const entries = await getCollection('poems');
+        const entry = entries.find(e => e.data.slug === lineSlugOrId || e.id === lineSlugOrId);
+        
+        if (entry) {
+            return {
+                type: 'line',
+                data: entry.data,
+                writer: writersData.find(w => w.slug === entry.data.writer),
+                allWriters: writersData,
+                allPoems: entries.map(e => e.data)
+            };
+        }
+    }
 
-	return paths;
+    // 2. Writer Page
+    const writer = writersData.find(w => w.slug === pathSlug);
+    if (writer) {
+        const poemEntries = await getCollection('poems', ({ data }) => data.writer === writer.slug);
+        return { type: 'writer', data: writer, poems: poemEntries.map(e => e.data), allWriters: writersData };
+    }
+
+    // 3. Category Page
+    const category = categoriesData.find(c => c.slug === pathSlug);
+    if (category) {
+        const poemEntries = await getCollection('poems', ({ data }) => data.category.includes(category.slug));
+        return { type: 'category', data: category, poems: poemEntries.map(e => e.data), allWriters: writersData };
+    }
+
+    // 4. Collection Page
+    const collection = collectionsData.find(c => c.slug === pathSlug);
+    if (collection) {
+        const poemEntries = await getCollection('poems', ({ data }) => {
+            if (collection.filter?.category) return data.category.includes(collection.filter.category);
+            return true;
+        });
+        return { type: 'collection', data: collection, poems: poemEntries.map(e => e.data), allWriters: writersData };
+    }
+
+    return null;
 }
 
-const { type, data, writer, poems, allPoems, allWriters } = Astro.props;
+const pageData = await getPageData(slug);
+if (!pageData) return Astro.redirect('/404');
 
-// Build breadcrumbs based on page type
+const { type, data, writer, poems, allPoems, allWriters } = pageData as any;
+
+// Build breadcrumbs
 const breadcrumbs = [];
 if (type === 'line') {
 	breadcrumbs.push({ name: 'Poetry', href: '/explore' });
@@ -82,7 +91,6 @@ if (type === 'line') {
 	breadcrumbs.push({ name: data.name, href: `/${data.slug}` });
 }
 
-// CTR-optimized title generation (per seo2.md)
 function getCTRTitle() {
 	if (type === 'line') return data.title;
 	if (type === 'writer') return `${data.name} Poetry — Best Lines & Shayari Collection`;

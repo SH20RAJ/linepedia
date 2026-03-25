@@ -7,7 +7,7 @@
 	},
 	"scripts": {
 		"dev": "astro dev",
-		"build": "node scripts/generate-posters.js && astro build",
+		"build": "astro build",
 		"preview": "bun run build && astro preview",
 		"astro": "astro",
 		"generate-types": "wrangler types",
@@ -22,6 +22,7 @@
 		"@tailwindcss/postcss": "^4.2.2",
 		"astro": "^6.0.8",
 		"clsx": "^2.1.1",
+		"csv-parse": "^6.2.1",
 		"html-to-image": "^1.11.13",
 		"lucide-astro": "^0.556.0",
 		"postcss": "^8.5.8",

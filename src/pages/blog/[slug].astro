@@ -82,10 +82,17 @@ const breadcrumbs = [
 <style is:global>
     /* Custom prose styles for a more poetic feel */
     .prose blockquote {
-        @apply border-l-4 border-accent italic text-primary/60 pl-8 my-10;
+        border-left-width: 4px;
+        border-color: var(--color-accent);
+        font-style: italic;
+        color: color-mix(in srgb, var(--color-primary) 60%, transparent);
+        padding-left: 2rem;
+        margin-top: 2.5rem;
+        margin-bottom: 2.5rem;
         font-family: serif;
     }
     .prose h2 {
-        @apply mt-20 mb-8;
+        margin-top: 5rem;
+        margin-bottom: 2rem;
     }
 </style>
