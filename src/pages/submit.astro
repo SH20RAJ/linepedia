@@ -1,0 +1,62 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import { PenTool, Send } from 'lucide-astro';
+---
+
+<Layout title="Submit Your Line" description="Share your own shayari, quotes, and poetic lines with the Linepedia community.">
+	<Navbar />
+	
+	<main class="min-h-screen poetic-gradient py-20 px-4">
+		<div class="container mx-auto max-w-2xl">
+			<div class="bg-white rounded-[3rem] p-12 md:p-20 shadow-2xl border border-indigo-50">
+				<div class="flex flex-col items-center text-center mb-12">
+					<div class="w-20 h-20 bg-indigo-50 rounded-3xl flex items-center justify-center text-primary mb-6">
+						<PenTool size={40} />
+					</div>
+					<h1 class="text-4xl font-serif font-black text-primary mb-4">Submit Your Line</h1>
+					<p class="text-primary/60 text-lg">Every soul has a story. Every story has a rhyme. Share yours with the world.</p>
+				</div>
+
+				<form class="space-y-8">
+					<div class="space-y-2">
+						<label class="text-sm font-bold uppercase tracking-widest text-primary/40 ml-4">The Line (Poem/Shayari)</label>
+						<textarea 
+							placeholder="Type your lines here..." 
+							rows="5"
+							class="w-full bg-cream border border-indigo-50 rounded-3xl px-8 py-6 focus:ring-4 focus:ring-accent/10 focus:border-accent outline-none text-lg font-serif placeholder:italic"
+						></textarea>
+					</div>
+
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div class="space-y-2">
+							<label class="text-sm font-bold uppercase tracking-widest text-primary/40 ml-4">Your Name</label>
+							<input type="text" placeholder="John Doe" class="w-full bg-cream border border-indigo-50 rounded-full px-8 py-4 focus:ring-4 focus:ring-accent/10 focus:border-accent outline-none" />
+						</div>
+						<div class="space-y-2">
+							<label class="text-sm font-bold uppercase tracking-widest text-primary/40 ml-4">Category</label>
+							<select class="w-full bg-cream border border-indigo-50 rounded-full px-8 py-4 focus:ring-4 focus:ring-accent/10 focus:border-accent outline-none appearance-none">
+								<option>Sad Shayari</option>
+								<option>Love Shayari</option>
+								<option>Deep Quotes</option>
+								<option>Motivation</option>
+							</select>
+						</div>
+					</div>
+
+					<button type="submit" class="w-full bg-primary text-white py-6 rounded-full font-bold text-lg flex items-center justify-center space-x-3 hover:bg-primary/90 transition-all shadow-xl hover:shadow-primary/20 hover:-translate-y-1">
+						<Send size={20} />
+						<span>Send to Review</span>
+					</button>
+
+					<p class="text-center text-xs text-primary/30 mt-6 font-medium">
+						Submissions are reviewed by our editorial team before publishing.
+					</p>
+				</form>
+			</div>
+		</div>
+	</main>
+
+	<Footer />
+</Layout>
