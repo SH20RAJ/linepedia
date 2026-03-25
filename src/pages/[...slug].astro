@@ -143,7 +143,11 @@ function getDescription() {
 									<Copy size={20} />
 									<span>Copy Line</span>
 								</button>
-								<button class="bg-white border-2 border-primary text-primary px-8 py-4 rounded-full font-bold flex items-center space-x-2 hover:bg-indigo-50 transition-all">
+								<button id="like-btn" data-liked="false" class="bg-white border-2 border-primary text-primary px-8 py-4 rounded-full font-bold flex items-center space-x-2 hover:bg-red-50 transition-all">
+									<Heart size={20} />
+									<span>Like</span>
+								</button>
+								<button id="share-btn" class="bg-white border-2 border-primary text-primary px-8 py-4 rounded-full font-bold flex items-center space-x-2 hover:bg-indigo-50 transition-all">
 									<Share2 size={20} />
 									<span>Share</span>
 								</button>
@@ -273,15 +277,50 @@ function getDescription() {
 </Layout>
 
 <script>
+	// Copy button
 	const copyBtn = document.getElementById('copy-btn');
 	if (copyBtn) {
 		copyBtn.addEventListener('click', () => {
 			const poem = document.querySelector('blockquote p');
 			if (poem) {
-				navigator.clipboard.writeText(poem.textContent || '');
-				copyBtn.querySelector('span').textContent = 'Copied!';
-				setTimeout(() => { copyBtn.querySelector('span').textContent = 'Copy Line'; }, 2000);
+				navigator.clipboard.writeText(poem.textContent || '').then(() => {
+					copyBtn.querySelector('span').textContent = 'Copied!';
+					setTimeout(() => { copyBtn.querySelector('span').textContent = 'Copy Line'; }, 2000);
+				});
+			}
+		});
+	}
+
+	// Like button
+	const likeBtn = document.getElementById('like-btn');
+	if (likeBtn) {
+		likeBtn.addEventListener('click', () => {
+			const svg = likeBtn.querySelector('svg');
+			const isLiked = likeBtn.dataset.liked === 'true';
+			likeBtn.dataset.liked = isLiked ? 'false' : 'true';
+			likeBtn.querySelector('span').textContent = isLiked ? 'Like' : 'Liked!';
+			if (svg) svg.style.fill = isLiked ? 'none' : 'currentColor';
+			likeBtn.classList.toggle('bg-red-50', !isLiked);
+			likeBtn.classList.toggle('border-red-200', !isLiked);
+			likeBtn.classList.toggle('text-red-500', !isLiked);
+		});
+	}
+
+	// Share button
+	const shareBtn = document.getElementById('share-btn');
+	if (shareBtn) {
+		shareBtn.addEventListener('click', async () => {
+			const poem = document.querySelector('blockquote p');
+			const text = poem?.textContent?.trim() || '';
+			if (navigator.share) {
+				await navigator.share({ title: document.title, text, url: window.location.href });
+			} else {
+				navigator.clipboard.writeText(window.location.href).then(() => {
+					shareBtn.querySelector('span').textContent = 'Link Copied!';
+					setTimeout(() => { shareBtn.querySelector('span').textContent = 'Share'; }, 2000);
+				});
 			}
 		});
 	}
 </script>
+

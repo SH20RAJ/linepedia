@@ -1,5 +1,5 @@
 ---
-import { Share2, Copy, Heart } from 'lucide-astro';
+import { Copy, Heart } from 'lucide-astro';
 
 interface Props {
   id: string;
@@ -12,28 +12,28 @@ interface Props {
 const { id, slug, content, writer, writerName } = Astro.props;
 ---
 
-<div class="bg-white border border-indigo-50 rounded-2xl p-6 flex flex-col h-full card-shadow card-hover group">
+<div class="bg-white border border-indigo-50 rounded-2xl p-6 flex flex-col h-full card-shadow card-hover group" data-poem-card>
   <div class="flex-grow">
     <blockquote class="italic text-primary/80 leading-relaxed mb-6">
-      <p class="whitespace-pre-line text-lg font-serif">
+      <p class="whitespace-pre-line text-lg font-serif poem-text">
         "{content}"
       </p>
     </blockquote>
   </div>
 
   <div class="flex items-center justify-between border-t border-indigo-50 pt-4">
-    <a href={`/writer/${writer}`} class="flex items-center space-x-2 group/writer">
+    <a href={`/${writer}`} class="flex items-center space-x-2 group/writer">
       <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center overflow-hidden">
-        <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${writer}`} alt={writerName} />
+        <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${writer}`} alt={writerName} loading="lazy" />
       </div>
       <span class="text-sm font-medium text-primary/60 group-hover/writer:text-primary transition-colors">{writerName}</span>
     </a>
 
     <div class="flex items-center space-x-1">
-      <button class="p-2 text-primary/30 hover:text-accent transition-colors" title="Copy">
+      <button class="copy-card-btn p-2 text-primary/30 hover:text-accent transition-colors" title="Copy">
         <Copy size={16} />
       </button>
-      <button class="p-2 text-primary/30 hover:text-red-400 transition-colors" title="Like">
+      <button class="like-card-btn p-2 text-primary/30 hover:text-red-400 transition-colors" title="Like">
         <Heart size={16} />
       </button>
       <a href={`/line/${slug}`} class="ml-4 text-xs font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition-colors">
@@ -42,3 +42,33 @@ const { id, slug, content, writer, writerName } = Astro.props;
     </div>
   </div>
 </div>
+
+<script>
+  // Copy buttons on cards
+  document.querySelectorAll('[data-poem-card]').forEach(card => {
+    const copyBtn = card.querySelector('.copy-card-btn');
+    const likeBtn = card.querySelector('.like-card-btn');
+    const poemText = card.querySelector('.poem-text');
+
+    copyBtn?.addEventListener('click', () => {
+      const text = poemText?.textContent?.replace(/^"|"$/g, '').trim() || '';
+      navigator.clipboard.writeText(text).then(() => {
+        copyBtn.classList.remove('text-primary/30');
+        copyBtn.classList.add('text-accent');
+        setTimeout(() => {
+          copyBtn.classList.add('text-primary/30');
+          copyBtn.classList.remove('text-accent');
+        }, 1500);
+      });
+    });
+
+    likeBtn?.addEventListener('click', () => {
+      const svg = likeBtn.querySelector('svg');
+      const isLiked = likeBtn.dataset.liked === 'true';
+      likeBtn.dataset.liked = isLiked ? 'false' : 'true';
+      likeBtn.classList.toggle('text-red-500', !isLiked);
+      likeBtn.classList.toggle('text-primary/30', isLiked);
+      if (svg) svg.style.fill = isLiked ? 'none' : 'currentColor';
+    });
+  });
+</script>
