@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import PoemCard from '../components/PoemCard.astro';
+import { Search } from 'lucide-astro';
 import poemsData from '../content/poems.json';
 import writersData from '../content/writers.json';
 ---
@@ -14,11 +15,29 @@ import writersData from '../content/writers.json';
 			<div class="max-w-4xl mb-16">
 				<h1 class="text-6xl font-serif font-black text-primary mb-6">Discovery</h1>
 				<p class="text-xl text-primary/60 leading-relaxed max-w-2xl">
-					Browse through our complete collection. Filter by mood, writer, or just let serendipity guide you through the lines.
+					Browse through our complete collection. Filter by mood, writer, or just search for the words that resonate with you.
 				</p>
 			</div>
+
+			{/* Search Input */}
+			<div class="max-w-xl mb-12">
+				<div class="relative group">
+					<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+						<Search size={22} class="text-primary/30 group-focus-within:text-accent transition-colors" />
+					</div>
+					<input 
+						type="text" 
+						id="search-input" 
+						placeholder="Search for keywords, authors, or feelings..." 
+						class="w-full bg-white border-2 border-indigo-50 rounded-2xl py-5 pl-12 pr-4 outline-none focus:border-accent focus:shadow-2xl focus:shadow-accent/5 transition-all text-primary font-medium"
+					/>
+				</div>
+				<div id="search-status" class="mt-4 text-sm text-primary/40 font-medium hidden">
+					Showing <span id="match-count">0</span> matching lines
+				</div>
+			</div>
 			
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+			<div id="poems-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 				{poemsData.map(poem => (
 					<PoemCard 
 						id={poem.id}
@@ -43,3 +62,52 @@ import writersData from '../content/writers.json';
 	</main>
 	<Footer />
 </Layout>
+
+<script>
+	const searchInput = document.getElementById('search-input') as HTMLInputElement;
+	const poemsGrid = document.getElementById('poems-grid');
+	const searchStatus = document.getElementById('search-status');
+	const matchCount = document.getElementById('match-count');
+	const cards = document.querySelectorAll('#poems-grid > div');
+
+	function filterPoems(query: string) {
+		const q = query.toLowerCase().trim();
+		let count = 0;
+
+		cards.forEach(card => {
+			const content = card.querySelector('p')?.textContent?.toLowerCase() || '';
+			const writer = card.querySelector('a')?.textContent?.toLowerCase() || '';
+			
+			if (content.includes(q) || writer.includes(q)) {
+				(card as HTMLElement).style.display = 'flex';
+				count++;
+			} else {
+				(card as HTMLElement).style.display = 'none';
+			}
+		});
+
+		if (searchStatus && matchCount) {
+			if (q.length > 0) {
+				searchStatus.classList.remove('hidden');
+				matchCount.textContent = count.toString();
+			} else {
+				searchStatus.classList.add('hidden');
+			}
+		}
+	}
+
+	if (searchInput) {
+		// Handle 1: Real-time input
+		searchInput.addEventListener('input', (e) => {
+			filterPoems((e.target as HTMLInputElement).value);
+		});
+
+		// Handle 2: URL params on load
+		const urlParams = new URLSearchParams(window.location.search);
+		const queryParam = urlParams.get('q');
+		if (queryParam) {
+			searchInput.value = queryParam;
+			filterPoems(queryParam);
+		}
+	}
+</script>
