@@ -1,0 +1,1 @@
+if it is possible to create poster or og image of the poems and in bw images to share and get traffic from pinterest and google images

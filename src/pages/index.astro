@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import Hero from '../components/Hero.astro';
 import PoemCard from '../components/PoemCard.astro';
 import StructuredData from '../components/StructuredData.astro';
+import { Quote } from 'lucide-astro';
 
 import poemsData from '../content/poems.json';
 import writersData from '../content/writers.json';
@@ -15,6 +16,14 @@ const featuredPoems = poemsData.slice(0, 9);
 const trendingCategories = categoriesData.slice(0, 8);
 const featuredWriters = writersData.slice(0, 12);
 const featuredCollections = collectionsData.slice(0, 4);
+
+// SEO: Poem of the Day (random but stable for the day)
+const today = new Date().toDateString();
+const seed = today.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+const poemOfTheDay = poemsData[seed % poemsData.length];
+
+// Trending Lines (last 6)
+const trendingLines = poemsData.slice(-6).reverse();
 ---
 
 <Layout title="Best Shayari, Poems & Quotes Collection" description="Linepedia — The largest collection of curated poetry, shayari, and quotes. Browse by mood, writer, or theme. Copy paste ready for Instagram, WhatsApp & more.">
@@ -29,6 +38,28 @@ const featuredCollections = collectionsData.slice(0, 4);
 
 	<main>
 		<Hero />
+
+		{/* Poem of the Day — Fresh Content Signal */}
+		<section class="container mx-auto px-4 -mt-12 relative z-20">
+			<div class="bg-primary text-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl overflow-hidden relative group">
+				<div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform"><Quote size={120} /></div>
+				<div class="max-w-3xl">
+					<span class="inline-block px-4 py-1 bg-white/10 rounded-full text-xs font-bold uppercase tracking-widest mb-6 border border-white/10">Poem of the Day</span>
+					<blockquote class="text-2xl md:text-4xl font-serif italic mb-8 leading-relaxed">
+						"{poemOfTheDay.content.slice(0, 150)}..."
+					</blockquote>
+					<div class="flex items-center justify-between">
+						<a href={`/line/${poemOfTheDay.slug}`} class="flex items-center space-x-3 group/author">
+							<div class="w-10 h-10 rounded-full bg-white/20 border border-white/20 overflow-hidden">
+								<img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${poemOfTheDay.writer}`} alt={poemOfTheDay.writer} />
+							</div>
+							<span class="font-bold border-b border-transparent group-hover/author:border-white transition-all underline-offset-4">{writersData.find(w => w.slug === poemOfTheDay.writer)?.name || poemOfTheDay.writer}</span>
+						</a>
+						<a href={`/line/${poemOfTheDay.slug}`} class="px-6 py-3 bg-white text-primary rounded-full font-bold text-sm hover:bg-accent hover:text-white transition-all shadow-lg">Read Full Poem &rarr;</a>
+					</div>
+				</div>
+			</div>
+		</section>
 
 		{/* Trending Categories */}
 		<section class="container mx-auto px-4 py-16">
@@ -114,6 +145,29 @@ const featuredCollections = collectionsData.slice(0, 4);
 				<a href="/explore" class="px-12 py-4 bg-white border border-indigo-100 rounded-full text-primary font-bold shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
 					Explore All Lines &rarr;
 				</a>
+			</div>
+		</section>
+
+		{/* Trending Now Sidebar/Section — Internal Linking Boost */}
+		<section class="bg-white py-16 border-y border-indigo-50">
+			<div class="container mx-auto px-4">
+				<div class="flex items-center space-x-2 mb-10">
+					<div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+					<h2 class="text-xl font-bold uppercase tracking-widest text-primary/40">Trending Now</h2>
+				</div>
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+					{trendingLines.map(line => (
+						<a href={`/line/${line.slug}`} class="flex items-start space-x-4 p-4 rounded-2xl hover:bg-indigo-50 transition-all border border-transparent hover:border-indigo-100 group">
+							<div class="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center grow-0 shrink-0 text-primary group-hover:bg-primary group-hover:text-white transition-all">
+								<Quote size={20} />
+							</div>
+							<div>
+								<p class="text-primary font-medium line-clamp-2 mb-1">"{line.content.slice(0, 100)}..."</p>
+								<span class="text-xs text-primary/40 font-bold uppercase tracking-wider">{writersData.find(w => w.slug === line.writer)?.name || line.writer}</span>
+							</div>
+						</a>
+					))}
+				</div>
 			</div>
 		</section>
 

@@ -7,7 +7,8 @@ import StructuredData from '../components/StructuredData.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import RelatedLines from '../components/RelatedLines.astro';
 import SEOIntro from '../components/SEOIntro.astro';
-import { Share2, Copy, Heart, BookOpen, Quote, ChevronRight, Bookmark } from 'lucide-astro';
+import DigitalPoster from '../components/DigitalPoster.astro';
+import { Share2, Copy, Heart, BookOpen, Quote, ChevronRight, Bookmark, Download } from 'lucide-astro';
 
 export async function getStaticPaths() {
 	const poemsData = (await import('../content/poems.json')).default;
@@ -161,6 +162,9 @@ function getDescription() {
 								</h2>
 								<p class="text-primary/70 leading-relaxed">{data.meaning}</p>
 							</div>
+
+							{/* B&W Digital Poster for Pinterest/Google Images sharing */}
+							<DigitalPoster content={data.content} writer={writer?.name || data.writer} title={data.title} />
 						</div>
 					</article>
 
