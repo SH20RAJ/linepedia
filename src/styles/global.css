@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+@theme {
+  --color-primary: #1e1b4b;
+  --color-secondary: #e0e7ff;
+  --color-accent: #f59e0b;
+  --color-cream: #fafaf9;
+  --color-lavender: #f3f4ff;
+  
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+  
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+}
+
+@layer base {
+  body {
+    @apply bg-cream text-primary font-sans antialiased;
+  }
+}
+
+@utility poetic-gradient {
+  background: linear-gradient(135deg, theme('colors.cream') 0%, theme('colors.lavender') 100%);
+}
+
+@utility card-shadow {
+  box-shadow: 0 4px 20px -2px rgba(30, 27, 75, 0.05);
+}
+
+@utility card-hover {
+  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+}

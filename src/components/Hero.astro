@@ -1,0 +1,41 @@
+---
+import { Search } from 'lucide-astro';
+---
+
+<section class="poetic-gradient py-20 px-4 md:py-32 flex flex-col items-center text-center">
+  <div class="max-w-4xl w-full">
+    <h1 class="text-4xl md:text-6xl lg:text-7xl font-serif font-black text-primary mb-6 leading-tight">
+      Explore the Infinite <br /> Beauty of <span class="text-accent italic">Lines</span>
+    </h1>
+    <p class="text-primary/70 text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed">
+      Browse the world's largest collection of shayari, quotes, and poetic lines curated for every mood and occasion.
+    </p>
+
+    <!-- Hero Search -->
+    <div class="relative max-w-2xl mx-auto w-full group">
+      <div class="absolute inset-y-0 left-6 flex items-center pointer-events-none text-primary/40 group-focus-within:text-accent transition-colors">
+        <Search size={24} />
+      </div>
+      <input 
+        type="text" 
+        placeholder="Search shayari, quotes, poets..." 
+        class="w-full bg-white border border-indigo-100 rounded-full py-5 pl-16 pr-8 shadow-xl focus:outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-200 transition-all text-lg placeholder:text-primary/30"
+      />
+      <div class="absolute right-3 inset-y-3 hidden md:block">
+        <button class="bg-primary text-white h-full px-8 rounded-full font-medium hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/20">
+          Find
+        </button>
+      </div>
+    </div>
+
+    <!-- Trending Tags -->
+    <div class="mt-8 flex flex-wrap justify-center gap-2 text-sm">
+      <span class="text-primary/40 mr-2 self-center">Trending:</span>
+      {['sad-shayari', 'jaun-elia', 'deep-captions', '2-line-love'].map(tag => (
+        <a href={`/${tag}`} class="px-4 py-2 bg-white/50 border border-indigo-50 rounded-full hover:bg-white hover:border-indigo-200 transition-all text-primary/70 hover:text-primary font-medium">
+          #{tag.replace(/-/g, ' ')}
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

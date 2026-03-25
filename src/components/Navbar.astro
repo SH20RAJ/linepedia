@@ -1,0 +1,64 @@
+---
+import { Search, Menu, X, Home, Compass, PenTool, LayoutGrid, Layers } from 'lucide-astro';
+
+const navItems = [
+  { name: 'Explore', href: '/explore', icon: Compass },
+  { name: 'Writers', href: '/writers', icon: PenTool },
+  { name: 'Categories', href: '/categories', icon: LayoutGrid },
+  { name: 'Collections', href: '/collections', icon: Layers },
+];
+---
+
+<header class="sticky top-0 z-50 bg-cream/80 backdrop-blur-md border-b border-indigo-100">
+  <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+    <a href="/" class="flex items-center space-x-2">
+      <span class="text-2xl font-serif font-black text-primary tracking-tight">Linepedia</span>
+    </a>
+
+    <nav class="hidden md:flex items-center space-x-8">
+      {navItems.map(item => (
+        <a href={item.href} class="text-sm font-medium text-primary/70 hover:text-primary transition-colors">
+          {item.name}
+        </a>
+      ))}
+      <a href="/submit" class="px-4 py-2 bg-primary text-white text-sm font-medium rounded-full hover:bg-primary/90 transition-colors">
+        Submit Line
+      </a>
+    </nav>
+
+    <button class="md:hidden p-2 text-primary" id="mobile-menu-btn">
+      <Menu size={24} />
+    </button>
+  </div>
+</header>
+
+<!-- Mobile Bottom Navigation -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-indigo-50 px-6 py-3 flex items-center justify-between shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+  <a href="/" class="flex flex-col items-center space-y-1 text-primary">
+    <Home size={20} />
+    <span class="text-[10px] font-medium uppercase tracking-wider">Home</span>
+  </a>
+  {navItems.map(item => (
+    <a href={item.href} class="flex flex-col items-center space-y-1 text-primary/60">
+      <item.icon size={20} />
+      <span class="text-[10px] font-medium uppercase tracking-wider">{item.name}</span>
+    </a>
+  ))}
+</nav>
+
+<style>
+  /* Add padding to body to account for fixed bottom nav on mobile */
+  @media (max-width: 768px) {
+    :global(body) {
+      padding-bottom: 72px;
+    }
+  }
+</style>
+
+<script>
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  // Simple toggle logic for future expansion if needed
+  menuBtn?.addEventListener('click', () => {
+    alert('Mobile menu clicked! (Placeholder for menu expansion)');
+  });
+</script>
