@@ -165,9 +165,10 @@ async function ingest() {
     fs.writeFileSync(KV_BATCH_FILE, JSON.stringify(kvBulk));
     console.log(`KV Bulk batch saved to ${KV_BATCH_FILE}`);
 
-    // 3. Export Top 15,000 new poems to content collection for "Smart Static" performance
-    console.log('Exporting top 15,000 new poems to content collection for static rendering...');
-    for (const poem of results.slice(0, 15000)) {
+    // 3. Export Top 500 new poems to content collection (keep bundle small for CF Pages 25MB limit)
+    // The remaining 37k+ poems are served via Cloudflare KV on-demand
+    console.log('Exporting top 500 new poems to content collection...');
+    for (const poem of results.slice(0, 500)) {
         fs.writeFileSync(path.join(POEMS_DIR, `${poem.id}.json`), JSON.stringify(poem, null, 2));
     }
 

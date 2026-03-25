@@ -4,11 +4,7 @@
 		"global_fetch_strictly_public"
 	],
 	"name": "linepedia",
-	"main": "@astrojs/cloudflare/entrypoints/server",
-	"assets": {
-		"directory": "./dist",
-		"binding": "ASSETS"
-	},
+	"pages_build_output_dir": "dist",
 	"observability": {
 		"enabled": true
 	}
