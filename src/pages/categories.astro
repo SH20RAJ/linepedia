@@ -1,0 +1,25 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import categoriesData from '../content/categories.json';
+---
+
+<Layout title="Categories" description="Explore poetry and shayari by mood, theme, and category.">
+	<Navbar />
+	<main class="min-h-screen py-20 px-4">
+		<div class="container mx-auto">
+			<h1 class="text-5xl font-serif font-black text-primary mb-12">Categories</h1>
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+				{categoriesData.map(cat => (
+					<a href={`/${cat.slug}`} class="group p-8 bg-white border border-indigo-50 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all">
+						<h2 class="text-3xl font-serif font-bold text-primary group-hover:text-accent transition-colors mb-4">{cat.name}</h2>
+						<p class="text-primary/60 leading-relaxed mb-6">{cat.description}</p>
+						<span class="text-xs font-bold uppercase tracking-widest text-accent">Browse Collection &rarr;</span>
+					</a>
+				))}
+			</div>
+		</div>
+	</main>
+	<Footer />
+</Layout>

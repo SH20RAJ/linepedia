@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import collectionsData from '../content/collections.json';
+---
+
+<Layout title="Collections" description="Hand-picked collections of the best shayari and quotes.">
+	<Navbar />
+	<main class="min-h-screen py-20 px-4">
+		<div class="container mx-auto">
+			<h1 class="text-5xl font-serif font-black text-primary mb-12">Collections</h1>
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+				{collectionsData.map(col => (
+					<a href={`/${col.slug}`} class="group relative aspect-[16/9] rounded-[3rem] overflow-hidden shadow-xl">
+						<div class="absolute inset-0 bg-primary/40 group-hover:bg-primary/20 transition-all z-10" />
+						<img src="https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" />
+						<div class="absolute inset-0 flex flex-col justify-end p-12 z-20">
+							<h2 class="text-4xl font-serif font-black text-white mb-2">{col.name}</h2>
+							<p class="text-white/80 text-lg max-w-md">{col.description}</p>
+						</div>
+					</a>
+				))}
+			</div>
+		</div>
+	</main>
+	<Footer />
+</Layout>
