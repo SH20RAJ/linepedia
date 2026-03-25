@@ -1,4 +1,4 @@
-# 📈 Linepedia — growth.md
+# 📈 Linespedia — growth.md
 
 ## Exact Traffic Scaling Execution Plan
 

@@ -1,5 +1,5 @@
 /**
- * Linepedia Expanded Content Import Script
+ * Linespedia Expanded Content Import Script
  * 
  * Sources:
  * 1. PoetryDB (all 129 authors) — classic English poetry
@@ -217,7 +217,7 @@ async function fetchIqbalAPI() {
 // MAIN
 // =========================================
 async function main() {
-  console.log('🚀 Linepedia Content Import — Appending Mode');
+  console.log('🚀 Linespedia Content Import — Appending Mode');
   console.log('═'.repeat(60));
 
   const fs = await import('fs');

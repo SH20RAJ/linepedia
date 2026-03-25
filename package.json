@@ -1,5 +1,5 @@
 {
-	"name": "linepedia",
+	"name": "linespedia",
 	"type": "module",
 	"version": "0.0.1",
 	"engines": {
@@ -7,11 +7,11 @@
 	},
 	"scripts": {
 		"dev": "astro dev",
-		"build": "astro build",
-		"preview": "astro build && astro preview",
+		"build": "node scripts/generate-posters.js && astro build",
+		"preview": "bun run build && astro preview",
 		"astro": "astro",
 		"generate-types": "wrangler types",
-		"deploy": "astro build && wrangler deploy",
+		"deploy": "bun run build && wrangler deploy",
 		"cf-typegen": "wrangler types"
 	},
 	"dependencies": {

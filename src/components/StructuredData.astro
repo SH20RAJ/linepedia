@@ -26,7 +26,7 @@ const siteUrl = Astro.site?.toString() || "https://linespedia.com";
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "Linepedia",
+  name: "Linespedia",
   url: siteUrl,
   potentialAction: {
     "@type": "SearchAction",
@@ -69,7 +69,7 @@ const contentSchema =
         datePublished: datePublished || new Date().toISOString(),
         publisher: {
           "@type": "Organization",
-          name: "Linepedia",
+          name: "Linespedia",
           url: siteUrl,
         },
       }
@@ -89,7 +89,7 @@ const contentSchema =
           url: url.startsWith("http") ? url : `${siteUrl}${url}`,
           publisher: {
             "@type": "Organization",
-            name: "Linepedia",
+            name: "Linespedia",
             url: siteUrl,
           },
         };

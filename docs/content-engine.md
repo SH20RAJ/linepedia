@@ -1,4 +1,4 @@
-# ⚙️ Linepedia — content-engine.md
+# ⚙️ Linespedia — content-engine.md
 
 ## Daily Automation Workflow
 

@@ -1,8 +1,8 @@
-# ⚙️ Linepedia — Technical Implementation Specification (tech.md)
+# ⚙️ Linespedia — Technical Implementation Specification (tech.md)
 
 ## 🎯 Purpose
 
-This document defines how to technically build the Linepedia platform using Astro with programmatic SEO architecture.
+This document defines how to technically build the Linespedia platform using Astro with programmatic SEO architecture.
 
 AI should use this as the **single source of truth for engineering decisions.**
 

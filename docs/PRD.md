@@ -1,8 +1,8 @@
-# 📄 Linepedia — Product Requirements Document (PRD)
+# 📄 Linespedia — Product Requirements Document (PRD)
 
 ## 🧭 Product Overview
 
-**Product Name:** Linepedia
+**Product Name:** Linespedia
 **Domain:** linespedia.com
 **Category:** Programmatic SEO Content Platform
 **Primary Goal:**
@@ -243,7 +243,7 @@ These pages target **high-intent keywords.**
 
 Top Navbar:
 
-- Logo (Linepedia)
+- Logo (Linespedia)
 - Explore
 - Writers
 - Categories
@@ -411,7 +411,7 @@ Income milestones:
 
 ## 🚀 Long Term Vision
 
-Linepedia becomes:
+Linespedia becomes:
 
 > **Search Traffic Infrastructure for Emotional Content**
 

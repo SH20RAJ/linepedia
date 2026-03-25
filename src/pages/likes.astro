@@ -1,0 +1,135 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import { Heart, Trash2, ArrowRight } from "lucide-astro";
+
+const breadcrumbs = [
+  { name: "Home", url: "/" },
+  { name: "My Likes", url: "/likes" },
+];
+---
+
+<Layout
+  title="My Liked Lines | Linespedia"
+  description="Your curated collection of favorite poetic lines, shayari, and quotes on Linespedia."
+>
+  <Navbar />
+  <main class="min-h-screen">
+    <div class="poetic-gradient py-24 border-b border-indigo-50">
+      <div class="container mx-auto px-4 max-w-4xl text-center">
+        <Breadcrumb items={breadcrumbs} />
+        <h1 class="text-5xl md:text-7xl font-serif font-black text-primary mb-6">
+          My <span class="text-red-500">Liked</span> Lines
+        </h1>
+        <p class="text-xl text-primary/60 max-w-2xl mx-auto">
+          A personal sanctuary of words that touched your soul. Saved in your
+          browser for quick access.
+        </p>
+      </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-16">
+      <div id="likes-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Liked poems will be injected here -->
+         <div id="loading" class="col-span-full text-center py-20 opacity-50">
+            <div class="animate-pulse">Loading your collection...</div>
+         </div>
+      </div>
+
+      <div id="empty-state" class="hidden text-center py-32">
+        <div class="inline-flex p-6 bg-indigo-50 rounded-full text-primary mb-6">
+          <Heart size={48} />
+        </div>
+        <h2 class="text-3xl font-serif font-black text-primary mb-4">No likes yet</h2>
+        <p class="text-primary/50 mb-8 max-w-md mx-auto">Start exploring and heart the lines that resonate with you. They will appear here!</p>
+        <a href="/explore" class="inline-flex items-center space-x-2 bg-primary text-white px-8 py-4 rounded-full font-bold hover:bg-accent transition-all shadow-xl">
+          <span>Explore Lines</span>
+          <ArrowRight size={20} />
+        </a>
+      </div>
+
+      <div id="likes-footer" class="hidden mt-20 pt-12 border-t border-indigo-50 flex justify-center">
+        <button id="clear-likes" class="flex items-center space-x-2 text-primary/40 hover:text-red-500 font-bold transition-all">
+          <Trash2 size={18} />
+          <span>Clear All Likes</span>
+        </button>
+      </div>
+    </div>
+  </main>
+  <Footer />
+
+  <script>
+    function getLikes() {
+      return JSON.parse(localStorage.getItem('likes') || '[]');
+    }
+
+    const container = document.getElementById('likes-container');
+    const emptyState = document.getElementById('empty-state');
+    const footer = document.getElementById('likes-footer');
+    const loading = document.getElementById('loading');
+
+    function renderLikes() {
+      const likes = getLikes();
+      if (loading) loading.style.display = 'none';
+
+      if (likes.length === 0) {
+        if (container) container.style.display = 'none';
+        if (emptyState) emptyState.classList.remove('hidden');
+        if (footer) footer.classList.add('hidden');
+      } else {
+        if (container) {
+            container.style.display = 'grid';
+            container.innerHTML = likes.map(poem => `
+                <div class="bg-white border border-indigo-50 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group flex flex-col justify-between" data-id="${poem.id}">
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <span class="text-[10px] uppercase tracking-widest font-black text-accent/40">Saved Line</span>
+                            <button class="remove-like text-primary/20 hover:text-red-500 transition-colors" data-id="${poem.id}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="lucide lucide-heart text-red-500"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                            </button>
+                        </div>
+                        <p class="text-xl font-serif text-primary leading-relaxed italic mb-8">"${poem.content}"</p>
+                    </div>
+                    <div class="flex items-center justify-between mt-auto pt-6 border-t border-indigo-50">
+                        <div>
+                            <span class="block text-[10px] uppercase tracking-widest font-bold text-primary/30 mb-1">By Poet</span>
+                            <a href="/writers/${poem.writer}" class="text-sm font-bold text-primary hover:text-accent transition-colors">${poem.writerName}</a>
+                        </div>
+                        <a href="/line/${poem.slug}" class="p-3 bg-indigo-50 rounded-2xl text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+        if (emptyState) emptyState.classList.add('hidden');
+        if (footer) footer.classList.remove('hidden');
+
+        // Re-attach listeners
+        document.querySelectorAll('.remove-like').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const newLikes = getLikes().filter(l => l.id !== id);
+                localStorage.setItem('likes', JSON.stringify(newLikes));
+                renderLikes();
+            });
+        });
+      }
+    }
+
+    const clearBtn = document.getElementById('clear-likes');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear your entire collection?')) {
+                localStorage.removeItem('likes');
+                renderLikes();
+            }
+        });
+    }
+
+    // Initial render
+    renderLikes();
+  </script>
+</Layout>

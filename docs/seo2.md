@@ -1,8 +1,8 @@
-# 🚀 Linepedia — SEO Master Strategy (seo.md)
+# 🚀 Linespedia — SEO Master Strategy (seo.md)
 
 ## 🎯 Purpose
 
-This document defines **ALL SEO tactics, systems, rules, and growth strategies** required to make Linepedia rank at the top of Google search results.
+This document defines **ALL SEO tactics, systems, rules, and growth strategies** required to make Linespedia rank at the top of Google search results.
 
 This is a **Programmatic SEO + Topical Authority + Scale Playbook.**
 
@@ -338,7 +338,7 @@ This builds **topical dominance.**
 
 # 🧠 Long Term SEO Vision
 
-Linepedia should become:
+Linespedia should become:
 
 > The largest structured database of emotional lines on the internet.
 

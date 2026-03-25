@@ -1,4 +1,4 @@
-# 🏗️ Linepedia — infra-scale.md
+# 🏗️ Linespedia — infra-scale.md
 
 ## Handling 100k+ Pages
 

@@ -3,7 +3,7 @@ import poemsData from '../content/poems.json';
 
 export async function GET(context) {
   return rss({
-    title: 'Linepedia',
+    title: 'Linespedia',
     description: 'Ultra fast static pages for poetry, shayari, and quotes.',
     site: context.site,
     items: poemsData.map((poem) => ({
