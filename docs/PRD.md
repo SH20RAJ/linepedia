@@ -3,18 +3,18 @@
 ## 🧭 Product Overview
 
 **Product Name:** Linepedia
-**Domain:** linepedia.com
+**Domain:** linespedia.com
 **Category:** Programmatic SEO Content Platform
 **Primary Goal:**
 Build a massive-scale poetry / quotes / shayari / captions discovery website that ranks on Google and generates passive income via search traffic + ads.
 
 **Core Philosophy:**
 
-* Content scale > manual writing
-* Ultra fast static pages
-* Structured topical authority
-* Infinite internal discovery loop
-* Automation driven growth
+- Content scale > manual writing
+- Ultra fast static pages
+- Structured topical authority
+- Infinite internal discovery loop
+- Automation driven growth
 
 ---
 
@@ -29,11 +29,11 @@ Build a massive-scale poetry / quotes / shayari / captions discovery website tha
 
 ## 👥 Target Users
 
-* Students / young users searching emotional lines
-* Instagram caption seekers
-* Shayari lovers
-* Literature readers
-* WhatsApp / status content sharers
+- Students / young users searching emotional lines
+- Instagram caption seekers
+- Shayari lovers
+- Literature readers
+- WhatsApp / status content sharers
 
 ---
 
@@ -41,11 +41,11 @@ Build a massive-scale poetry / quotes / shayari / captions discovery website tha
 
 Target queries like:
 
-* sad shayari copy paste
-* 2 line deep quotes
-* love captions short
-* jaun elia sad poetry
-* urdu lines for bio
+- sad shayari copy paste
+- 2 line deep quotes
+- love captions short
+- jaun elia sad poetry
+- urdu lines for bio
 
 Traffic strategy:
 
@@ -61,10 +61,10 @@ User → Google Search → Static Astro Pages → CDN → Ads + Internal Links �
 
 ### Key Decisions
 
-* Static Site Generation (SSG)
-* Edge CDN hosting
-* Programmatic route generation
-* JSON / CSV based content database
+- Static Site Generation (SSG)
+- Edge CDN hosting
+- Programmatic route generation
+- JSON / CSV based content database
 
 ---
 
@@ -72,21 +72,21 @@ User → Google Search → Static Astro Pages → CDN → Ads + Internal Links �
 
 ### Frontend / SEO Engine
 
-* Astro (latest)
-* TailwindCSS
-* Minimal JS hydration
-* Content Collections / JSON loader
+- Astro (latest)
+- TailwindCSS
+- Minimal JS hydration
+- Content Collections / JSON loader
 
 ### Infrastructure
 
-* Cloudflare Pages / Vercel
-* Custom Root Domain
+- Cloudflare Pages / Vercel
+- Custom Root Domain
 
 ### Data Layer
 
-* JSON files initially
-* CSV import pipeline
-* Future: Headless CMS / DB
+- JSON files initially
+- CSV import pipeline
+- Future: Headless CMS / DB
 
 ---
 
@@ -138,18 +138,18 @@ User → Google Search → Static Astro Pages → CDN → Ads + Internal Links �
 
 Sections:
 
-* Hero search bar (centered)
-* Trending categories grid
-* Featured writers carousel
-* Latest lines masonry grid
-* Popular collections
-* Infinite browse feed
+- Hero search bar (centered)
+- Trending categories grid
+- Featured writers carousel
+- Latest lines masonry grid
+- Popular collections
+- Infinite browse feed
 
 **Visual Style:**
 
-* Soft poetic gradient (cream → lavender)
-* Large breathable whitespace
-* Editorial minimal layout
+- Soft poetic gradient (cream → lavender)
+- Large breathable whitespace
+- Editorial minimal layout
 
 ---
 
@@ -165,10 +165,10 @@ Examples:
 
 Features:
 
-* SEO intro paragraph
-* Filter chips (language / mood / length)
-* Grid content listing
-* Pagination / infinite scroll
+- SEO intro paragraph
+- Filter chips (language / mood / length)
+- Grid content listing
+- Pagination / infinite scroll
 
 ---
 
@@ -183,15 +183,14 @@ Examples:
 
 Sections:
 
-* Writer photo
-* Biography
-* Stats (number of lines)
-* Tabs:
-
-  * All
-  * Sad
-  * Love
-  * Deep
+- Writer photo
+- Biography
+- Stats (number of lines)
+- Tabs:
+  - All
+  - Sad
+  - Love
+  - Deep
 
 Purpose: Build topical authority.
 
@@ -207,21 +206,21 @@ Example:
 
 Design:
 
-* Centered poetic typography
-* Copy button
-* Share buttons
-* Meaning / explanation
-* Writer mini profile
-* Related lines grid
-* Auto internal link clusters
+- Centered poetic typography
+- Copy button
+- Share buttons
+- Meaning / explanation
+- Writer mini profile
+- Related lines grid
+- Auto internal link clusters
 
 Desktop:
 
-* Sticky explore panel
+- Sticky explore panel
 
 Mobile:
 
-* Scroll-focused reading experience
+- Scroll-focused reading experience
 
 ---
 
@@ -244,16 +243,16 @@ These pages target **high-intent keywords.**
 
 Top Navbar:
 
-* Logo (Linepedia)
-* Explore
-* Writers
-* Categories
-* Collections
-* Submit Line (future)
+- Logo (Linepedia)
+- Explore
+- Writers
+- Categories
+- Collections
+- Submit Line (future)
 
 Mobile:
 
-* Bottom tab navigation
+- Bottom tab navigation
 
 ---
 
@@ -265,20 +264,20 @@ Theme:
 
 Colors:
 
-* Primary → Deep Indigo
-* Secondary → Soft Lavender
-* Accent → Warm Gold
+- Primary → Deep Indigo
+- Secondary → Soft Lavender
+- Accent → Warm Gold
 
 Typography:
 
-* Headings → Elegant Serif
-* Body → Clean Sans
+- Headings → Elegant Serif
+- Body → Clean Sans
 
 Cards:
 
-* Rounded XL
-* Soft shadows
-* Hover elevation
+- Rounded XL
+- Soft shadows
+- Hover elevation
 
 ---
 
@@ -288,12 +287,12 @@ Utility: `generateRoutes()`
 
 Reads dataset and auto generates:
 
-* Individual content pages
-* Writer pages
-* Category pages
-* Mood pages
-* Language pages
-* Collection pages
+- Individual content pages
+- Writer pages
+- Category pages
+- Mood pages
+- Language pages
+- Collection pages
 
 ---
 
@@ -301,25 +300,25 @@ Reads dataset and auto generates:
 
 Each page shows:
 
-* Same writer lines
-* Same category lines
-* Trending lines
-* Random discovery
+- Same writer lines
+- Same category lines
+- Trending lines
+- Random discovery
 
 Goal:
 
-* Increase crawl depth
-* Improve engagement
-* Spread ranking power
+- Increase crawl depth
+- Improve engagement
+- Spread ranking power
 
 ---
 
 ## ⚡ Performance Rules
 
-* Zero JS by default
-* Hydrate only search
-* Lazy load images
-* CDN edge caching
+- Zero JS by default
+- Hydrate only search
+- Lazy load images
+- CDN edge caching
 
 Target:
 
@@ -329,15 +328,14 @@ Target:
 
 ## 📊 SEO Infrastructure
 
-* Dynamic sitemap generation
-* Sitemap chunking after 50K URLs
-* Robots.txt optimization
-* Canonical tags
-* Structured Data:
-
-  * Article Schema
-  * Breadcrumb Schema
-  * WebSite Search Schema
+- Dynamic sitemap generation
+- Sitemap chunking after 50K URLs
+- Robots.txt optimization
+- Canonical tags
+- Structured Data:
+  - Article Schema
+  - Breadcrumb Schema
+  - WebSite Search Schema
 
 ---
 
@@ -345,27 +343,27 @@ Target:
 
 ### Phase 1 (0–30 days)
 
-* Launch site
-* Publish 300 pages
-* Focus indexing
+- Launch site
+- Publish 300 pages
+- Focus indexing
 
 ### Phase 2 (30–90 days)
 
-* Reach 1000 pages
-* Category dominance
-* Early traffic (5K–20K)
+- Reach 1000 pages
+- Category dominance
+- Early traffic (5K–20K)
 
 ### Phase 3 (3–6 months)
 
-* 3000+ pages
-* Backlinks
-* Social distribution
+- 3000+ pages
+- Backlinks
+- Social distribution
 
 ### Phase 4 (6–12 months)
 
-* 10K+ pages
-* UGC system
-* Automation pipeline
+- 10K+ pages
+- UGC system
+- Automation pipeline
 
 ---
 
@@ -375,10 +373,10 @@ Pipeline:
 
 1. Collect dataset (public domain + curated excerpts)
 2. AI generates:
+   - intro
+   - explanation
+   - metadata
 
-   * intro
-   * explanation
-   * metadata
 3. CSV → JSON script
 4. Static build → deploy
 
@@ -390,24 +388,24 @@ Target velocity:
 
 ## 🌐 Off-Page Growth
 
-* Pinterest quote cards automation
-* Reddit emotional content seeding
-* Blogger outreach backlinks
-* Social sharing loops
+- Pinterest quote cards automation
+- Reddit emotional content seeding
+- Blogger outreach backlinks
+- Social sharing loops
 
 ---
 
 ## 💰 Monetization Plan
 
-* Display ads (AdSense)
-* Sticky footer ads
-* Related content loops → pageview depth
-* Affiliate poetry books (later)
+- Display ads (AdSense)
+- Sticky footer ads
+- Related content loops → pageview depth
+- Affiliate poetry books (later)
 
 Income milestones:
 
-* 50K traffic → ₹8K–₹20K
-* 200K traffic → ₹40K+
+- 50K traffic → ₹8K–₹20K
+- 200K traffic → ₹40K+
 
 ---
 
@@ -419,21 +417,21 @@ Linepedia becomes:
 
 Expansion:
 
-* Lyrics
-* Status captions
-* Multi-language poetry
-* User submissions
-* API for quote apps
+- Lyrics
+- Status captions
+- Multi-language poetry
+- User submissions
+- API for quote apps
 
 ---
 
 ## 🏁 Success Metrics
 
-* Indexed pages count
-* Monthly organic sessions
-* Pages per session
-* Average ranking keywords
-* Ad revenue
+- Indexed pages count
+- Monthly organic sessions
+- Pages per session
+- Average ranking keywords
+- Ad revenue
 
 ---
 

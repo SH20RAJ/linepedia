@@ -4,7 +4,7 @@ import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://linepedia.com',
+  site: 'https://linespedia.com',
   output: 'static',
   adapter: cloudflare(),
   integrations: [

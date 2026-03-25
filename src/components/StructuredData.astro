@@ -1,6 +1,6 @@
 ---
 interface Props {
-  type: 'line' | 'writer' | 'category' | 'collection';
+  type: "line" | "writer" | "category" | "collection";
   title: string;
   description: string;
   url: string;
@@ -10,87 +10,120 @@ interface Props {
   faqs?: { q: string; a: string }[];
 }
 
-const { type, title, description, url, authorName, datePublished, breadcrumbs = [], faqs = [] } = Astro.props;
-const siteUrl = Astro.site?.toString() || 'https://linepedia.com';
+const {
+  type,
+  title,
+  description,
+  url,
+  authorName,
+  datePublished,
+  breadcrumbs = [],
+  faqs = [],
+} = Astro.props;
+const siteUrl = Astro.site?.toString() || "https://linespedia.com";
 
 // WebSite schema with SearchAction (sitewide)
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "Linepedia",
-  "url": siteUrl,
-  "potentialAction": {
+  name: "Linepedia",
+  url: siteUrl,
+  potentialAction: {
     "@type": "SearchAction",
-    "target": `${siteUrl}/explore?q={search_term_string}`,
-    "query-input": "required name=search_term_string"
-  }
+    target: `${siteUrl}/explore?q={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
 };
 
 // Breadcrumb schema
-const breadcrumbSchema = breadcrumbs.length > 0 ? {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": breadcrumbs.map((crumb, index) => ({
-    "@type": "ListItem",
-    "position": index + 1,
-    "name": crumb.name,
-    "item": crumb.url.startsWith('http') ? crumb.url : `${siteUrl}${crumb.url}`
-  }))
-} : null;
+const breadcrumbSchema =
+  breadcrumbs.length > 0
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: breadcrumbs.map((crumb, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: crumb.name,
+          item: crumb.url.startsWith("http")
+            ? crumb.url
+            : `${siteUrl}${crumb.url}`,
+        })),
+      }
+    : null;
 
 // CreativeWork / Article schema
-const contentSchema = type === 'line' ? {
-  "@context": "https://schema.org",
-  "@type": "CreativeWork",
-  "name": title,
-  "description": description,
-  "author": {
-    "@type": "Person",
-    "name": authorName || "Unknown"
-  },
-  "genre": "Poetry",
-  "url": url.startsWith('http') ? url : `${siteUrl}${url}`,
-  "datePublished": datePublished || new Date().toISOString(),
-  "publisher": {
-    "@type": "Organization",
-    "name": "Linepedia",
-    "url": siteUrl
-  }
-} : type === 'writer' ? {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": title,
-  "description": description,
-  "url": url.startsWith('http') ? url : `${siteUrl}${url}`
-} : {
-  "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  "name": title,
-  "description": description,
-  "url": url.startsWith('http') ? url : `${siteUrl}${url}`,
-  "publisher": {
-    "@type": "Organization",
-    "name": "Linepedia",
-    "url": siteUrl
-  }
-};
+const contentSchema =
+  type === "line"
+    ? {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        name: title,
+        description: description,
+        author: {
+          "@type": "Person",
+          name: authorName || "Unknown",
+        },
+        genre: "Poetry",
+        url: url.startsWith("http") ? url : `${siteUrl}${url}`,
+        datePublished: datePublished || new Date().toISOString(),
+        publisher: {
+          "@type": "Organization",
+          name: "Linepedia",
+          url: siteUrl,
+        },
+      }
+    : type === "writer"
+      ? {
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: title,
+          description: description,
+          url: url.startsWith("http") ? url : `${siteUrl}${url}`,
+        }
+      : {
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: title,
+          description: description,
+          url: url.startsWith("http") ? url : `${siteUrl}${url}`,
+          publisher: {
+            "@type": "Organization",
+            name: "Linepedia",
+            url: siteUrl,
+          },
+        };
 
 // FAQ Schema
-const faqSchema = faqs.length > 0 ? {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": faqs.map(faq => ({
-    "@type": "Question",
-    "name": faq.q,
-    "acceptedAnswer": {
-      "@type": "Answer",
-      "text": faq.a
-    }
-  }))
-} : null;
+const faqSchema =
+  faqs.length > 0
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.q,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.a,
+          },
+        })),
+      }
+    : null;
 ---
 
 <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
-{breadcrumbSchema && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />}
-{faqSchema && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />}
+{
+  breadcrumbSchema && (
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(breadcrumbSchema)}
+    />
+  )
+}
+{
+  faqSchema && (
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  )
+}
 <script type="application/ld+json" set:html={JSON.stringify(contentSchema)} />

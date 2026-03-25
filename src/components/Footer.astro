@@ -1,5 +1,5 @@
 ---
-import { Github, Twitter, Instagram } from 'lucide-astro';
+import { Github, Twitter, Instagram } from "lucide-astro";
 
 const year = new Date().getFullYear();
 ---
@@ -9,38 +9,66 @@ const year = new Date().getFullYear();
     <div class="col-span-1 md:col-span-2">
       <h2 class="text-3xl font-serif font-bold text-white mb-4">Linepedia</h2>
       <p class="max-w-xs text-secondary/80 leading-relaxed">
-        The ultimate sanctuary for poetic souls. Discover, share, and celebrate the beauty of words.
+        The ultimate sanctuary for poetic souls. Discover, share, and celebrate
+        the beauty of words.
       </p>
     </div>
-    
+
     <div>
-      <h3 class="text-white font-bold mb-4 uppercase tracking-widest text-xs">Navigation</h3>
+      <h3 class="text-white font-bold mb-4 uppercase tracking-widest text-xs">
+        Navigation
+      </h3>
       <ul class="space-y-2 text-sm">
-        <li><a href="/explore" class="hover:text-accent transition-colors">Explore</a></li>
-        <li><a href="/writers" class="hover:text-accent transition-colors">Writers</a></li>
-        <li><a href="/categories" class="hover:text-accent transition-colors">Categories</a></li>
-        <li><a href="/collections" class="hover:text-accent transition-colors">Collections</a></li>
+        <li>
+          <a href="/explore" class="hover:text-accent transition-colors"
+            >Explore</a>
+        </li>
+        <li>
+          <a href="/writers" class="hover:text-accent transition-colors"
+            >Writers</a>
+        </li>
+        <li>
+          <a href="/categories" class="hover:text-accent transition-colors"
+            >Categories</a>
+        </li>
+        <li>
+          <a href="/collections" class="hover:text-accent transition-colors"
+            >Collections</a>
+        </li>
       </ul>
     </div>
 
     <div>
-      <h3 class="text-white font-bold mb-4 uppercase tracking-widest text-xs">Community</h3>
+      <h3 class="text-white font-bold mb-4 uppercase tracking-widest text-xs">
+        Community
+      </h3>
       <div class="flex space-x-4">
-        <a href="#" class="p-2 bg-secondary/10 rounded-full hover:bg-accent hover:text-primary transition-all">
+        <a
+          href="#"
+          class="p-2 bg-secondary/10 rounded-full hover:bg-accent hover:text-primary transition-all"
+        >
           <Instagram size={20} />
         </a>
-        <a href="#" class="p-2 bg-secondary/10 rounded-full hover:bg-accent hover:text-primary transition-all">
+        <a
+          href="#"
+          class="p-2 bg-secondary/10 rounded-full hover:bg-accent hover:text-primary transition-all"
+        >
           <Twitter size={20} />
         </a>
-        <a href="#" class="p-2 bg-secondary/10 rounded-full hover:bg-accent hover:text-primary transition-all">
+        <a
+          href="#"
+          class="p-2 bg-secondary/10 rounded-full hover:bg-accent hover:text-primary transition-all"
+        >
           <Github size={20} />
         </a>
       </div>
     </div>
   </div>
-  
-  <div class="container mx-auto border-t border-secondary/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs opacity-60">
-    <p>&copy; {year} Linepedia.com - All rights reserved.</p>
+
+  <div
+    class="container mx-auto border-t border-secondary/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs opacity-60"
+  >
+    <p>&copy; {year} linespedia.com - All rights reserved.</p>
     <div class="flex space-x-6 mt-4 md:mt-0">
       <a href="/privacy">Privacy Policy</a>
       <a href="/terms">Terms of Service</a>

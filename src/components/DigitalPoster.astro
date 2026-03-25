@@ -1,5 +1,5 @@
 ---
-import { Download, Share2 } from 'lucide-astro';
+import { Download, Share2 } from "lucide-astro";
 
 interface Props {
   content: string;
@@ -13,11 +13,18 @@ const { content, writer, title } = Astro.props;
 <div class="mt-16 border-t border-indigo-50 pt-16">
   <div class="flex items-end justify-between mb-8">
     <div>
-      <h2 class="text-2xl font-serif font-black text-primary">Digital Poster</h2>
-      <p class="text-primary/50 mt-1">Perfect for Instagram Stories & Pinterest</p>
+      <h2 class="text-2xl font-serif font-black text-primary">
+        Digital Poster
+      </h2>
+      <p class="text-primary/50 mt-1">
+        Perfect for Instagram Stories & Pinterest
+      </p>
     </div>
     <div class="flex space-x-3">
-      <button id="download-poster" class="flex items-center space-x-2 px-6 py-3 bg-white border border-indigo-100 rounded-full text-sm font-bold text-primary hover:bg-indigo-50 transition-all shadow-sm">
+      <button
+        id="download-poster"
+        class="flex items-center space-x-2 px-6 py-3 bg-white border border-indigo-100 rounded-full text-sm font-bold text-primary hover:bg-indigo-50 transition-all shadow-sm"
+      >
         <Download size={18} />
         <span>Download B&W</span>
       </button>
@@ -26,18 +33,28 @@ const { content, writer, title } = Astro.props;
 
   <div class="flex justify-center">
     {/* Pinterest-optimized aspect ratio (2:3) */}
-    <div id="poetic-poster" class="w-full max-w-md aspect-[2/3] bg-black text-white p-12 flex flex-col justify-center items-center text-center relative overflow-hidden shadow-2xl rounded-sm">
+    <div
+      id="poetic-poster"
+      class="w-full max-w-md aspect-[2/3] bg-black text-white p-12 flex flex-col justify-center items-center text-center relative overflow-hidden shadow-2xl rounded-sm"
+    >
       {/* Decorative Border */}
-      <div class="absolute inset-4 border border-white/20 pointer-events-none"></div>
-      <div class="absolute inset-8 border border-white/10 pointer-events-none"></div>
-      
+      <div class="absolute inset-4 border border-white/20 pointer-events-none">
+      </div>
+      <div class="absolute inset-8 border border-white/10 pointer-events-none">
+      </div>
+
       {/* Texture Overlay */}
-      <div class="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+      <div
+        class="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"
+      >
+      </div>
 
       <div class="relative z-10 space-y-8">
         <div class="w-12 h-0.5 bg-white/40 mx-auto"></div>
-        
-        <p class="text-2xl md:text-3xl font-serif leading-relaxed italic whitespace-pre-line tracking-wide px-4">
+
+        <p
+          class="text-2xl md:text-3xl font-serif leading-relaxed italic whitespace-pre-line tracking-wide px-4"
+        >
           {content}
         </p>
 
@@ -49,48 +66,54 @@ const { content, writer, title } = Astro.props;
         </div>
       </div>
 
-      <div class="absolute bottom-12 left-0 right-0 flex flex-col items-center opacity-30">
-        <span class="text-[10px] uppercase tracking-[0.4em] font-black">Linepedia.com</span>
+      <div
+        class="absolute bottom-12 left-0 right-0 flex flex-col items-center opacity-30"
+      >
+        <span class="text-[10px] uppercase tracking-[0.4em] font-black"
+          >linespedia.com</span
+        >
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  import { toPng } from 'html-to-image';
+  import { toPng } from "html-to-image";
 
-  const downloadBtn = document.getElementById('download-poster');
-  const poster = document.getElementById('poetic-poster');
+  const downloadBtn = document.getElementById("download-poster");
+  const poster = document.getElementById("poetic-poster");
 
   if (downloadBtn && poster) {
-    downloadBtn.addEventListener('click', () => {
-      downloadBtn.innerHTML = '<span>Generating...</span>';
-      
+    downloadBtn.addEventListener("click", () => {
+      downloadBtn.innerHTML = "<span>Generating...</span>";
+
       // Temporary style adjustments for capture
-      poster.style.borderRadius = '0';
-      
+      poster.style.borderRadius = "0";
+
       toPng(poster, {
         quality: 1,
         pixelRatio: 3, // High DPI for Pinterest/Instagram
         style: {
-           transform: 'scale(1)',
-        }
+          transform: "scale(1)",
+        },
       })
-      .then((dataUrl) => {
-        const link = document.createElement('a');
-        link.download = `linepedia-poster-${Date.now()}.png`;
-        link.href = dataUrl;
-        link.click();
-        downloadBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg><span>Downloaded!</span>';
-        poster.style.borderRadius = '0.125rem';
-        setTimeout(() => {
-          downloadBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg><span>Download B&W</span>';
-        }, 2000);
-      })
-      .catch((err) => {
-        console.error('oops, something went wrong!', err);
-        downloadBtn.innerHTML = '<span>Error</span>';
-      });
+        .then((dataUrl) => {
+          const link = document.createElement("a");
+          link.download = `linepedia-poster-${Date.now()}.png`;
+          link.href = dataUrl;
+          link.click();
+          downloadBtn.innerHTML =
+            '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg><span>Downloaded!</span>';
+          poster.style.borderRadius = "0.125rem";
+          setTimeout(() => {
+            downloadBtn.innerHTML =
+              '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg><span>Download B&W</span>';
+          }, 2000);
+        })
+        .catch((err) => {
+          console.error("oops, something went wrong!", err);
+          downloadBtn.innerHTML = "<span>Error</span>";
+        });
     });
   }
 </script>

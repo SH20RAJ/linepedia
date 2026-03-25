@@ -9,4 +9,4 @@ Disallow: /admin/
 Disallow: /scripts/
 Disallow: /_astro/
 
-Sitemap: https://linepedia.com/sitemap-index.xml
+Sitemap: https://linespedia.com/sitemap-index.xml
