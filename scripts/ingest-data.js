@@ -21,10 +21,26 @@ function generateId(text) {
 }
 
 async function ingest() {
-    console.log('🚀 Starting deep ingestion of 220MB dataset...');
+    console.log('🚀 Starting deep ingestion with legacy restoration...');
     
     const results = [];
     const seen = new Set();
+    const seenTitles = new Set();
+
+    // 0. Load Legacy Poems (Fix 404s)
+    const legacyPath = '/tmp/poems-legacy.json';
+    if (fs.existsSync(legacyPath)) {
+        console.log('Restoring 311 Legacy Poems...');
+        const legacyPoems = JSON.parse(fs.readFileSync(legacyPath, 'utf-8'));
+        for (const poem of legacyPoems) {
+            const titleKey = slugify(`${poem.writer}-${poem.title}`);
+            if (seenTitles.has(titleKey)) continue;
+            
+            seenTitles.add(titleKey);
+            seen.add(poem.id);
+            results.push(poem); // Keep original id/slug
+        }
+    }
 
     // 1. Ingest Kaggle CSV (130MB)
     const csvPath = path.join(DATA_DIR, 'poem-data.csv');
@@ -39,8 +55,12 @@ async function ingest() {
             
             const title = record['Title'] || 'Untitled';
             const author = record['Author'] || 'Unknown';
-            const hash = generateId(`${author}-${title}-${content.slice(0, 50)}`);
+            const titleKey = slugify(`${author}-${title}`);
             
+            if (seenTitles.has(titleKey)) continue;
+            seenTitles.add(titleKey);
+
+            const hash = generateId(`${author}-${title}-${content.slice(0, 50)}`);
             if (seen.has(hash)) continue;
             seen.add(hash);
 
@@ -73,8 +93,12 @@ async function ingest() {
             
             const title = record['Title'] || 'Untitled';
             const author = record['Author'] || 'Unknown';
-            const hash = generateId(`${author}-${title}-${content.slice(0, 50)}`);
+            const titleKey = slugify(`${author}-${title}`);
             
+            if (seenTitles.has(titleKey)) continue;
+            seenTitles.add(titleKey);
+
+            const hash = generateId(`${author}-${title}-${content.slice(0, 50)}`);
             if (seen.has(hash)) continue;
             seen.add(hash);
 
@@ -95,22 +119,45 @@ async function ingest() {
 
     console.log(`✅ Total unique poems processed: ${results.length}`);
     
-    // Sort by popularity (Views)
+    // Sort by popularity (Views) - keep legacy at the top or sorted naturally
     results.sort((a, b) => (b.meta?.views || 0) - (a.meta?.views || 0));
 
-    // For now, let's export the top 10,000 for the first scaling phase
-    const topBatch = results.slice(0, 10000);
+    // Export individual poem files
     const poemsDir = './src/content/poems';
     
-    if (fs.existsSync(OUTPUT_FILE)) fs.unlinkSync(OUTPUT_FILE);
+    // Safety check: ensure 102.json from legacy is present
+    const legacyCheck = results.find(p => p.id === '102');
+    if (legacyCheck) {
+        console.log('Verified: Legacy poem 102 (An Exile\'s Farewell) is available.');
+    }
+
     if (!fs.existsSync(poemsDir)) fs.mkdirSync(poemsDir, { recursive: true });
 
-    console.log(`Exporting 10,000 individual poem files to ${poemsDir}...`);
+    console.log(`Exporting poems to ${poemsDir}...`);
     
-    for (const poem of topBatch) {
+    // 1. Export ALL legacy poems first (guarantees they exist)
+    const legacyPoems = results.filter(p => !p.id.includes('-') && p.id.length < 10); // Simple check for legacy numeric IDs
+    // Actually, I have the list from /tmp/poems-legacy.json
+    const legacyIds = new Set(JSON.parse(fs.readFileSync('/tmp/poems-legacy.json', 'utf-8')).map(p => p.id));
+    
+    let exportedCount = 0;
+    for (const poem of results) {
+        if (legacyIds.has(poem.id)) {
+            fs.writeFileSync(path.join(poemsDir, `${poem.id}.json`), JSON.stringify(poem, null, 2));
+            exportedCount++;
+        }
+    }
+    console.log(`Restored ${exportedCount} legacy poems.`);
+
+    // 2. Export top remaining up to 10,000 total (to avoid overwhelming Astro in dev)
+    const topRemaining = results.filter(p => !legacyIds.has(p.id)).slice(0, 10000 - exportedCount);
+    
+    for (const poem of topRemaining) {
         fs.writeFileSync(path.join(poemsDir, `${poem.id}.json`), JSON.stringify(poem, null, 2));
+        exportedCount++;
     }
     
+    console.log(`Total poems exported: ${exportedCount}`);
     console.log('DONE!');
 }
 
