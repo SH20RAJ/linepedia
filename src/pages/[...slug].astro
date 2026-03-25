@@ -3,6 +3,10 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import PoemCard from '../components/PoemCard.astro';
+import StructuredData from '../components/StructuredData.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import RelatedLines from '../components/RelatedLines.astro';
+import SEOIntro from '../components/SEOIntro.astro';
 import { Share2, Copy, Heart, BookOpen, Quote, ChevronRight, Bookmark } from 'lucide-astro';
 
 export async function getStaticPaths() {
@@ -13,84 +17,129 @@ export async function getStaticPaths() {
 
 	const paths = [];
 
-	// 1. Individual Line Pages
+	// 1. Individual Line Pages — /line/:slug
 	poemsData.forEach(poem => {
 		const writer = writersData.find(w => w.slug === poem.writer);
 		paths.push({
 			params: { slug: `line/${poem.slug}` },
-			props: { type: 'line', data: poem, writer }
+			props: { type: 'line', data: poem, writer, allPoems: poemsData, allWriters: writersData }
 		});
 	});
 
-	// 2. Writer Pages
+	// 2. Writer Pages — /:writer-slug
 	writersData.forEach(writer => {
 		const writerPoems = poemsData.filter(p => p.writer === writer.slug);
 		paths.push({
 			params: { slug: writer.slug },
-			props: { type: 'writer', data: writer, poems: writerPoems }
+			props: { type: 'writer', data: writer, poems: writerPoems, allWriters: writersData }
 		});
 	});
 
-	// 3. Category Pages
+	// 3. Category Pages — /:category-slug
 	categoriesData.forEach(cat => {
 		const catPoems = poemsData.filter(p => p.category.includes(cat.slug));
 		paths.push({
 			params: { slug: cat.slug },
-			props: { type: 'category', data: cat, poems: catPoems }
+			props: { type: 'category', data: cat, poems: catPoems, allWriters: writersData }
 		});
 	});
 
-	// 4. Collection Pages
+	// 4. Collection Pages (keyword multiplier output) — /:collection-slug
 	collectionsData.forEach(col => {
 		let colPoems = poemsData;
-		if (col.filter.category) {
+		if (col.filter?.category) {
 			colPoems = colPoems.filter(p => p.category.includes(col.filter.category));
 		}
-		if (col.filter.mood) {
+		if (col.filter?.mood) {
 			colPoems = colPoems.filter(p => p.mood.includes(col.filter.mood));
 		}
 		paths.push({
 			params: { slug: col.slug },
-			props: { type: 'collection', data: col, poems: colPoems }
+			props: { type: 'collection', data: col, poems: colPoems, allWriters: writersData }
 		});
 	});
 
 	return paths;
 }
 
-const { type, data, writer, poems } = Astro.props;
-const writersData = (await import('../content/writers.json')).default;
+const { type, data, writer, poems, allPoems, allWriters } = Astro.props;
+
+// Build breadcrumbs based on page type
+const breadcrumbs = [];
+if (type === 'line') {
+	breadcrumbs.push({ name: 'Poetry', href: '/explore' });
+	if (writer) breadcrumbs.push({ name: writer.name, href: `/${writer.slug}` });
+	breadcrumbs.push({ name: data.title, href: `/line/${data.slug}` });
+} else if (type === 'writer') {
+	breadcrumbs.push({ name: 'Writers', href: '/writers' });
+	breadcrumbs.push({ name: data.name, href: `/${data.slug}` });
+} else if (type === 'category') {
+	breadcrumbs.push({ name: 'Categories', href: '/categories' });
+	breadcrumbs.push({ name: data.name, href: `/${data.slug}` });
+} else if (type === 'collection') {
+	breadcrumbs.push({ name: 'Collections', href: '/collections' });
+	breadcrumbs.push({ name: data.name, href: `/${data.slug}` });
+}
+
+// CTR-optimized title generation (per seo2.md)
+function getCTRTitle() {
+	if (type === 'line') return data.title;
+	if (type === 'writer') return `${data.name} Poetry — Best Lines & Shayari Collection`;
+	if (type === 'category') return `${data.name} — Best ${data.name} Copy Paste ${new Date().getFullYear()}`;
+	if (type === 'collection') return `${data.name} — Top Lines Copy Paste for Instagram & WhatsApp`;
+	return data.name;
+}
+
+function getDescription() {
+	if (type === 'line') return `${data.content.slice(0, 140)}... Read meaning, context, and discover more from ${writer?.name || 'this poet'}.`;
+	if (type === 'writer') return data.bio;
+	return data.seoIntro || data.description;
+}
 ---
 
-<Layout 
-	title={type === 'line' ? data.title : data.name} 
-	description={type === 'line' ? data.content.slice(0, 160) : data.description || data.seoIntro || data.bio}
+<Layout
+	title={getCTRTitle()}
+	description={getDescription()}
+	type={type === 'line' ? 'article' : 'website'}
 >
+	<StructuredData
+		type={type}
+		title={getCTRTitle()}
+		description={getDescription()}
+		url={Astro.url.pathname}
+		authorName={type === 'line' ? writer?.name : undefined}
+		datePublished={type === 'line' ? data.createdAt : undefined}
+		breadcrumbs={breadcrumbs.map(b => ({ name: b.name, url: b.href }))}
+	/>
+
 	<Navbar />
 
 	<main class="min-h-screen bg-cream">
+
+		{/* ========== INDIVIDUAL LINE PAGE ========== */}
 		{type === 'line' && (
 			<div class="container mx-auto px-4 py-12 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-12">
-				<!-- Main Content Area -->
 				<div class="lg:col-span-8 flex flex-col items-center">
-					<div class="w-full max-w-2xl bg-white border border-indigo-50 rounded-[3rem] p-12 md:p-20 shadow-2xl relative overflow-hidden">
+
+					<div class="w-full max-w-2xl mb-8">
+						<Breadcrumb items={breadcrumbs} />
+					</div>
+
+					{/* Main Poem Card */}
+					<article class="w-full max-w-2xl bg-white border border-indigo-50 rounded-[3rem] p-12 md:p-20 shadow-2xl relative overflow-hidden">
 						<div class="absolute top-0 right-0 p-8 opacity-5 text-primary">
 							<Quote size={80} />
 						</div>
-						
+
 						<div class="relative z-10 flex flex-col items-center text-center">
-							<div class="text-accent mb-8">
-								<Heart size={40} fill="currentColor" />
-							</div>
-							
-							<blockquote class="text-3xl md:text-5xl font-serif font-black text-primary leading-tight md:leading-snug mb-12">
-								<p class="whitespace-pre-line prose prose-indigo">
-									{data.content}
-								</p>
+							<h1 class="sr-only">{data.title}</h1>
+
+							<blockquote class="text-2xl md:text-4xl font-serif font-black text-primary leading-tight md:leading-snug mb-12">
+								<p class="whitespace-pre-line">{data.content}</p>
 							</blockquote>
 
 							<div class="flex flex-wrap justify-center gap-4 mb-12">
-								<button class="bg-primary text-white px-8 py-4 rounded-full font-bold flex items-center space-x-2 hover:bg-primary/90 transition-all shadow-xl hover:shadow-primary/20">
+								<button id="copy-btn" class="bg-primary text-white px-8 py-4 rounded-full font-bold flex items-center space-x-2 hover:bg-primary/90 transition-all shadow-xl">
 									<Copy size={20} />
 									<span>Copy Line</span>
 								</button>
@@ -100,43 +149,65 @@ const writersData = (await import('../content/writers.json')).default;
 								</button>
 							</div>
 
-							<!-- Meaning Section -->
+							{/* Meaning Section — ensures no thin page (150+ words per seo2.md) */}
 							<div class="w-full text-left bg-indigo-50/50 rounded-3xl p-8 border border-indigo-100/50">
-								<h3 class="font-bold text-xs uppercase tracking-widest text-primary/40 mb-4 flex items-center space-x-2">
+								<h2 class="font-bold text-xs uppercase tracking-widest text-primary/40 mb-4 flex items-center space-x-2">
 									<BookOpen size={16} />
 									<span>Meaning & Context</span>
-								</h3>
-								<p class="text-primary/70 leading-relaxed italic">
-									"{data.meaning}"
-								</p>
+								</h2>
+								<p class="text-primary/70 leading-relaxed">{data.meaning}</p>
 							</div>
 						</div>
-					</div>
+					</article>
 
-					<!-- Writer Mini Card -->
-					<div class="mt-12 w-full max-w-2xl flex items-center p-6 bg-white border border-indigo-100 rounded-3xl shadow-sm hover:shadow-md transition-all group">
-						<img src={writer.photo} class="w-16 h-16 rounded-2xl object-cover mr-6 border-2 border-indigo-100" />
-						<div class="flex-grow">
-							<h4 class="text-lg font-bold text-primary group-hover:text-accent transition-colors">By {writer.name}</h4>
-							<p class="text-sm text-primary/50">{writer.bio.slice(0, 60)}...</p>
-						</div>
-						<a href={`/${writer.slug}`} class="p-4 rounded-2xl bg-indigo-50 text-primary hover:bg-primary hover:text-white transition-all">
-							<ChevronRight size={24} />
+					{/* Writer Mini Card */}
+					{writer && (
+						<a href={`/${writer.slug}`} class="mt-12 w-full max-w-2xl flex items-center p-6 bg-white border border-indigo-100 rounded-3xl shadow-sm hover:shadow-md transition-all group">
+							<img src={writer.photo} class="w-16 h-16 rounded-2xl object-cover mr-6 border-2 border-indigo-100" alt={writer.name} loading="lazy" />
+							<div class="flex-grow">
+								<h3 class="text-lg font-bold text-primary group-hover:text-accent transition-colors">By {writer.name}</h3>
+								<p class="text-sm text-primary/50">{writer.bio.slice(0, 80)}...</p>
+							</div>
+							<div class="p-4 rounded-2xl bg-indigo-50 text-primary group-hover:bg-primary group-hover:text-white transition-all">
+								<ChevronRight size={24} />
+							</div>
 						</a>
+					)}
+
+					{/* Internal Linking Automation — same writer, same category, trending, random */}
+					<div class="w-full max-w-3xl">
+						<RelatedLines
+							currentSlug={data.slug}
+							currentWriter={data.writer}
+							currentCategories={data.category}
+							allPoems={allPoems}
+							allWriters={allWriters}
+						/>
 					</div>
 				</div>
 
-				<!-- Sticky Floating Panel (Desktop) -->
+				{/* Sticky Sidebar */}
 				<aside class="hidden lg:block lg:col-span-4 h-full">
 					<div class="sticky top-28 space-y-8">
 						<div class="bg-white border border-indigo-50 rounded-3xl p-8 shadow-sm">
 							<h3 class="font-bold text-xs uppercase tracking-widest text-primary/40 mb-6">Explore Tags</h3>
 							<div class="flex flex-wrap gap-2">
 								{data.category.map(tag => (
-									<a href={`/${tag}`} class="px-4 py-2 bg-indigo-50 rounded-xl text-primary font-medium hover:bg-accent hover:text-white transition-all">
-										#{tag}
-									</a>
+									<a href={`/${tag}`} class="px-4 py-2 bg-indigo-50 rounded-xl text-primary font-medium hover:bg-accent hover:text-white transition-all">#{tag}</a>
 								))}
+								{data.mood.map(tag => (
+									<a href="#" class="px-4 py-2 bg-cream rounded-xl text-primary/60 font-medium hover:bg-primary hover:text-white transition-all">#{tag}</a>
+								))}
+							</div>
+						</div>
+
+						<div class="bg-primary rounded-3xl p-8 text-white relative overflow-hidden">
+							<div class="absolute top-0 right-0 p-4 opacity-10"><Bookmark size={100} /></div>
+							<h3 class="text-xl font-serif font-black mb-4 relative z-10">Weekly Gazette</h3>
+							<p class="text-indigo-100 mb-6 text-sm relative z-10">Get the best poetic lines delivered to your inbox every Sunday.</p>
+							<div class="relative z-10">
+								<input type="email" placeholder="Email address" class="w-full bg-white/10 border border-white/20 rounded-full px-4 py-3 mb-4 focus:bg-white/20 outline-none text-sm placeholder:text-white/40" />
+								<button class="w-full bg-white text-primary font-bold py-3 rounded-full hover:bg-accent hover:text-white transition-all shadow-xl">Join 5k+ Souls</button>
 							</div>
 						</div>
 					</div>
@@ -144,49 +215,53 @@ const writersData = (await import('../content/writers.json')).default;
 			</div>
 		)}
 
+		{/* ========== WRITER PAGE ========== */}
 		{type === 'writer' && (
 			<div>
 				<div class="poetic-gradient pt-24 pb-40">
-					<div class="container mx-auto px-4 flex flex-col items-center">
-						<img src={data.photo} class="w-40 h-40 md:w-56 md:h-56 rounded-[3rem] object-cover shadow-2xl border-4 border-white mb-8" />
+					<div class="container mx-auto px-4 flex flex-col items-center text-center">
+						<Breadcrumb items={breadcrumbs} />
+						<img src={data.photo} class="w-40 h-40 md:w-56 md:h-56 rounded-[3rem] object-cover shadow-2xl border-4 border-white mb-8" alt={data.name} loading="lazy" />
 						<h1 class="text-5xl md:text-7xl font-serif font-black text-primary mb-4">{data.name}</h1>
-						<p class="text-xl text-primary/60 max-w-2xl text-center leading-relaxed">{data.bio}</p>
+						<p class="text-xl text-primary/60 max-w-2xl leading-relaxed">{data.bio}</p>
+						<div class="mt-8 flex space-x-12">
+							<div class="text-center">
+								<span class="block text-3xl font-serif font-bold text-primary">{data.stats.poems}</span>
+								<span class="text-xs uppercase tracking-[0.2em] font-bold text-primary/40">Lines Published</span>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="container mx-auto px-4 -mt-20">
 					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-24">
 						{poems.map(poem => (
-							<PoemCard 
-								id={poem.id}
-								slug={poem.slug}
-								content={poem.content}
-								writer={poem.writer}
-								writerName={data.name}
-							/>
+							<PoemCard id={poem.id} slug={poem.slug} content={poem.content.slice(0, 200)} writer={poem.writer} writerName={data.name} />
 						))}
 					</div>
 				</div>
 			</div>
 		)}
 
+		{/* ========== CATEGORY / COLLECTION PAGE ========== */}
 		{(type === 'category' || type === 'collection') && (
 			<div>
 				<div class="poetic-gradient py-24 border-b border-indigo-50">
 					<div class="container mx-auto px-4 max-w-4xl">
+						<Breadcrumb items={breadcrumbs} />
 						<h1 class="text-5xl md:text-7xl font-serif font-black text-primary mb-6">{data.name}</h1>
-						<p class="text-xl text-primary/60 leading-relaxed font-medium">{data.seoIntro || data.description}</p>
+						<SEOIntro title={data.name} intro={data.seoIntro || data.description} count={poems?.length} />
 					</div>
 				</div>
 				<div class="container mx-auto px-4 py-16">
+					<div class="flex flex-wrap items-center justify-between gap-8 mb-12">
+						<div class="flex items-center space-x-2 text-sm text-primary/40">
+							<span class="font-bold">{poems.length}</span>
+							<span>Results found</span>
+						</div>
+					</div>
 					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-24">
 						{poems.map(poem => (
-							<PoemCard 
-								id={poem.id}
-								slug={poem.slug}
-								content={poem.content}
-								writer={poem.writer}
-								writerName={writersData.find(w => w.slug === poem.writer)?.name || poem.writer}
-							/>
+							<PoemCard id={poem.id} slug={poem.slug} content={poem.content.slice(0, 200)} writer={poem.writer} writerName={allWriters?.find(w => w.slug === poem.writer)?.name || poem.writer} />
 						))}
 					</div>
 				</div>
@@ -196,3 +271,17 @@ const writersData = (await import('../content/writers.json')).default;
 
 	<Footer />
 </Layout>
+
+<script>
+	const copyBtn = document.getElementById('copy-btn');
+	if (copyBtn) {
+		copyBtn.addEventListener('click', () => {
+			const poem = document.querySelector('blockquote p');
+			if (poem) {
+				navigator.clipboard.writeText(poem.textContent || '');
+				copyBtn.querySelector('span').textContent = 'Copied!';
+				setTimeout(() => { copyBtn.querySelector('span').textContent = 'Copy Line'; }, 2000);
+			}
+		});
+	}
+</script>

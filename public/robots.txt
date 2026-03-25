@@ -1,4 +1,12 @@
 User-agent: *
-Allow: /
+Allow: /line/
+Allow: /writers
+Allow: /categories
+Allow: /collections
+Allow: /explore
+
+Disallow: /admin/
+Disallow: /scripts/
+Disallow: /_astro/
 
 Sitemap: https://linepedia.com/sitemap-index.xml
