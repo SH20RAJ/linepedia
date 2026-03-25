@@ -7,7 +7,7 @@ const year = new Date().getFullYear();
 <footer class="bg-primary text-secondary pt-16 pb-8 px-4 mt-auto">
   <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
     <div class="col-span-1 md:col-span-2">
-      <h2 class="text-3xl font-serif font-bold text-white mb-4">Linepedia</h2>
+      <h2 class="text-3xl font-serif font-bold text-white mb-4">Linespedia</h2>
       <p class="max-w-xs text-secondary/80 leading-relaxed">
         The ultimate sanctuary for poetic souls. Discover, share, and celebrate
         the beauty of words.
@@ -68,11 +68,16 @@ const year = new Date().getFullYear();
   <div
     class="container mx-auto border-t border-secondary/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs opacity-60"
   >
-    <p>&copy; {year} linespedia.com - All rights reserved.</p>
+    <div class="flex flex-col items-center md:items-start space-y-4">
+      <p>&copy; {year} linespedia.com - All rights reserved.</p>
+      <a href={`https://visitorbadge.io/status?path=${encodeURIComponent(Astro.url.href)}`}>
+        <img src={`https://api.visitorbadge.io/api/visitors?path=${encodeURIComponent(Astro.url.href)}&countColor=%23263759`} alt="Visitor Badge" class="h-6" />
+      </a>
+    </div>
     <div class="flex space-x-6 mt-4 md:mt-0">
-      <a href="/privacy">Privacy Policy</a>
-      <a href="/terms">Terms of Service</a>
-      <a href="/sitemap-index.xml">Sitemap</a>
+      <a href="/privacy" class="hover:text-white transition-colors">Privacy Policy</a>
+      <a href="/terms" class="hover:text-white transition-colors">Terms of Service</a>
+      <a href="/sitemap-index.xml" class="hover:text-white transition-colors">Sitemap</a>
     </div>
   </div>
 </footer>

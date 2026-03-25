@@ -164,7 +164,40 @@ function getDescription() {
 							</div>
 
 							{/* B&W Digital Poster for Pinterest/Google Images sharing */}
-							<DigitalPoster content={data.content} writer={writer?.name || data.writer} title={data.title} />
+							<div class="mt-16 w-full border-t border-indigo-50 pt-16">
+								<div class="flex items-end justify-between mb-8">
+									<div>
+										<h2 class="text-2xl font-serif font-black text-primary">Pinterest Poster</h2>
+										<p class="text-primary/50 mt-1">Ready for Pinterest & Google Images</p>
+									</div>
+									<div class="flex space-x-3">
+										<a 
+											href={`https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(`https://linespedia.com/line/${data.slug}`)}&media=${encodeURIComponent(`https://linespedia.com/posters/${data.slug}.png`)}&description=${encodeURIComponent(data.content.slice(0, 200))}`}
+											target="_blank"
+											rel="noopener noreferrer"
+											class="flex items-center space-x-2 px-6 py-3 bg-[#E60023] text-white rounded-full text-sm font-bold hover:bg-[#ad001a] transition-all shadow-lg"
+										>
+											<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.289 2C6.617 2 2 6.617 2 12.289c0 4.305 2.605 7.991 6.385 9.556-.089-.81-.131-1.341-.131-1.341s-.581-2.476-.581-2.476-.149-.595.044-.847c.18-.235.617-.308.617-.308s1.603.208 2.613 1.055c.951.802 2.304 1.24 3.731 1.24 4.148 0 7.857-3.14 7.857-8.583 0-5.321-3.692-8.471-8.525-8.471-5.636 0-9.283 3.491-9.283 8.356 0 2.059.569 3.655 1.706 4.704.141.13.296.223.364.076.069-.149.231-.914.3-.1.1.2.062 1.18-.33.324-1.01-1.282-1.369-2.914-1.369-4.704 0-3.321 2.502-6.526 7.154-6.526 3.869 0 6.617 2.766 6.617 6.195 0 4.305-2.152 7.324-5.333 7.324-1.077 0-2.091-.56-2.438-1.222l-.666 2.541c-.241.939-.893 2.115-1.332 2.827 1.026.31 2.119.469 3.255.469 5.672 0 10.289-4.617 10.289-10.289S17.961 2 12.289 2z"/></svg>
+											<span>Pin it</span>
+										</a>
+										<a href={`/posters/${data.slug}.png`} download class="flex items-center space-x-2 px-6 py-3 bg-white border border-indigo-100 rounded-full text-sm font-bold text-primary hover:bg-indigo-50 transition-all shadow-sm">
+											<Download size={18} />
+											<span>Download PNG</span>
+										</a>
+									</div>
+								</div>
+								<div class="flex justify-center group overflow-hidden rounded-2xl border border-indigo-50 shadow-2xl transition-all hover:scale-[1.01]">
+									<img src={`/posters/${data.slug}.png`} alt={`${data.title} Poster`} class="w-full max-w-md aspect-[2/3] object-cover" loading="lazy" />
+								</div>
+							</div>
+
+							{/* Visitor Analytics Badge */}
+							<div class="mt-24 pt-12 border-t border-indigo-50 flex flex-col items-center">
+								<p class="text-xs font-bold uppercase tracking-widest text-primary/30 mb-4">Page Popularity</p>
+								<a href={`https://visitorbadge.io/status?path=${encodeURIComponent(`linespedia.com/line/${data.slug}`)}`}>
+									<img src={`https://api.visitorbadge.io/api/visitors?path=${encodeURIComponent(`linespedia.com/line/${data.slug}`)}&countColor=%23263759`} alt="Visitor Badge" />
+								</a>
+							</div>
 						</div>
 					</article>
 
