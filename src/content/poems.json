@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "slug": "jaun-elia-sad-line-23",
+    "title": "Jaun Elia Sad Line 23",
+    "content": "Sharam, dehshat, jhijhak, pareshani\nMile naye naye dost toh dosti ki gayi...",
+    "writer": "jaun-elia",
+    "category": ["sad-shayari"],
+    "mood": ["sad", "deep"],
+    "language": "Urdu",
+    "meaning": "The poet speaks about the awkwardness and hesitation when meeting new friends after a loss or change.",
+    "createdAt": "2024-03-25T12:00:00Z"
+  },
+  {
+    "id": "2",
+    "slug": "ahmad-faraz-love-line-01",
+    "title": "Ahmad Faraz Love Line 01",
+    "content": "Suna hai log usey aankh bhar ke dekhte hain\nSo uske shehar mein kuch din thehar ke dekhte hain",
+    "writer": "ahmad-faraz",
+    "category": ["love-shayari"],
+    "mood": ["love"],
+    "language": "Urdu",
+    "meaning": "I've heard people gaze at her intently, so I'll stay in her city for a few days to see for myself.",
+    "createdAt": "2024-03-25T13:00:00Z"
+  }
+]

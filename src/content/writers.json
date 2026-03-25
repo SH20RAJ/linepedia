@@ -1,0 +1,20 @@
+[
+  {
+    "slug": "jaun-elia",
+    "name": "Jaun Elia",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=jaun",
+    "bio": "Jaun Elia was a Pakistani Urdu poet, philosopher, biographer, and scholar.",
+    "stats": {
+      "poems": 1250
+    }
+  },
+  {
+    "slug": "ahmad-faraz",
+    "name": "Ahmad Faraz",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=ahmad",
+    "bio": "Ahmad Faraz was a Pakistani Urdu poet, considered one of the greatest modern Urdu poets of the last century.",
+    "stats": {
+      "poems": 800
+    }
+  }
+]

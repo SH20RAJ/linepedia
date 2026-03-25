@@ -1,0 +1,21 @@
+[
+  {
+    "slug": "2-line-sad-shayari",
+    "name": "2 Line Sad Shayari",
+    "description": "Short and impactful 2 line sad shayari that speaks volumes.",
+    "seoIntro": "Sometimes two lines are enough to express the deepest pain. Explore our collection of 2 line sad shayari.",
+    "filter": {
+      "category": "sad-shayari",
+      "length": "short"
+    }
+  },
+  {
+    "slug": "instagram-deep-captions",
+    "name": "Instagram Deep Captions",
+    "description": "Thoughtful and deep captions for your Instagram posts.",
+    "seoIntro": "Level up your social media game with these deep and meaningful captions.",
+    "filter": {
+      "mood": "deep"
+    }
+  }
+]
