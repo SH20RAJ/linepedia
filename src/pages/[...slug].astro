@@ -12,17 +12,21 @@ import { Share2, Copy, Heart, BookOpen, Quote, ChevronRight, Bookmark, Download 
 
 import { getCollection, getEntry } from "astro:content";
 
+import writersData from '../content/writers.json';
+import categoriesData from '../content/categories.json';
+import collectionsData from '../content/collections.json';
+
 export const prerender = false;
 
 const { slug } = Astro.params;
 
+let error = null;
+let pageData = null;
+
 // SSR Data Fetching Logic
 async function getPageData(pathSlug: string | undefined) {
-    const writersData = (await import('../content/writers.json')).default;
-    const categoriesData = (await import('../content/categories.json')).default;
-    const collectionsData = (await import('../content/collections.json')).default;
-
-    if (!pathSlug) return null;
+    try {
+        if (!pathSlug) return null;
 
     // 1. Line Page — /line/:slug or /line/:id
     if (pathSlug.startsWith('line/')) {
@@ -89,10 +93,20 @@ async function getPageData(pathSlug: string | undefined) {
     }
 
     return null;
+    } catch (e: any) {
+        console.error("Error in getPageData:", e);
+        throw e;
+    }
 }
 
-const pageData = await getPageData(slug);
-if (!pageData) return Astro.redirect('/404');
+try {
+    pageData = await getPageData(slug);
+} catch (e: any) {
+    console.error("Critical SSR Error:", e);
+    error = e.message;
+}
+
+if (!pageData && !error) return Astro.redirect('/404');
 
 const { type, data, writer, poems, allPoems, allWriters } = pageData as any;
 
@@ -114,15 +128,17 @@ if (type === 'line') {
 }
 
 function getCTRTitle() {
+    if (error || !data) return "Error | Linespedia";
 	if (type === 'line') return data.title;
 	if (type === 'writer') return `${data.name} Poetry — Best Lines & Shayari Collection`;
 	if (type === 'category') return `${data.name} — Best ${data.name} Copy Paste ${new Date().getFullYear()}`;
 	if (type === 'collection') return `${data.name} — Top Lines Copy Paste for Instagram & WhatsApp`;
-	return data.name;
+	return data.name || "Poetry";
 }
 
 function getDescription() {
-	if (type === 'line') return `${data.content.slice(0, 140)}... Read meaning, context, and discover more from ${writer?.name || 'this poet'}.`;
+    if (error || !data) return "Something went wrong loading this content.";
+	if (type === 'line') return `${data.content?.slice(0, 140)}... Read meaning, context, and discover more from ${writer?.name || 'this poet'}.`;
 	if (type === 'writer') return data.bio;
 	return data.seoIntro || data.description;
 }
@@ -131,24 +147,32 @@ function getDescription() {
 <Layout
 	title={getCTRTitle()}
 	description={getDescription()}
-	type={type === 'line' ? 'article' : 'website'}
+	type={!error && type === 'line' ? 'article' : 'website'}
 >
-	<StructuredData
+	{!error && <StructuredData
 		type={type}
 		title={getCTRTitle()}
 		description={getDescription()}
 		url={Astro.url.pathname}
 		authorName={type === 'line' ? writer?.name : undefined}
 		datePublished={type === 'line' ? data.createdAt : undefined}
-		breadcrumbs={breadcrumbs.map(b => ({ name: b.name, url: b.href }))}
-	/>
+		breadcrumbs={breadcrumbs.map((b: any) => ({ name: b.name, url: b.href }))}
+	/>}
 
 	<Navbar />
+    
+    {error && (
+        <div class="container mx-auto px-4 py-20 text-center">
+            <h1 class="text-4xl font-serif font-black text-primary mb-4">Rendering Error</h1>
+            <p class="text-red-500 bg-red-50 p-4 rounded-2xl inline-block border border-red-100">{error}</p>
+            <p class="mt-8 text-primary/50">This usually happens if the database is not yet synced. Please check the post-deployment steps.</p>
+        </div>
+    )}
 
 	<main class="min-h-screen bg-cream">
 
 		{/* ========== INDIVIDUAL LINE PAGE ========== */}
-		{type === 'line' && (
+		{!error && type === 'line' && (
 			<div class="container mx-auto px-4 py-12 md:py-24 grid grid-cols-1 lg:grid-cols-12 gap-12">
 				<div class="lg:col-span-8 flex flex-col items-center">
 
