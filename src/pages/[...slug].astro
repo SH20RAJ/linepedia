@@ -1,44 +1,323 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import writersData from '../content/writers.json';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import PoemCard from '../components/PoemCard.astro';
+import StructuredData from '../components/StructuredData.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { Share2, Copy, Heart, BookOpen, Quote, ChevronRight, Bookmark, Download, Pinterest } from 'lucide-astro';
+
 import { getEntry } from "astro:content";
+
+import writersData from '../content/writers.json';
+import categoriesData from '../content/categories.json';
+import collectionsData from '../content/collections.json';
 
 export const prerender = false;
 
 const { slug } = Astro.params;
-let data = null;
-let error = null;
 
-try {
-    if (slug?.startsWith('line/')) {
-        const entry = await getEntry('poems', slug.replace('line/', ''));
-        if (entry) {
-            data = entry.data;
-        } else {
-            // Check KV fallback
-            const kv = (Astro.locals as any).runtime?.env?.SESSION;
-            if (kv) {
-                const kvData = await kv.get(slug.replace('line/', ''));
-                if (kvData) data = JSON.parse(kvData);
+let error = null;
+let pageData = null;
+
+// SSR Data Fetching Logic with efficient getEntry
+async function getPageData(pathSlug: string | undefined) {
+    try {
+        if (!pathSlug) return null;
+
+        if (pathSlug.startsWith('line/')) {
+            const lineSlugOrId = pathSlug.replace('line/', '');
+            const parts = lineSlugOrId.split('-');
+            const idFromSlug = parts[parts.length - 1];
+
+            let entry = await getEntry('poems', idFromSlug);
+            
+            if (!entry) {
+                const runtime = (Astro.locals as any).runtime || (Astro.locals as any).env;
+                const kv = runtime?.env?.SESSION || (Astro.locals as any).SESSION;
+                
+                if (kv) {
+                    const kvDataBySlug = await kv.get(`slug:${lineSlugOrId}`);
+                    if (kvDataBySlug) {
+                        const data = JSON.parse(kvDataBySlug);
+                        entry = { data, id: data.id } as any;
+                    } else {
+                        const kvDataById = await kv.get(`poem:${idFromSlug}`);
+                        if (kvDataById) {
+                            const data = JSON.parse(kvDataById);
+                            entry = { data, id: data.id } as any;
+                        }
+                    }
+                }
+            }
+
+            if (entry) {
+                return {
+                    type: 'line',
+                    data: entry.data,
+                    writer: writersData.find(w => w.slug === entry.data.writer),
+                    allWriters: writersData,
+                    allPoems: [] 
+                };
             }
         }
+
+        const writer = writersData.find(w => w.slug === pathSlug);
+        if (writer) return { type: 'writer', data: writer, poems: [], allWriters: writersData };
+
+        const category = categoriesData.find(c => c.slug === pathSlug);
+        if (category) return { type: 'category', data: category, poems: [], allWriters: writersData };
+        
+        const collection = collectionsData.find(c => c.slug === pathSlug);
+        if (collection) return { type: 'collection', data: collection, poems: [], allWriters: writersData };
+
+        return null;
+    } catch (e: any) {
+        console.error("Error in getPageData:", e);
+        throw e;
     }
+}
+
+try {
+    pageData = await getPageData(slug);
 } catch (e: any) {
     error = e.message;
 }
 
-if (!data && !error) return Astro.redirect('/404');
+if (!pageData && !error) return Astro.redirect('/404');
+
+const { type, data, writer } = (pageData || {}) as any;
+
+const breadcrumbs = [];
+if (type === 'line' && data) {
+	breadcrumbs.push({ name: 'Poetry', href: '/explore' });
+	if (writer) breadcrumbs.push({ name: writer.name, href: `/${writer.slug}` });
+	breadcrumbs.push({ name: data.title, href: `/line/${data.slug}` });
+}
+
+function getCTRTitle() {
+    if (error || !data) return "Error | Linespedia";
+	if (type === 'line') return data.title;
+	if (type === 'writer') return `${data.name} Poetry Collection`;
+	return data.name || "Poetry";
+}
+
+function getDescription() {
+    if (error || !data) return "Something went wrong loading this content.";
+	if (type === 'line') return `${data.content?.slice(0, 140)}...`;
+	return data.bio || data.description;
+}
 ---
 
-<Layout title={data?.title || "Poetry"}>
-    <main class="p-20">
-        {error && <div class="p-4 bg-red-100 text-red-700">Error: {error}</div>}
-        {data && (
-            <article>
-                <h1 class="text-4xl font-black mb-8">{data.title}</h1>
-                <pre class="whitespace-pre-wrap text-xl">{data.content}</pre>
-            </article>
+<Layout title={getCTRTitle()} description={getDescription()} type={type === 'line' ? 'article' : 'website'}>
+    {!error && type === 'line' && (
+        <StructuredData
+            type="line"
+            title={getCTRTitle()}
+            description={getDescription()}
+            url={Astro.url.pathname}
+            authorName={writer?.name}
+            datePublished={data.createdAt}
+        />
+    )}
+
+	<Navbar />
+    
+    {error && (
+        <div class="container mx-auto px-4 py-20 text-center">
+            <h1 class="text-4xl font-serif font-black text-primary mb-4">Rendering Error</h1>
+            <p class="text-red-500 bg-red-50 p-4 rounded-2xl inline-block border border-red-100">{error}</p>
+        </div>
+    )}
+
+	<main class="min-h-screen poetic-gradient">
+		{!error && type === 'line' && (
+			<div class="container mx-auto px-4 py-12 md:py-32 max-w-4xl animate-in fade-in slide-in-from-bottom-8 duration-1000">
+				<Breadcrumb items={breadcrumbs} />
+				
+                {/* Main Premium Card with Glassmorphism */}
+				<article class="mt-8 bg-white/70 backdrop-blur-2xl border border-white/40 rounded-[4rem] p-12 md:p-24 shadow-2xl relative overflow-hidden group">
+					<div class="absolute top-0 right-0 p-12 opacity-[0.03] text-primary group-hover:scale-110 transition-transform duration-700">
+						<Quote size={120} />
+					</div>
+					
+                    <div class="relative z-10 flex flex-col items-center text-center">
+						<h1 class="text-sm font-bold uppercase tracking-[0.4em] text-primary/30 mb-12">Poetic Insight</h1>
+						
+						<blockquote class="text-3xl md:text-5xl font-serif font-black text-primary leading-tight md:leading-snug mb-16 selection:bg-accent/20">
+							<p class="whitespace-pre-line drop-shadow-sm">{data.content}</p>
+						</blockquote>
+
+						<div class="flex flex-wrap justify-center gap-6 mb-16">
+							<button id="copy-btn" class="bg-primary text-white px-10 py-5 rounded-full font-bold flex items-center space-x-3 hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-primary/20">
+								<Copy size={20} />
+								<span>Copy Line</span>
+							</button>
+							<button id="pin-btn" class="bg-[#E60023] text-white px-10 py-5 rounded-full font-bold flex items-center space-x-3 hover:bg-[#ad001a] hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-red-500/20">
+								<Pinterest size={20} />
+								<span>Pin to Pinterest</span>
+							</button>
+						</div>
+
+						{/* SEO Content Enrichment Section */}
+						<div class="w-full text-left bg-indigo-50/40 backdrop-blur-md rounded-[2.5rem] p-10 md:p-14 border border-indigo-100/30">
+							<h2 class="font-bold text-xs uppercase tracking-[0.3em] text-primary/40 mb-8 flex items-center space-x-3">
+								<BookOpen size={18} />
+								<span>Meaning & Deep Context</span>
+							</h2>
+							<div class="prose prose-indigo prose-lg text-primary/70 leading-relaxed space-y-6 max-w-none">
+                                <p class="font-medium text-primary/80 italic">"{data.content?.split('\n')[0]}..."</p>
+                                <p>{data.meaning || `This powerful line by ${writer?.name || 'the poet'} explores the delicate balance of emotion and expression. In the context of ${data.category?.join(' and ') || 'this classic work'}, it serves as a testament to the enduring power of verse.`}</p>
+                                <p>Whether you're sharing this on Instagram as a caption or reflecting on it privately, this line offers a profound resonance that has stood the test of time. At Linespedia, we believe these moments of clarity are what make poetry essential.</p>
+                            </div>
+						</div>
+
+                        {/* Digital Poster Display */}
+                        <div class="mt-20 w-full pt-16 border-t border-indigo-50/50 text-left">
+                            <div class="flex items-end justify-between mb-12">
+                                <div>
+                                    <h3 class="text-3xl font-serif font-black text-primary mb-2">Visual Discovery</h3>
+                                    <p class="text-primary/40">Download or share this line as a premium digital poster.</p>
+                                </div>
+                                <a href={`/posters/${data.slug}.png`} download class="hidden md:flex items-center space-x-3 px-8 py-4 bg-white border-2 border-primary/10 rounded-full text-sm font-bold text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+                                    <Download size={20} />
+                                    <span>Download Original</span>
+                                </a>
+                            </div>
+                            <div class="rounded-3xl border border-indigo-50/50 overflow-hidden shadow-2xl hover:shadow-accent/10 transition-shadow">
+                                <img src={`/posters/${data.slug}.png`} alt={`${data.title} Poster`} class="w-full aspect-[2/3] object-cover" />
+                            </div>
+                            <a href={`/posters/${data.slug}.png`} download class="flex md:hidden mt-8 items-center justify-center space-x-3 px-8 py-5 bg-primary text-white rounded-full font-bold shadow-xl">
+                                <Download size={20} />
+                                <span>Save to Device</span>
+                            </a>
+                        </div>
+					</div>
+				</article>
+                
+                {/* Writer Profile Mini */}
+                {writer && (
+                    <div class="mt-16 p-10 bg-white border border-indigo-50 rounded-[3rem] shadow-xl flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-10 hover:shadow-2xl transition-all duration-500">
+                        <div class="w-32 h-32 md:w-40 md:h-40 flex-shrink-0 rounded-3xl overflow-hidden border-4 border-indigo-50 shadow-inner">
+                            <img src={writer.photo} class="w-full h-full object-cover" alt={writer.name} />
+                        </div>
+                        <div class="flex-grow text-center md:text-left">
+                            <h3 class="text-2xl font-serif font-black text-primary mb-3">About {writer.name}</h3>
+                            <p class="text-primary/60 leading-relaxed mb-6">{writer.bio?.slice(0, 180)}...</p>
+                            <a href={`/${writer.slug}`} class="inline-flex items-center space-x-3 text-accent font-bold uppercase tracking-widest text-sm hover:translate-x-2 transition-transform">
+                                <span>Full Bibliography</span>
+                                <ChevronRight size={18} />
+                            </a>
+                        </div>
+                    </div>
+                )}
+
+                {/* Internal Linking: Related Content */}
+                <div class="mt-24">
+                    <h2 class="text-3xl font-serif font-black text-primary mb-12">More to Explore</h2>
+                    <RelatedLines 
+                        currentSlug={data.slug}
+                        currentWriter={data.writer}
+                        currentCategories={data.category || []}
+                        allPoems={[]}
+                        allWriters={writersData}
+                    />
+                </div>
+			</div>
+		)}
+
+        {/* Categories/Collections */}
+        {!error && (type === 'category' || type === 'collection') && (
+            <div class="container mx-auto px-4 py-32 max-w-5xl animate-in fade-in duration-1000">
+                <Breadcrumb items={breadcrumbs} />
+                <h1 class="text-6xl md:text-8xl font-serif font-black text-primary mt-8 mb-12 leading-tight">{data.name}</h1>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+                    <div class="lg:col-span-12">
+                        <div class="bg-white/80 backdrop-blur-xl border border-indigo-50 rounded-[3rem] p-12 md:p-20 shadow-2xl">
+                            <p class="text-2xl text-primary/60 leading-relaxed font-light mb-12">{data.seoIntro || data.description}</p>
+                            <div class="bg-indigo-50/50 rounded-3xl p-12 text-center border border-indigo-100">
+                                <Bookmark class="w-16 h-16 text-accent/20 mx-auto mb-6" />
+                                <h3 class="text-xl font-bold text-primary mb-2">Curated for Perfection</h3>
+                                <p class="text-primary/50 max-w-md mx-auto">This collection is dynamically generated based on search volume and cultural relevance. Start exploring the lines that define {data.name.toLowerCase()} today.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         )}
-        {!data && !error && <p>No data found.</p>}
-    </main>
+	</main>
+
+	<Footer />
+
+    {/* Floating Share Bar for Mobile */}
+    <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 md:hidden animate-in slide-in-from-bottom-20 duration-1000 delay-500">
+        <div class="bg-primary/90 backdrop-blur-xl text-white px-8 py-4 rounded-full shadow-2xl shadow-primary/40 flex items-center space-x-8">
+            <button id="mobile-copy-btn" class="flex flex-col items-center"><Copy size={18} /><span class="text-[10px] mt-1 font-bold">Copy</span></button>
+            <div class="w-px h-6 bg-white/20"></div>
+            <button id="mobile-share-btn" class="flex flex-col items-center"><Share2 size={18} /><span class="text-[10px] mt-1 font-bold">Share</span></button>
+             <div class="w-px h-6 bg-white/20"></div>
+            <button id="mobile-pin-btn" class="flex flex-col items-center"><Pinterest size={18} /><span class="text-[10px] mt-1 font-bold">Pin</span></button>
+        </div>
+    </div>
 </Layout>
+
+<script>
+	const copyBtn = document.getElementById('copy-btn');
+	const mobileCopyBtn = document.getElementById('mobile-copy-btn');
+    const pinBtn = document.getElementById('pin-btn');
+    const mobilePinBtn = document.getElementById('mobile-pin-btn');
+    const shareBtn = document.getElementById('mobile-share-btn');
+
+	const poemContent = document.querySelector('blockquote p')?.textContent || '';
+    const currentUrl = window.location.href;
+    const imageUrl = `${window.location.origin}${document.querySelector('img[alt$="Poster"]')?.getAttribute('src') || ''}`;
+
+	function doCopy(btn: any) {
+		navigator.clipboard.writeText(poemContent).then(() => {
+			const span = btn.querySelector('span');
+			if (span) {
+				const old = span.textContent;
+				span.textContent = 'Copied!';
+				setTimeout(() => { span.textContent = old; }, 2000);
+			}
+		});
+	}
+
+    function doPin() {
+        const pinUrl = `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(currentUrl)}&media=${encodeURIComponent(imageUrl)}&description=${encodeURIComponent(poemContent.slice(0, 200))}`;
+        window.open(pinUrl, '_blank');
+    }
+
+	copyBtn?.addEventListener('click', () => doCopy(copyBtn));
+    mobileCopyBtn?.addEventListener('click', () => doCopy(mobileCopyBtn));
+    pinBtn?.addEventListener('click', doPin);
+    mobilePinBtn?.addEventListener('click', doPin);
+
+    shareBtn?.addEventListener('click', async () => {
+        if (navigator.share) {
+            await navigator.share({ title: document.title, text: poemContent, url: currentUrl });
+        } else {
+            navigator.clipboard.writeText(currentUrl);
+            alert("Link copied to clipboard!");
+        }
+    });
+
+    // Simple scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll')?.forEach(el => observer.observe(el));
+</script>
+
+<style>
+    .poetic-gradient {
+        background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.05), transparent 40%),
+                    radial-gradient(circle at bottom left, rgba(236, 72, 153, 0.05), transparent 40%),
+                    #fdfcf7;
+    }
+</style>

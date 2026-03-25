@@ -11,7 +11,7 @@
 		"preview": "bun run build && astro preview",
 		"astro": "astro",
 		"generate-types": "wrangler types",
-		"deploy": "bun run build && wrangler deploy",
+		"deploy": "bun run build && wrangler pages deploy dist",
 		"cf-typegen": "wrangler types"
 	},
 	"dependencies": {

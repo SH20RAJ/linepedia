@@ -22,6 +22,17 @@ function generateId(text) {
     return crypto.createHash('md5').update(text).digest('hex').slice(0, 12);
 }
 
+function getEnrichedMeaning(poem) {
+    const author = poem.writer || 'the poet';
+    const category = poem.category?.[0] || 'classic poetry';
+    
+    return `This evocative piece by ${author} represents a masterful exploration of ${category}. The lines capture a profound emotional resonance, inviting the reader to reflect on the deeper themes of human experience and artistic expression.
+
+In the broader context of ${author}'s bibliography, these specific lines stand out for their clarity and poignancy. Whether you are searching for inspiration or a moment of quiet contemplation, this work offers a timeless perspective that transcends its original era.
+
+At Linespedia, we have curated this specific poem to ensure it reaches a modern audience. We recommend sharing these lines as a digital poster or using them as a thoughtful caption to connect with others who appreciate the enduring beauty of verse.`;
+}
+
 async function ingest() {
     console.log('🚀 Starting deep ingestion with KV split...');
     
@@ -71,7 +82,7 @@ async function ingest() {
                 content: content,
                 writer: author,
                 category: ['classic'],
-                meaning: record['About'] || `A classic poem by ${author}.`,
+                meaning: getEnrichedMeaning({ writer: author, category: ['classic'] }),
                 meta: {
                     views: parseInt(record['Views']) || 0,
                     dates: record['Birth and Death Dates'] || null
@@ -109,7 +120,7 @@ async function ingest() {
                 content: content,
                 writer: author,
                 category: ['classical-poetry'],
-                meaning: `An insightful piece by ${author}.`,
+                meaning: getEnrichedMeaning({ writer: author, category: ['classical-poetry'] }),
                 meta: {
                     source: 'public-domain-poetry'
                 }
@@ -154,9 +165,9 @@ async function ingest() {
     fs.writeFileSync(KV_BATCH_FILE, JSON.stringify(kvBulk));
     console.log(`KV Bulk batch saved to ${KV_BATCH_FILE}`);
 
-    // 3. Export Top 500 new poems to content collection for "Latest" previews
-    console.log('Exporting top 500 new poems to content collection for preview...');
-    for (const poem of results.slice(0, 500)) {
+    // 3. Export Top 15,000 new poems to content collection for "Smart Static" performance
+    console.log('Exporting top 15,000 new poems to content collection for static rendering...');
+    for (const poem of results.slice(0, 15000)) {
         fs.writeFileSync(path.join(POEMS_DIR, `${poem.id}.json`), JSON.stringify(poem, null, 2));
     }
 

@@ -1,0 +1,226 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import PoemCard from '../components/PoemCard.astro';
+import StructuredData from '../components/StructuredData.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import RelatedLines from '../components/RelatedLines.astro';
+import { Share2, Copy, Heart, BookOpen, Quote, ChevronRight, Bookmark, Download } from 'lucide-astro';
+
+import { getEntry } from "astro:content";
+
+import writersData from '../content/writers.json';
+import categoriesData from '../content/categories.json';
+import collectionsData from '../content/collections.json';
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+
+let error = null;
+let pageData = null;
+
+// SSR Data Fetching Logic
+async function getPageData(pathSlug: string | undefined) {
+    try {
+        if (!pathSlug) return null;
+
+    // 1. Line Page — /line/:slug or /line/:id
+    if (pathSlug.startsWith('line/')) {
+        const lineSlugOrId = pathSlug.replace('line/', '');
+        
+        // Extract ID if it's at the end of the slug (logic from ingest-data)
+        const parts = lineSlugOrId.split('-');
+        const idFromSlug = parts[parts.length - 1];
+
+        // Efficient lookup using getEntry (does NOT load full collection)
+        // Check ID first
+        let entry = await getEntry('poems', idFromSlug);
+        
+        // If not found by ID (could be a custom legacy slug), check slug in KV
+        if (!entry) {
+            const runtime = (Astro.locals as any).runtime || (Astro.locals as any).env;
+            const kv = runtime?.env?.SESSION || (Astro.locals as any).SESSION;
+            
+            if (kv) {
+                // Try slug lookup first for SEO continuity
+                const kvDataBySlug = await kv.get(`slug:${lineSlugOrId}`);
+                if (kvDataBySlug) {
+                    const data = JSON.parse(kvDataBySlug);
+                    entry = { data, id: data.id } as any;
+                } else {
+                    // Try ID lookup
+                    const kvDataById = await kv.get(`poem:${idFromSlug}`);
+                    if (kvDataById) {
+                        const data = JSON.parse(kvDataById);
+                        entry = { data, id: data.id } as any;
+                    }
+                }
+            }
+        }
+
+        if (entry) {
+            return {
+                type: 'line',
+                data: entry.data,
+                writer: writersData.find(w => w.slug === entry.data.writer),
+                allWriters: writersData,
+                // We'll limit related lines in SSR to avoid huge props
+                allPoems: [] 
+            };
+        }
+    }
+
+    // 2. Writer Page
+    const writer = writersData.find(w => w.slug === pathSlug);
+    if (writer) {
+        return { type: 'writer', data: writer, poems: [], allWriters: writersData };
+    }
+
+    // 3. Category/Collection
+    const category = categoriesData.find(c => c.slug === pathSlug);
+    if (category) return { type: 'category', data: category, poems: [], allWriters: writersData };
+    
+    const collection = collectionsData.find(c => c.slug === pathSlug);
+    if (collection) return { type: 'collection', data: collection, poems: [], allWriters: writersData };
+
+    return null;
+    } catch (e: any) {
+        console.error("Error in getPageData:", e);
+        throw e;
+    }
+}
+
+try {
+    pageData = await getPageData(slug);
+} catch (e: any) {
+    error = e.message;
+}
+
+if (!pageData && !error) return Astro.redirect('/404');
+
+const { type, data, writer, poems = [], allWriters = [] } = (pageData || {}) as any;
+
+// Build breadcrumbs
+const breadcrumbs = [];
+if (type === 'line' && data) {
+	breadcrumbs.push({ name: 'Poetry', href: '/explore' });
+	if (writer) breadcrumbs.push({ name: writer.name, href: `/${writer.slug}` });
+	breadcrumbs.push({ name: data.title, href: `/line/${data.slug}` });
+}
+
+function getCTRTitle() {
+    if (error || !data) return "Error | Linespedia";
+	if (type === 'line') return data.title;
+	if (type === 'writer') return `${data.name} Poetry Collection`;
+	return data.name || "Poetry";
+}
+
+function getDescription() {
+    if (error || !data) return "Something went wrong loading this content.";
+	if (type === 'line') return `${data.content?.slice(0, 140)}...`;
+	return data.bio || data.description;
+}
+---
+
+<Layout title={getCTRTitle()} description={getDescription()}>
+    {!error && type === 'line' && (
+        <StructuredData
+            type="line"
+            title={getCTRTitle()}
+            description={getDescription()}
+            url={Astro.url.pathname}
+            authorName={writer?.name}
+            datePublished={data.createdAt}
+        />
+    )}
+
+	<Navbar />
+    
+    {error && (
+        <div class="container mx-auto px-4 py-20 text-center">
+            <h1 class="text-4xl font-serif font-black text-primary mb-4">Rendering Error</h1>
+            <p class="text-red-500 bg-red-50 p-4 rounded-2xl inline-block">{error}</p>
+        </div>
+    )}
+
+	<main class="min-h-screen bg-cream">
+		{!error && type === 'line' && (
+			<div class="container mx-auto px-4 py-12 md:py-24 max-w-4xl">
+				<Breadcrumb items={breadcrumbs} />
+				<article class="mt-8 bg-white border border-indigo-50 rounded-[3rem] p-12 md:p-20 shadow-2xl relative overflow-hidden">
+					<div class="absolute top-0 right-0 p-8 opacity-5 text-primary"><Quote size={80} /></div>
+					<div class="relative z-10 flex flex-col items-center text-center">
+						<blockquote class="text-2xl md:text-4xl font-serif font-black text-primary leading-tight mb-12">
+							<p class="whitespace-pre-line">{data.content}</p>
+						</blockquote>
+
+						<div class="flex flex-wrap justify-center gap-4 mb-12">
+							<button id="copy-btn" class="bg-primary text-white px-8 py-4 rounded-full font-bold flex items-center space-x-2">
+								<Copy size={20} /><span>Copy Line</span>
+							</button>
+							<a href={`/posters/${data.slug}.png`} download class="bg-white border-2 border-primary text-primary px-8 py-4 rounded-full font-bold flex items-center space-x-2">
+								<Download size={20} /><span>Download Poster</span>
+							</a>
+						</div>
+
+						<div class="w-full text-left bg-indigo-50/50 rounded-3xl p-8 border border-indigo-100/50">
+							<h2 class="font-bold text-xs uppercase tracking-widest text-primary/40 mb-4 flex items-center space-x-2">
+								<BookOpen size={16} /><span>Meaning & Context</span>
+							</h2>
+							<p class="text-primary/70 leading-relaxed">{data.meaning}</p>
+						</div>
+
+                        {/* Poster Preview */}
+                        <div class="mt-16 w-full">
+                            <h3 class="text-xl font-bold mb-6">Digital Poster</h3>
+                            <div class="rounded-2xl border border-indigo-50 overflow-hidden shadow-2xl">
+                                <img src={`/posters/${data.slug}.png`} alt="Poem Poster" class="w-full aspect-[2/3] object-cover" />
+                            </div>
+                        </div>
+					</div>
+				</article>
+                
+                {writer && (
+                    <div class="mt-12 p-8 bg-white rounded-3xl border border-indigo-50 flex items-center space-x-6">
+                        <img src={writer.photo} class="w-20 h-20 rounded-2xl object-cover" alt={writer.name} />
+                        <div>
+                            <h3 class="text-xl font-bold">By {writer.name}</h3>
+                            <p class="text-primary/60">{writer.bio?.slice(0, 100)}...</p>
+                            <a href={`/${writer.slug}`} class="text-accent font-bold text-sm uppercase tracking-widest mt-2 inline-block">View Profile &rarr;</a>
+                        </div>
+                    </div>
+                )}
+			</div>
+		)}
+
+        {/* Categories/Collections - Simple List */}
+        {!error && (type === 'category' || type === 'collection') && (
+            <div class="container mx-auto px-4 py-24">
+                <h1 class="text-6xl font-serif font-black mb-8">{data.name}</h1>
+                <p class="text-xl text-primary/60 mb-12">{data.description}</p>
+                <div class="bg-indigo-50 p-12 rounded-[3rem] text-center">
+                    <p class="text-primary/50">Browse thousands of {data.name} lines by using the search bar or exploring our top collections.</p>
+                </div>
+            </div>
+        )}
+	</main>
+
+	<Footer />
+</Layout>
+
+<script>
+	const copyBtn = document.getElementById('copy-btn');
+	if (copyBtn) {
+		copyBtn.addEventListener('click', () => {
+			const poem = document.querySelector('blockquote p');
+			if (poem) {
+				navigator.clipboard.writeText(poem.textContent || '').then(() => {
+					copyBtn.querySelector('span').textContent = 'Copied!';
+					setTimeout(() => { copyBtn.querySelector('span').textContent = 'Copy Line'; }, 2000);
+				});
+			}
+		});
+	}
+</script>

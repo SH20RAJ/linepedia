@@ -2,37 +2,57 @@
 import { Search } from 'lucide-astro';
 ---
 
-<section class="poetic-gradient py-20 px-4 md:py-32 flex flex-col items-center text-center">
-  <div class="max-w-4xl w-full">
-    <h1 class="text-4xl md:text-6xl lg:text-7xl font-serif font-black text-primary mb-6 leading-tight">
-      Explore the Infinite <br /> Beauty of <span class="text-accent italic">Lines</span>
+<section class="relative pt-24 pb-32 md:pt-40 md:pb-52 overflow-hidden">
+  {/* Premium Background Background */}
+  <div class="absolute inset-0 z-0">
+    <div class="absolute inset-0 bg-[#fdfcf7]"></div>
+    <div class="absolute top-0 right-0 w-[80%] h-[80%] bg-gradient-to-br from-indigo-50/50 to-pink-50/30 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4"></div>
+    <div class="absolute bottom-0 left-0 w-[60%] h-[60%] bg-gradient-to-tr from-accent/5 to-indigo-50/20 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4"></div>
+  </div>
+
+  <div class="container mx-auto px-4 relative z-10 flex flex-col items-center text-center">
+    <div class="inline-flex items-center space-x-2 px-4 py-2 bg-white/50 backdrop-blur-md border border-indigo-100/50 rounded-full mb-8 animate-in fade-in slide-in-from-top-4 duration-1000">
+      <div class="w-2 h-2 bg-accent rounded-full animate-pulse"></div>
+      <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60">The World's Largest Verse Collection</span>
+    </div>
+
+    <h1 class="text-5xl md:text-8xl lg:text-9xl font-serif font-black text-primary mb-8 leading-[0.9] tracking-tight animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+      Explore the <br /> 
+      <span class="relative">
+        Infinite
+        <svg class="absolute -bottom-2 left-0 w-full h-3 text-accent/20" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 25 2, 50 5 T 100 5" stroke="currentColor" stroke-width="4" fill="none"/></svg>
+      </span>
+       Poetry
     </h1>
-    <p class="text-primary/70 text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed">
-      Browse the world's largest collection of shayari, quotes, and poetic lines curated for every mood and occasion.
+
+    <p class="text-primary/60 text-lg md:text-2xl mb-16 max-w-3xl mx-auto leading-relaxed font-light animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-400">
+      A curated sanctuary of shayari, quotes, and poetic lines for hearts that speak in verses. Optimized for your discovery.
     </p>
 
-    <!-- Hero Search -->
-    <div class="relative max-w-2xl mx-auto w-full group">
-      <div class="absolute inset-y-0 left-6 flex items-center pointer-events-none text-primary/40 group-focus-within:text-accent transition-colors">
-        <Search size={24} />
+    {/* Hero Search - Premium Glassmorphism */}
+    <div class="relative max-w-3xl mx-auto w-full group animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-600">
+      <div class="absolute inset-y-0 left-8 flex items-center pointer-events-none text-primary/30 group-focus-within:text-accent transition-all duration-500">
+        <Search size={28} />
       </div>
       <input 
         type="text" 
-        placeholder="Search shayari, quotes, poets..." 
-        class="w-full bg-white border border-indigo-100 rounded-full py-5 pl-16 pr-8 shadow-xl focus:outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-200 transition-all text-lg placeholder:text-primary/30"
+        placeholder="Search for keywords, authors, or themes..." 
+        class="w-full bg-white/80 backdrop-blur-2xl border-2 border-indigo-50/50 rounded-[2.5rem] py-7 pl-20 pr-10 shadow-2xl shadow-indigo-100/20 focus:outline-none focus:border-accent/30 focus:shadow-accent/5 transition-all text-xl md:text-2xl placeholder:font-light placeholder:text-primary/20"
       />
-      <div class="absolute right-3 inset-y-3 hidden md:block">
-        <button class="bg-primary text-white h-full px-8 rounded-full font-medium hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/20">
-          Find
+      <div class="absolute right-4 inset-y-4 hidden md:block">
+        <button class="bg-primary text-white h-full px-12 rounded-[1.8rem] font-bold text-lg hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary/20">
+          Discover
         </button>
       </div>
     </div>
 
-    <!-- Trending Tags -->
-    <div class="mt-8 flex flex-wrap justify-center gap-2 text-sm">
-      <span class="text-primary/40 mr-2 self-center">Trending:</span>
-      {['sad-shayari', 'jaun-elia', 'deep-captions', '2-line-love'].map(tag => (
-        <a href={`/${tag}`} class="px-4 py-2 bg-white/50 border border-indigo-50 rounded-full hover:bg-white hover:border-indigo-200 transition-all text-primary/70 hover:text-primary font-medium">
+    {/* Trending Tags - Premium Pills */}
+    <div class="mt-12 flex flex-wrap justify-center gap-3 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-800">
+      {['sad-shayari', 'jaun-elia', 'deep-captions', '2-line-love'].map((tag, i) => (
+        <a 
+          href={`/${tag}`} 
+          class="px-6 py-3 bg-white/40 backdrop-blur-md border border-indigo-100/30 rounded-full hover:bg-white hover:border-accent/20 hover:scale-110 active:scale-95 transition-all text-primary/60 hover:text-accent font-bold text-sm"
+        >
           #{tag.replace(/-/g, ' ')}
         </a>
       ))}

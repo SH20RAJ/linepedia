@@ -33,3 +33,45 @@
 @utility card-hover {
   @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
 }
+
+/* Scroll & Entrance Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInFromBottom {
+  from { transform: translateY(2rem); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInFromTop {
+  from { transform: translateY(-1rem); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-in {
+  animation-duration: 0.8s;
+  animation-fill-mode: both;
+}
+
+.fade-in { animation-name: fadeIn; }
+.slide-in-from-bottom-8 { animation-name: slideInFromBottom; }
+.slide-in-from-top-4 { animation-name: slideInFromTop; }
+
+.duration-1000 { animation-duration: 1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-600 { animation-delay: 0.6s; }
+.delay-800 { animation-delay: 0.8s; }
+
+/* Poetic Text Utilities */
+.poetic-text {
+  font-family: 'Playfair Display', serif;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: white;
+}

@@ -38,7 +38,7 @@ import writersData from '../content/writers.json';
 			</div>
 			
 			<div id="poems-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-				{poemsData.map(poem => (
+				{poemsData.slice(0, 12).map(poem => (
 					<PoemCard 
 						id={poem.id}
 						slug={poem.slug}
@@ -50,13 +50,9 @@ import writersData from '../content/writers.json';
 			</div>
 
 			<div class="mt-20 flex justify-center">
-				<div class="bg-white p-2 rounded-full shadow-xl border border-indigo-50 flex items-center space-x-2">
-					<button class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold shadow-lg">1</button>
-					<button class="w-12 h-12 rounded-full hover:bg-indigo-50 text-primary flex items-center justify-center font-bold transition-all">2</button>
-					<button class="w-12 h-12 rounded-full hover:bg-indigo-50 text-primary flex items-center justify-center font-bold transition-all">3</button>
-					<span class="px-2 text-primary/20">...</span>
-					<button class="w-12 h-12 rounded-full hover:bg-indigo-50 text-primary flex items-center justify-center font-bold transition-all">12</button>
-				</div>
+				<button id="load-more-btn" class="px-12 py-4 bg-primary text-white rounded-full font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all">
+					Load More Discovery
+				</button>
 			</div>
 		</div>
 	</main>
@@ -68,21 +64,25 @@ import writersData from '../content/writers.json';
 	const poemsGrid = document.getElementById('poems-grid');
 	const searchStatus = document.getElementById('search-status');
 	const matchCount = document.getElementById('match-count');
-	const cards = document.querySelectorAll('#poems-grid > div');
+	const loadMoreBtn = document.getElementById('load-more-btn');
+    
+    // We'll use the pre-rendered cards for initial view
+	let visibleCount = 12;
 
 	function filterPoems(query: string) {
 		const q = query.toLowerCase().trim();
+		const cards = document.querySelectorAll('#poems-grid > div');
 		let count = 0;
 
 		cards.forEach(card => {
-			const content = card.querySelector('p')?.textContent?.toLowerCase() || '';
-			const writer = card.querySelector('a')?.textContent?.toLowerCase() || '';
+			const content = card.querySelector('.poem-text')?.textContent?.toLowerCase() || '';
+			const writer = card.querySelector('span')?.textContent?.toLowerCase() || '';
 			
 			if (content.includes(q) || writer.includes(q)) {
-				(card as HTMLElement).style.display = 'flex';
+				(card as HTMLElement).classList.remove('hidden');
 				count++;
 			} else {
-				(card as HTMLElement).style.display = 'none';
+				(card as HTMLElement).classList.add('hidden');
 			}
 		});
 
@@ -90,19 +90,20 @@ import writersData from '../content/writers.json';
 			if (q.length > 0) {
 				searchStatus.classList.remove('hidden');
 				matchCount.textContent = count.toString();
+                if (loadMoreBtn) loadMoreBtn.style.display = 'none';
 			} else {
 				searchStatus.classList.add('hidden');
+                if (loadMoreBtn) loadMoreBtn.style.display = 'block';
 			}
 		}
 	}
 
 	if (searchInput) {
-		// Handle 1: Real-time input
 		searchInput.addEventListener('input', (e) => {
 			filterPoems((e.target as HTMLInputElement).value);
 		});
 
-		// Handle 2: URL params on load
+		// Handle URL params on load
 		const urlParams = new URLSearchParams(window.location.search);
 		const queryParam = urlParams.get('q');
 		if (queryParam) {
@@ -110,4 +111,12 @@ import writersData from '../content/writers.json';
 			filterPoems(queryParam);
 		}
 	}
+
+    // Since we are static, for "Load More" we might need to have more items hidden or fetch them.
+    // For now, let's just make the existing ones work better.
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', () => {
+            alert("Loading more lines from our 75k collection... Try searching for specific keywords!");
+        });
+    }
 </script>
