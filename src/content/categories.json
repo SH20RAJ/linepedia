@@ -1,14 +1,32 @@
 [
   {
+    "slug": "deep-lines",
+    "name": "Deep Lines",
+    "description": "Explore our curated collection of deep lines — the best lines for every mood and occasion.",
+    "seoIntro": "Discover the most beautiful deep lines from legendary poets and contemporary writers. Our collection features carefully selected lines that capture the essence of deep lines, perfect for sharing on social media, using as captions, or simply reading for personal reflection. Browse through hundreds of handpicked lines organized by writer, mood, and theme."
+  },
+  {
     "slug": "sad-shayari",
     "name": "Sad Shayari",
-    "description": "Heart touching sad shayari and lines to express your grief and sorrow.",
-    "seoIntro": "Looking for the best sad shayari in Urdu and Hindi? Browse our collection of deep and emotional lines."
+    "description": "Explore our curated collection of sad shayari — the best lines for every mood and occasion.",
+    "seoIntro": "Discover the most beautiful sad shayari from legendary poets and contemporary writers. Our collection features carefully selected lines that capture the essence of sad shayari, perfect for sharing on social media, using as captions, or simply reading for personal reflection. Browse through hundreds of handpicked lines organized by writer, mood, and theme."
+  },
+  {
+    "slug": "nature-poetry",
+    "name": "Nature Poetry",
+    "description": "Explore our curated collection of nature poetry — the best lines for every mood and occasion.",
+    "seoIntro": "Discover the most beautiful nature poetry from legendary poets and contemporary writers. Our collection features carefully selected lines that capture the essence of nature poetry, perfect for sharing on social media, using as captions, or simply reading for personal reflection. Browse through hundreds of handpicked lines organized by writer, mood, and theme."
   },
   {
     "slug": "love-shayari",
     "name": "Love Shayari",
-    "description": "Romantic love shayari to share with your partner.",
-    "seoIntro": "Find the most beautiful love shayari and romantic lines here."
+    "description": "Explore our curated collection of love shayari — the best lines for every mood and occasion.",
+    "seoIntro": "Discover the most beautiful love shayari from legendary poets and contemporary writers. Our collection features carefully selected lines that capture the essence of love shayari, perfect for sharing on social media, using as captions, or simply reading for personal reflection. Browse through hundreds of handpicked lines organized by writer, mood, and theme."
+  },
+  {
+    "slug": "motivational-lines",
+    "name": "Motivational Lines",
+    "description": "Explore our curated collection of motivational lines — the best lines for every mood and occasion.",
+    "seoIntro": "Discover the most beautiful motivational lines from legendary poets and contemporary writers. Our collection features carefully selected lines that capture the essence of motivational lines, perfect for sharing on social media, using as captions, or simply reading for personal reflection. Browse through hundreds of handpicked lines organized by writer, mood, and theme."
   }
 ]

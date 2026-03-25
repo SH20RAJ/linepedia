@@ -1,21 +1,137 @@
 [
   {
-    "slug": "2-line-sad-shayari",
-    "name": "2 Line Sad Shayari",
-    "description": "Short and impactful 2 line sad shayari that speaks volumes.",
-    "seoIntro": "Sometimes two lines are enough to express the deepest pain. Explore our collection of 2 line sad shayari.",
+    "slug": "deep-lines-copy-paste",
+    "name": "Deep Lines Copy Paste",
+    "description": "Best deep lines copy paste — ready to share and use.",
+    "seoIntro": "Looking for the best deep lines to copy paste? Browse our hand-picked collection of emotional and impactful lines perfect for sharing. Each line has been curated for maximum impact and relatability. Whether you need a quick caption or a deeply moving verse, you'll find exactly what you're looking for here.",
     "filter": {
-      "category": "sad-shayari",
-      "length": "short"
+      "category": "deep-lines"
     }
   },
   {
-    "slug": "instagram-deep-captions",
-    "name": "Instagram Deep Captions",
-    "description": "Thoughtful and deep captions for your Instagram posts.",
-    "seoIntro": "Level up your social media game with these deep and meaningful captions.",
+    "slug": "deep-lines-instagram-captions",
+    "name": "Deep Lines Instagram Captions",
+    "description": "Best deep lines instagram captions — ready to share and use.",
+    "seoIntro": "Looking for the best deep lines to instagram captions? Browse our hand-picked collection of emotional and impactful lines perfect for sharing. Each line has been curated for maximum impact and relatability. Whether you need a quick caption or a deeply moving verse, you'll find exactly what you're looking for here.",
     "filter": {
-      "mood": "deep"
+      "category": "deep-lines"
+    }
+  },
+  {
+    "slug": "2-line-deep-lines",
+    "name": "2 Line Deep Lines",
+    "description": "Short and powerful 2 line deep lines.",
+    "seoIntro": "Sometimes the most powerful words come in the shortest form. Explore our collection of 2 line deep lines that pack an emotional punch in just a few lines. Perfect for sharing as status updates, captions, or simply reflecting upon.",
+    "filter": {
+      "category": "deep-lines"
+    }
+  },
+  {
+    "slug": "sad-shayari-copy-paste",
+    "name": "Sad Shayari Copy Paste",
+    "description": "Best sad shayari copy paste — ready to share and use.",
+    "seoIntro": "Looking for the best sad shayari to copy paste? Browse our hand-picked collection of emotional and impactful lines perfect for sharing. Each line has been curated for maximum impact and relatability. Whether you need a quick caption or a deeply moving verse, you'll find exactly what you're looking for here.",
+    "filter": {
+      "category": "sad-shayari"
+    }
+  },
+  {
+    "slug": "sad-shayari-instagram-captions",
+    "name": "Sad Shayari Instagram Captions",
+    "description": "Best sad shayari instagram captions — ready to share and use.",
+    "seoIntro": "Looking for the best sad shayari to instagram captions? Browse our hand-picked collection of emotional and impactful lines perfect for sharing. Each line has been curated for maximum impact and relatability. Whether you need a quick caption or a deeply moving verse, you'll find exactly what you're looking for here.",
+    "filter": {
+      "category": "sad-shayari"
+    }
+  },
+  {
+    "slug": "2-line-sad-shayari",
+    "name": "2 Line Sad Shayari",
+    "description": "Short and powerful 2 line sad shayari.",
+    "seoIntro": "Sometimes the most powerful words come in the shortest form. Explore our collection of 2 line sad shayari that pack an emotional punch in just a few lines. Perfect for sharing as status updates, captions, or simply reflecting upon.",
+    "filter": {
+      "category": "sad-shayari"
+    }
+  },
+  {
+    "slug": "nature-poetry-copy-paste",
+    "name": "Nature Poetry Copy Paste",
+    "description": "Best nature poetry copy paste — ready to share and use.",
+    "seoIntro": "Looking for the best nature poetry to copy paste? Browse our hand-picked collection of emotional and impactful lines perfect for sharing. Each line has been curated for maximum impact and relatability. Whether you need a quick caption or a deeply moving verse, you'll find exactly what you're looking for here.",
+    "filter": {
+      "category": "nature-poetry"
+    }
+  },
+  {
+    "slug": "nature-poetry-instagram-captions",
+    "name": "Nature Poetry Instagram Captions",
+    "description": "Best nature poetry instagram captions — ready to share and use.",
+    "seoIntro": "Looking for the best nature poetry to instagram captions? Browse our hand-picked collection of emotional and impactful lines perfect for sharing. Each line has been curated for maximum impact and relatability. Whether you need a quick caption or a deeply moving verse, you'll find exactly what you're looking for here.",
+    "filter": {
+      "category": "nature-poetry"
+    }
+  },
+  {
+    "slug": "2-line-nature-poetry",
+    "name": "2 Line Nature Poetry",
+    "description": "Short and powerful 2 line nature poetry.",
+    "seoIntro": "Sometimes the most powerful words come in the shortest form. Explore our collection of 2 line nature poetry that pack an emotional punch in just a few lines. Perfect for sharing as status updates, captions, or simply reflecting upon.",
+    "filter": {
+      "category": "nature-poetry"
+    }
+  },
+  {
+    "slug": "love-shayari-copy-paste",
+    "name": "Love Shayari Copy Paste",
+    "description": "Best love shayari copy paste — ready to share and use.",
+    "seoIntro": "Looking for the best love shayari to copy paste? Browse our hand-picked collection of emotional and impactful lines perfect for sharing. Each line has been curated for maximum impact and relatability. Whether you need a quick caption or a deeply moving verse, you'll find exactly what you're looking for here.",
+    "filter": {
+      "category": "love-shayari"
+    }
+  },
+  {
+    "slug": "love-shayari-instagram-captions",
+    "name": "Love Shayari Instagram Captions",
+    "description": "Best love shayari instagram captions — ready to share and use.",
+    "seoIntro": "Looking for the best love shayari to instagram captions? Browse our hand-picked collection of emotional and impactful lines perfect for sharing. Each line has been curated for maximum impact and relatability. Whether you need a quick caption or a deeply moving verse, you'll find exactly what you're looking for here.",
+    "filter": {
+      "category": "love-shayari"
+    }
+  },
+  {
+    "slug": "2-line-love-shayari",
+    "name": "2 Line Love Shayari",
+    "description": "Short and powerful 2 line love shayari.",
+    "seoIntro": "Sometimes the most powerful words come in the shortest form. Explore our collection of 2 line love shayari that pack an emotional punch in just a few lines. Perfect for sharing as status updates, captions, or simply reflecting upon.",
+    "filter": {
+      "category": "love-shayari"
+    }
+  },
+  {
+    "slug": "motivational-lines-copy-paste",
+    "name": "Motivational Lines Copy Paste",
+    "description": "Best motivational lines copy paste — ready to share and use.",
+    "seoIntro": "Looking for the best motivational lines to copy paste? Browse our hand-picked collection of emotional and impactful lines perfect for sharing. Each line has been curated for maximum impact and relatability. Whether you need a quick caption or a deeply moving verse, you'll find exactly what you're looking for here.",
+    "filter": {
+      "category": "motivational-lines"
+    }
+  },
+  {
+    "slug": "motivational-lines-instagram-captions",
+    "name": "Motivational Lines Instagram Captions",
+    "description": "Best motivational lines instagram captions — ready to share and use.",
+    "seoIntro": "Looking for the best motivational lines to instagram captions? Browse our hand-picked collection of emotional and impactful lines perfect for sharing. Each line has been curated for maximum impact and relatability. Whether you need a quick caption or a deeply moving verse, you'll find exactly what you're looking for here.",
+    "filter": {
+      "category": "motivational-lines"
+    }
+  },
+  {
+    "slug": "2-line-motivational-lines",
+    "name": "2 Line Motivational Lines",
+    "description": "Short and powerful 2 line motivational lines.",
+    "seoIntro": "Sometimes the most powerful words come in the shortest form. Explore our collection of 2 line motivational lines that pack an emotional punch in just a few lines. Perfect for sharing as status updates, captions, or simply reflecting upon.",
+    "filter": {
+      "category": "motivational-lines"
     }
   }
 ]

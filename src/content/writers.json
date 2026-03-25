@@ -1,20 +1,353 @@
 [
   {
-    "slug": "jaun-elia",
-    "name": "Jaun Elia",
-    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=jaun",
-    "bio": "Jaun Elia was a Pakistani Urdu poet, philosopher, biographer, and scholar.",
+    "slug": "adam-lindsay-gordon",
+    "name": "Adam Lindsay Gordon",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=adam-lindsay-gordon",
+    "bio": "Adam Lindsay Gordon is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
     "stats": {
-      "poems": 1250
+      "poems": 2
     }
   },
   {
-    "slug": "ahmad-faraz",
-    "name": "Ahmad Faraz",
-    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=ahmad",
-    "bio": "Ahmad Faraz was a Pakistani Urdu poet, considered one of the greatest modern Urdu poets of the last century.",
+    "slug": "alan-seeger",
+    "name": "Alan Seeger",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=alan-seeger",
+    "bio": "Alan Seeger is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
     "stats": {
-      "poems": 800
+      "poems": 6
+    }
+  },
+  {
+    "slug": "alexander-pope",
+    "name": "Alexander Pope",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=alexander-pope",
+    "bio": "Alexander Pope is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 63
+    }
+  },
+  {
+    "slug": "algernon-charles-swinburne",
+    "name": "Algernon Charles Swinburne",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=algernon-charles-swinburne",
+    "bio": "Algernon Charles Swinburne is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 42
+    }
+  },
+  {
+    "slug": "ambrose-bierce",
+    "name": "Ambrose Bierce",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=ambrose-bierce",
+    "bio": "Ambrose Bierce is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 2
+    }
+  },
+  {
+    "slug": "amy-levy",
+    "name": "Amy Levy",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=amy-levy",
+    "bio": "Amy Levy is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 12
+    }
+  },
+  {
+    "slug": "andrew-marvell",
+    "name": "Andrew Marvell",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=andrew-marvell",
+    "bio": "Andrew Marvell is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 10
+    }
+  },
+  {
+    "slug": "ann-taylor",
+    "name": "Ann Taylor",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=ann-taylor",
+    "bio": "Ann Taylor is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 5
+    }
+  },
+  {
+    "slug": "anne-bradstreet",
+    "name": "Anne Bradstreet",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=anne-bradstreet",
+    "bio": "Anne Bradstreet is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 11
+    }
+  },
+  {
+    "slug": "anne-bronte",
+    "name": "Anne Bronte",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=anne-bronte",
+    "bio": "Anne Bronte is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 13
+    }
+  },
+  {
+    "slug": "anne-killigrew",
+    "name": "Anne Killigrew",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=anne-killigrew",
+    "bio": "Anne Killigrew is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 7
+    }
+  },
+  {
+    "slug": "anne-kingsmill-finch",
+    "name": "Anne Kingsmill Finch",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=anne-kingsmill-finch",
+    "bio": "Anne Kingsmill Finch is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 12
+    }
+  },
+  {
+    "slug": "annie-louisa-walker",
+    "name": "Annie Louisa Walker",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=annie-louisa-walker",
+    "bio": "Annie Louisa Walker is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 1
+    }
+  },
+  {
+    "slug": "arthur-hugh-clough",
+    "name": "Arthur Hugh Clough",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=arthur-hugh-clough",
+    "bio": "Arthur Hugh Clough is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 3
+    }
+  },
+  {
+    "slug": "ben-jonson",
+    "name": "Ben Jonson",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=ben-jonson",
+    "bio": "Ben Jonson is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 13
+    }
+  },
+  {
+    "slug": "charles-kingsley",
+    "name": "Charles Kingsley",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=charles-kingsley",
+    "bio": "Charles Kingsley is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 3
+    }
+  },
+  {
+    "slug": "charles-sorley",
+    "name": "Charles Sorley",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=charles-sorley",
+    "bio": "Charles Sorley is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 2
+    }
+  },
+  {
+    "slug": "charlotte-bronte",
+    "name": "Charlotte Bronte",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=charlotte-bronte",
+    "bio": "Charlotte Bronte is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 8
+    }
+  },
+  {
+    "slug": "charlotte-smith",
+    "name": "Charlotte Smith",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=charlotte-smith",
+    "bio": "Charlotte Smith is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 5
+    }
+  },
+  {
+    "slug": "christina-rossetti",
+    "name": "Christina Rossetti",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=christina-rossetti",
+    "bio": "Christina Rossetti is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 13
+    }
+  },
+  {
+    "slug": "christopher-marlowe",
+    "name": "Christopher Marlowe",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=christopher-marlowe",
+    "bio": "Christopher Marlowe is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 1
+    }
+  },
+  {
+    "slug": "christopher-smart",
+    "name": "Christopher Smart",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=christopher-smart",
+    "bio": "Christopher Smart is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 11
+    }
+  },
+  {
+    "slug": "coventry-patmore",
+    "name": "Coventry Patmore",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=coventry-patmore",
+    "bio": "Coventry Patmore is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 1
+    }
+  },
+  {
+    "slug": "edgar-allan-poe",
+    "name": "Edgar Allan Poe",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=edgar-allan-poe",
+    "bio": "Edgar Allan Poe is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 50
+    }
+  },
+  {
+    "slug": "edmund-spenser",
+    "name": "Edmund Spenser",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=edmund-spenser",
+    "bio": "Edmund Spenser is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 15
+    }
+  },
+  {
+    "slug": "edward-fitzgerald",
+    "name": "Edward Fitzgerald",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=edward-fitzgerald",
+    "bio": "Edward Fitzgerald is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 2
+    }
+  },
+  {
+    "slug": "edward-lear",
+    "name": "Edward Lear",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=edward-lear",
+    "bio": "Edward Lear is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 2
+    }
+  },
+  {
+    "slug": "edward-taylor",
+    "name": "Edward Taylor",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=edward-taylor",
+    "bio": "Edward Taylor is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 8
+    }
+  },
+  {
+    "slug": "edward-thomas",
+    "name": "Edward Thomas",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=edward-thomas",
+    "bio": "Edward Thomas is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 135
+    }
+  },
+  {
+    "slug": "eliza-cook",
+    "name": "Eliza Cook",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=eliza-cook",
+    "bio": "Eliza Cook is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 1
+    }
+  },
+  {
+    "slug": "elizabeth-barrett-browning",
+    "name": "Elizabeth Barrett Browning",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=elizabeth-barrett-browning",
+    "bio": "Elizabeth Barrett Browning is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 33
+    }
+  },
+  {
+    "slug": "emily-bronte",
+    "name": "Emily Bronte",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=emily-bronte",
+    "bio": "Emily Bronte is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 14
+    }
+  },
+  {
+    "slug": "emily-dickinson",
+    "name": "Emily Dickinson",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=emily-dickinson",
+    "bio": "Emily Dickinson is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 362
+    }
+  },
+  {
+    "slug": "emma-lazarus",
+    "name": "Emma Lazarus",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=emma-lazarus",
+    "bio": "Emma Lazarus is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 4
+    }
+  },
+  {
+    "slug": "ernest-dowson",
+    "name": "Ernest Dowson",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=ernest-dowson",
+    "bio": "Ernest Dowson is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 1
+    }
+  },
+  {
+    "slug": "eugene-field",
+    "name": "Eugene Field",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=eugene-field",
+    "bio": "Eugene Field is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 32
+    }
+  },
+  {
+    "slug": "francis-thompson",
+    "name": "Francis Thompson",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=francis-thompson",
+    "bio": "Francis Thompson is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 1
+    }
+  },
+  {
+    "slug": "geoffrey-chaucer",
+    "name": "Geoffrey Chaucer",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=geoffrey-chaucer",
+    "bio": "Geoffrey Chaucer is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 30
+    }
+  },
+  {
+    "slug": "george-eliot",
+    "name": "George Eliot",
+    "photo": "https://api.dicebear.com/7.x/avataaars/svg?seed=george-eliot",
+    "bio": "George Eliot is a celebrated poet whose works explore the depths of human emotion through powerful verse. Their poetry continues to inspire readers across generations and cultures.",
+    "stats": {
+      "poems": 2
     }
   }
 ]
