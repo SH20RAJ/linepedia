@@ -1,0 +1,85 @@
+---
+import PoemCard from './PoemCard.astro';
+
+interface Props {
+  currentSlug: string;
+  currentWriter: string;
+  currentCategories: string[];
+  allPoems: any[];
+  allWriters: any[];
+}
+
+const { currentSlug, currentWriter, currentCategories, allPoems, allWriters } = Astro.props;
+
+// Same writer lines (up to 4)
+const sameWriterLines = allPoems
+  .filter(p => p.writer === currentWriter && p.slug !== currentSlug)
+  .slice(0, 4);
+
+// Same category lines (up to 4)
+const sameCategoryLines = allPoems
+  .filter(p => p.slug !== currentSlug && p.writer !== currentWriter && p.category.some(c => currentCategories.includes(c)))
+  .slice(0, 4);
+
+// Trending / random discovery (up to 4)
+const otherSlugs = new Set([currentSlug, ...sameWriterLines.map(p => p.slug), ...sameCategoryLines.map(p => p.slug)]);
+const trendingLines = allPoems
+  .filter(p => !otherSlugs.has(p.slug))
+  .sort(() => Math.random() - 0.5)
+  .slice(0, 4);
+
+function getWriterName(writerSlug) {
+  return allWriters.find(w => w.slug === writerSlug)?.name || writerSlug;
+}
+---
+
+{sameWriterLines.length > 0 && (
+  <section class="mt-20 w-full">
+    <h3 class="text-2xl font-serif font-bold text-primary mb-8">More from {getWriterName(currentWriter)}</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {sameWriterLines.map(poem => (
+        <PoemCard
+          id={poem.id}
+          slug={poem.slug}
+          content={poem.content.slice(0, 200)}
+          writer={poem.writer}
+          writerName={getWriterName(poem.writer)}
+        />
+      ))}
+    </div>
+  </section>
+)}
+
+{sameCategoryLines.length > 0 && (
+  <section class="mt-16 w-full">
+    <h3 class="text-2xl font-serif font-bold text-primary mb-8">Similar Lines You'll Love</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {sameCategoryLines.map(poem => (
+        <PoemCard
+          id={poem.id}
+          slug={poem.slug}
+          content={poem.content.slice(0, 200)}
+          writer={poem.writer}
+          writerName={getWriterName(poem.writer)}
+        />
+      ))}
+    </div>
+  </section>
+)}
+
+{trendingLines.length > 0 && (
+  <section class="mt-16 w-full">
+    <h3 class="text-2xl font-serif font-bold text-primary mb-8">Discover More</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {trendingLines.map(poem => (
+        <PoemCard
+          id={poem.id}
+          slug={poem.slug}
+          content={poem.content.slice(0, 200)}
+          writer={poem.writer}
+          writerName={getWriterName(poem.writer)}
+        />
+      ))}
+    </div>
+  </section>
+)}

@@ -1,0 +1,26 @@
+---
+import { ChevronRight, Home } from 'lucide-astro';
+
+interface Props {
+  items: { name: string; href: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav aria-label="Breadcrumb" class="flex items-center flex-wrap gap-1 text-xs font-bold uppercase tracking-widest text-primary/30 mb-8">
+  <a href="/" class="flex items-center hover:text-primary transition-colors">
+    <Home size={12} />
+    <span class="ml-1">Home</span>
+  </a>
+  {items.map((item, i) => (
+    <>
+      <ChevronRight size={12} class="mx-1 text-primary/20" />
+      {i === items.length - 1 ? (
+        <span class="text-accent">{item.name}</span>
+      ) : (
+        <a href={item.href} class="hover:text-primary transition-colors">{item.name}</a>
+      )}
+    </>
+  ))}
+</nav>

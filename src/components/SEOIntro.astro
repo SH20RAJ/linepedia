@@ -1,0 +1,20 @@
+---
+interface Props {
+  title: string;
+  intro: string;
+  count?: number;
+}
+
+const { title, intro, count } = Astro.props;
+---
+
+<div class="prose prose-indigo max-w-none mb-12">
+  <p class="text-lg text-primary/70 leading-relaxed font-medium">
+    {intro}
+  </p>
+  {count && (
+    <p class="text-sm text-primary/40 mt-4">
+      Showing <strong class="text-primary/60">{count}</strong> carefully curated lines in this collection.
+    </p>
+  )}
+</div>
