@@ -1,0 +1,91 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const breadcrumbs = [
+  { name: "Home", href: "/" },
+  { name: "Blog", href: "/blog" },
+  { name: post.data.title, href: `/blog/${post.id}` },
+];
+---
+
+<Layout
+  title={post.data.title}
+  description={post.data.description}
+  image={post.data.heroImage}
+  type="article"
+>
+  <Navbar />
+  <main class="min-h-screen">
+    <div class="relative h-[60vh] flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 bg-primary/40 z-10"></div>
+        <img 
+            src={post.data.heroImage} 
+            alt={post.data.title}
+            class="absolute inset-0 w-full h-full object-cover"
+        />
+        <div class="container mx-auto px-4 relative z-20 text-center">
+            <Breadcrumb items={breadcrumbs} />
+            <h1 class="text-4xl md:text-7xl font-serif font-black text-white mb-8 max-w-4xl mx-auto leading-tight">
+                {post.data.title}
+            </h1>
+            <div class="flex items-center justify-center space-x-6 text-white/90">
+                <div class="flex items-center space-x-2">
+                    <span class="text-xs uppercase font-bold tracking-widest text-white/50">Author</span>
+                    <span class="font-bold">{post.data.author}</span>
+                </div>
+                <div class="w-1 h-1 bg-white/30 rounded-full"></div>
+                <time class="font-bold">
+                    {post.data.pubDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </time>
+            </div>
+        </div>
+    </div>
+
+    <article class="container mx-auto px-4 py-20">
+      <div class="max-w-3xl mx-auto prose prose-xl prose-indigo prose-headings:font-serif prose-headings:font-black text-primary/80">
+        <Content />
+      </div>
+    </article>
+
+    {/* Shared Section */}
+    <div class="bg-indigo-50 py-20 px-4">
+        <div class="container mx-auto max-w-4xl text-center">
+            <h2 class="text-3xl font-serif font-black text-primary mb-6">Found inspiration in these words?</h2>
+            <p class="text-primary/60 mb-10">Explore our curated collection of poems and shayari to share with your audience.</p>
+            <a href="/explore" class="inline-flex items-center space-x-2 bg-primary text-white px-10 py-5 rounded-full font-bold hover:bg-accent transition-all shadow-2xl">
+                <span>Start Exploring</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+            </a>
+        </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style is:global>
+    /* Custom prose styles for a more poetic feel */
+    .prose blockquote {
+        @apply border-l-4 border-accent italic text-primary/60 pl-8 my-10;
+        font-family: serif;
+    }
+    .prose h2 {
+        @apply mt-20 mb-8;
+    }
+</style>

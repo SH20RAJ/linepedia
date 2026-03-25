@@ -1,0 +1,73 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const breadcrumbs = [
+  { name: "Home", href: "/" },
+  { name: "Blog", href: "/blog" },
+];
+---
+
+<Layout
+  title="Poetry & Shayari Blog | Linespedia"
+  description="Explore the Linespedia blog for insights into the world of poetry, shayari trends, and writing guides."
+>
+  <Navbar />
+  <main class="min-h-screen">
+    <div class="poetic-gradient py-24 border-b border-indigo-50">
+      <div class="container mx-auto px-4 max-w-4xl text-center">
+        <Breadcrumb items={breadcrumbs} />
+        <h1 class="text-5xl md:text-7xl font-serif font-black text-primary mb-6">
+          The <span class="text-accent">Poetic</span> Journal
+        </h1>
+        <p class="text-xl text-primary/60 max-w-2xl mx-auto">
+          Insights, trends, and guides from the intersection of tradition and modern expression.
+        </p>
+      </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-20">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+        {posts.map((post) => (
+          <article class="group">
+            <a href={`/blog/${post.id}`} class="block mb-6 overflow-hidden rounded-3xl aspect-video bg-indigo-50">
+              <img 
+                src={post.data.heroImage} 
+                alt={post.data.title}
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            </a>
+            <div class="flex items-center space-x-4 mb-4">
+              <span class="px-3 py-1 bg-indigo-50 text-accent text-[10px] font-black uppercase tracking-widest rounded-full">
+                {post.data.category}
+              </span>
+              <time class="text-xs text-primary/40 font-bold uppercase tracking-widest">
+                {post.data.pubDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </time>
+            </div>
+            <h2 class="text-3xl font-serif font-black text-primary mb-4 group-hover:text-accent transition-colors">
+              <a href={`/blog/${post.id}`}>{post.data.title}</a>
+            </h2>
+            <p class="text-primary/60 line-clamp-2 mb-6">
+              {post.data.description}
+            </p>
+            <a href={`/blog/${post.id}`} class="inline-flex items-center text-primary font-bold hover:text-accent transition-all group/link">
+              <span>Read Full Article</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2 group-hover/link:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
