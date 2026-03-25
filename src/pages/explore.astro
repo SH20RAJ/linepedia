@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import PoemCard from '../components/PoemCard.astro';
+import poemsData from '../content/poems.json';
+import writersData from '../content/writers.json';
+---
+
+<Layout title="Explore Poetry" description="Discover a world of beautiful shayari, quotes, and poetic lines.">
+	<Navbar />
+	<main class="min-h-screen py-20 px-4 poetic-gradient">
+		<div class="container mx-auto">
+			<div class="max-w-4xl mb-16">
+				<h1 class="text-6xl font-serif font-black text-primary mb-6">Discovery</h1>
+				<p class="text-xl text-primary/60 leading-relaxed max-w-2xl">
+					Browse through our complete collection. Filter by mood, writer, or just let serendipity guide you through the lines.
+				</p>
+			</div>
+			
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+				{poemsData.map(poem => (
+					<PoemCard 
+						id={poem.id}
+						slug={poem.slug}
+						content={poem.content}
+						writer={poem.writer}
+						writerName={writersData.find(w => w.slug === poem.writer)?.name || poem.writer}
+					/>
+				))}
+			</div>
+
+			<div class="mt-20 flex justify-center">
+				<div class="bg-white p-2 rounded-full shadow-xl border border-indigo-50 flex items-center space-x-2">
+					<button class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold shadow-lg">1</button>
+					<button class="w-12 h-12 rounded-full hover:bg-indigo-50 text-primary flex items-center justify-center font-bold transition-all">2</button>
+					<button class="w-12 h-12 rounded-full hover:bg-indigo-50 text-primary flex items-center justify-center font-bold transition-all">3</button>
+					<span class="px-2 text-primary/20">...</span>
+					<button class="w-12 h-12 rounded-full hover:bg-indigo-50 text-primary flex items-center justify-center font-bold transition-all">12</button>
+				</div>
+			</div>
+		</div>
+	</main>
+	<Footer />
+</Layout>
