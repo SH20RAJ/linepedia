@@ -99,7 +99,7 @@ const { content, writer, title } = Astro.props;
       })
         .then((dataUrl) => {
           const link = document.createElement("a");
-          link.download = `linepedia-poster-${Date.now()}.png`;
+          link.download = `linespedia-poster-${Date.now()}.png`;
           link.href = dataUrl;
           link.click();
           downloadBtn.innerHTML =

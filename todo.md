@@ -6,3 +6,4 @@ search isnt working
 
 add hindi shayris from internet database , apis or any places you can find out
 
+2f3a29d127b84110a911375a73d97702 setup indexnow and submit all urls in batch

@@ -4,7 +4,9 @@ import { parse } from 'csv-parse/sync';
 import crypto from 'crypto';
 
 const DATA_DIR = './src/data';
-const OUTPUT_FILE = './src/content/poems-dataset.json';
+const LEGACY_PATH = '/tmp/poems-legacy.json';
+const POEMS_DIR = './src/content/poems';
+const KV_BATCH_FILE = './src/data/poems-kv-batch.json';
 
 function slugify(text) {
     return text
@@ -21,24 +23,22 @@ function generateId(text) {
 }
 
 async function ingest() {
-    console.log('🚀 Starting deep ingestion with legacy restoration...');
+    console.log('🚀 Starting deep ingestion with KV split...');
     
+    const legacyMap = new Map();
     const results = [];
     const seen = new Set();
     const seenTitles = new Set();
 
-    // 0. Load Legacy Poems (Fix 404s)
-    const legacyPath = '/tmp/poems-legacy.json';
-    if (fs.existsSync(legacyPath)) {
-        console.log('Restoring 311 Legacy Poems...');
-        const legacyPoems = JSON.parse(fs.readFileSync(legacyPath, 'utf-8'));
+    // 0. Load Legacy Poems (Pinned for SEO/Continuity)
+    if (fs.existsSync(LEGACY_PATH)) {
+        console.log('Loading 311 Legacy Poems...');
+        const legacyPoems = JSON.parse(fs.readFileSync(LEGACY_PATH, 'utf-8'));
         for (const poem of legacyPoems) {
             const titleKey = slugify(`${poem.writer}-${poem.title}`);
-            if (seenTitles.has(titleKey)) continue;
-            
             seenTitles.add(titleKey);
             seen.add(poem.id);
-            results.push(poem); // Keep original id/slug
+            legacyMap.set(poem.id, poem);
         }
     }
 
@@ -117,47 +117,62 @@ async function ingest() {
         }
     }
 
-    console.log(`✅ Total unique poems processed: ${results.length}`);
+    console.log(`✅ Total unique new poems: ${results.length}`);
     
-    // Sort by popularity (Views) - keep legacy at the top or sorted naturally
+    // Sort by popularity
     results.sort((a, b) => (b.meta?.views || 0) - (a.meta?.views || 0));
 
-    // Export individual poem files
-    const poemsDir = './src/content/poems';
-    
-    // Safety check: ensure 102.json from legacy is present
-    const legacyCheck = results.find(p => p.id === '102');
-    if (legacyCheck) {
-        console.log('Verified: Legacy poem 102 (An Exile\'s Farewell) is available.');
+    // CLEAN EXPORT
+    if (fs.existsSync(POEMS_DIR)) fs.rmSync(POEMS_DIR, { recursive: true, force: true });
+    fs.mkdirSync(POEMS_DIR, { recursive: true });
+
+    // 1. Export Legacy Poems to Content Collection (Pinned)
+    console.log(`Exporting ${legacyMap.size} legacy poems to content collection...`);
+    for (const [id, poem] of legacyMap) {
+        fs.writeFileSync(path.join(POEMS_DIR, `${id}.json`), JSON.stringify(poem, null, 2));
     }
 
-    if (!fs.existsSync(poemsDir)) fs.mkdirSync(poemsDir, { recursive: true });
+    // 2. Prepare ALL (Legacy + New) for KV storage
+    // We will use a separate script to upload to KV, but we generate the file here
+    const kvData = [...legacyMap.values(), ...results];
+    console.log(`Preparing ${kvData.length} poems for KV...`);
+    
+    // Cloudflare KV Bulk format: [{ "key": "...", "value": "..." }]
+    const kvBulk = kvData.map(p => ({
+        key: `poem:${p.id}`,
+        value: JSON.stringify(p)
+    }));
+    
+    // Also store by slug for fast lookup
+    kvData.forEach(p => {
+        kvBulk.push({
+            key: `slug:${p.slug}`,
+            value: JSON.stringify(p)
+        });
+    });
 
-    console.log(`Exporting poems to ${poemsDir}...`);
-    
-    // 1. Export ALL legacy poems first (guarantees they exist)
-    const legacyPoems = results.filter(p => !p.id.includes('-') && p.id.length < 10); // Simple check for legacy numeric IDs
-    // Actually, I have the list from /tmp/poems-legacy.json
-    const legacyIds = new Set(JSON.parse(fs.readFileSync('/tmp/poems-legacy.json', 'utf-8')).map(p => p.id));
-    
-    let exportedCount = 0;
-    for (const poem of results) {
-        if (legacyIds.has(poem.id)) {
-            fs.writeFileSync(path.join(poemsDir, `${poem.id}.json`), JSON.stringify(poem, null, 2));
-            exportedCount++;
-        }
-    }
-    console.log(`Restored ${exportedCount} legacy poems.`);
+    fs.writeFileSync(KV_BATCH_FILE, JSON.stringify(kvBulk));
+    console.log(`KV Bulk batch saved to ${KV_BATCH_FILE}`);
 
-    // 2. Export top remaining up to 10,000 total (to avoid overwhelming Astro in dev)
-    const topRemaining = results.filter(p => !legacyIds.has(p.id)).slice(0, 10000 - exportedCount);
-    
-    for (const poem of topRemaining) {
-        fs.writeFileSync(path.join(poemsDir, `${poem.id}.json`), JSON.stringify(poem, null, 2));
-        exportedCount++;
+    // 3. Export Top 500 new poems to content collection for "Latest" previews
+    console.log('Exporting top 500 new poems to content collection for preview...');
+    for (const poem of results.slice(0, 500)) {
+        fs.writeFileSync(path.join(POEMS_DIR, `${poem.id}.json`), JSON.stringify(poem, null, 2));
     }
+
+    // 4. Generate Sitemap for ALL 75,000+ poems
+    console.log('Generating sitemap.xml for all poems...');
+    const SITEMAP_FILE = './public/sitemap-poems.xml';
+    let sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    sitemap += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
     
-    console.log(`Total poems exported: ${exportedCount}`);
+    for (const poem of kvData) {
+        sitemap += `  <url>\n    <loc>https://linespedia.com/line/${poem.slug}</loc>\n    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n    <priority>0.8</priority>\n  </url>\n`;
+    }
+    sitemap += '</urlset>';
+    fs.writeFileSync(SITEMAP_FILE, sitemap);
+    console.log(`Sitemap saved to ${SITEMAP_FILE}`);
+    
     console.log('DONE!');
 }
 

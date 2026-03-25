@@ -29,8 +29,30 @@ async function getPageData(pathSlug: string | undefined) {
         const lineSlugOrId = pathSlug.replace('line/', '');
         // Search by slug first (Astro 6 content collections use IDs as default, but we have a slug field)
         const entries = await getCollection('poems');
-        const entry = entries.find(e => e.data.slug === lineSlugOrId || e.id === lineSlugOrId);
+        let entry = entries.find(e => e.data.slug === lineSlugOrId || e.id === lineSlugOrId);
         
+        // KV Fallback for the massive dataset
+        if (!entry) {
+            const runtime = (Astro as any).locals.runtime;
+            const kv = runtime?.env?.SESSION;
+            if (kv) {
+                console.log('Searching KV for:', lineSlugOrId);
+                // Try slug lookup
+                const kvDataBySlug = await kv.get(`slug:${lineSlugOrId}`);
+                if (kvDataBySlug) {
+                    const data = JSON.parse(kvDataBySlug);
+                    entry = { data, id: data.id } as any;
+                } else {
+                    // Try ID lookup
+                    const kvDataById = await kv.get(`poem:${lineSlugOrId}`);
+                    if (kvDataById) {
+                        const data = JSON.parse(kvDataById);
+                        entry = { data, id: lineSlugOrId } as any;
+                    }
+                }
+            }
+        }
+
         if (entry) {
             return {
                 type: 'line',

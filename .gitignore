@@ -1,5 +1,9 @@
 # build output
 dist/
+src/data/poems.json
+src/data/poem-data.csv
+src/data/poems-kv-batch.json
+src/content/poems-dataset.json
 
 # generated types
 .astro/
