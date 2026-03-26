@@ -31,24 +31,34 @@ async function scrapeStory(url) {
         const doc = dom.window.document;
 
         const title = doc.querySelector('h1.textAbnormalXLarge')?.textContent?.trim() || '';
-        const contentDiv = doc.querySelector('div.pagecenter.textBelowNormal.textFormat');
+        const contentDiv = doc.querySelector('#dvAllLft.textNormal.textFormat');
         
-        if (!contentDiv) return null;
+        if (!contentDiv) {
+            console.log(`Fallback for ${url}`);
+            // Fallback for different container
+            const fallback = doc.querySelector('div.pagecenter.textBelowNormal.textFormat');
+            if (!fallback) return null;
+            contentDiv = fallback;
+        }
 
-        // Clean content: remove breadcrumbs
-        const breadcrumb = contentDiv.querySelector('div.textBelowNormal');
-        if (breadcrumb) breadcrumb.remove();
+        // Clean content: remove breadcrumbs and common ads/social
+        contentDiv.querySelectorAll('div, script, ins, .textBelowNormal').forEach(el => el.remove());
         
-        // Remove noise
-        const cleanText = contentDiv.textContent.replace(/Home\s*»\s*Complete Works\s*»\s*Stories\s*/gi, '').trim();
-        const cleanHtml = contentDiv.innerHTML.replace(/Home\s*»\s*Complete Works\s*»\s*Stories\s*/gi, '').trim();
+        // Better HTML cleaning
+        let html = contentDiv.innerHTML
+            .replace(/Home\s*»\s*Complete Works\s*»\s*Stories\s*/gi, '')
+            .replace(/&nbsp;/g, ' ')
+            .trim();
         
-        // Extract Image
-        const imgTag = contentDiv.querySelector('img');
+        // Extract Image (looking for illustrated frames)
+        const imgTag = contentDiv.querySelector('img.picDisplay') || contentDiv.querySelector('img');
         let imgUrl = imgTag ? imgTag.getAttribute('src') : null;
         if (imgUrl && !imgUrl.startsWith('http')) {
             imgUrl = imgUrl.startsWith('/') ? `${BASE_URL}${imgUrl}` : `${BASE_URL}/${imgUrl}`;
         }
+        
+        // Extract plain text for search indices
+        const text = contentDiv.textContent.replace(/\s+/g, ' ').trim();
         const hasImage = imgUrl ? await downloadImage(imgUrl, `${path.basename(url)}.png`) : false;
 
         // Extract Moral
@@ -58,8 +68,8 @@ async function scrapeStory(url) {
         return {
             title,
             slug: path.basename(url),
-            content: cleanText,
-            html: cleanHtml,
+            content: text,
+            html,
             image: hasImage ? true : null,
             moral,
             url

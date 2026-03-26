@@ -81,13 +81,26 @@ async function main() {
     
     // Use slug-map to get poems
     const slugMap = JSON.parse(fs.readFileSync(path.join(DATA_REPO, 'metadata/v1/slug-map.json'), 'utf-8'));
-    const slugs = Object.keys(slugMap).slice(0, 50); // Just top 50 for now
-    
+    const generatedSlugs = [];
     for (const slug of slugs) {
         const id = slugMap[slug];
-        const poemData = JSON.parse(fs.readFileSync(path.join(DATA_REPO, `poems/v1/${id}.json`), 'utf-8'));
-        await generatePoster({ slug, ...poemData });
+        try {
+            const poemData = JSON.parse(fs.readFileSync(path.join(DATA_REPO, `poems/v1/${id}.json`), 'utf-8'));
+            await generatePoster({ slug, ...poemData });
+            generatedSlugs.push(slug);
+        } catch (e) {
+            console.error(`Missing data for ${slug}`);
+        }
     }
+    
+    // Update Indices
+    console.log(`📝 Updating indices for ${generatedSlugs.length} posters...`);
+    const indexPath = path.join(DATA_REPO, 'metadata/v1/posters.json');
+    const localIndexPath = './src/data/poster-index.json';
+    
+    fs.writeFileSync(indexPath, JSON.stringify(generatedSlugs, null, 2));
+    if (!fs.existsSync(path.dirname(localIndexPath))) fs.mkdirSync(path.dirname(localIndexPath), { recursive: true });
+    fs.writeFileSync(localIndexPath, JSON.stringify(generatedSlugs, null, 2));
     
     console.log('🎬 Batch Completed.');
 }
