@@ -14,35 +14,26 @@ const { slug } = Astro.params;
 let error = null;
 let pageData = null;
 
+const CDN_BASE = 'https://cdn.jsdelivr.net/gh/BluredCodes/linespedia-data@main';
+
 async function getEnrichedPoem(pathSlug: string | undefined) {
     try {
         if (!pathSlug) return null;
 
-        // Astro v6 compatibility: Use Astro.locals.runtime.env
-        const runtime = (Astro.locals as any).runtime;
-        const kv = runtime?.env?.SESSION || runtime?.SESSION || (Astro.locals as any).SESSION;
-        
-        if (!kv) {
-            console.error('KV Storage not found in runtime');
-            return null;
-        }
+        // 1. Fetch slug map (cached heavily)
+        const slugMapRes = await fetch(`${CDN_BASE}/metadata/v1/slug-map.json`);
+        if (!slugMapRes.ok) return null;
+        const slugMap = await slugMapRes.json();
+        const id = slugMap[pathSlug];
 
-        const kvDataBySlug = await kv.get(`slug:${pathSlug}`);
-        if (kvDataBySlug) {
-            return JSON.parse(kvDataBySlug);
-        }
+        if (!id) return null;
 
-        // Try ID fallback
-        const parts = pathSlug.split('-');
-        const idFromSlug = parts[parts.length - 1];
-        const kvDataById = await kv.get(`poem:${idFromSlug}`);
-        if (kvDataById) {
-            return JSON.parse(kvDataById);
-        }
-
-        return null;
+        // 2. Fetch poem by ID
+        const poemRes = await fetch(`${CDN_BASE}/poems/v1/${id}.json`);
+        if (!poemRes.ok) return null;
+        return await poemRes.json();
     } catch (e) {
-        console.error('Error fetching enriched poem:', e);
+        console.error('Error fetching enriched poem from CDN:', e);
         return null;
     }
 }

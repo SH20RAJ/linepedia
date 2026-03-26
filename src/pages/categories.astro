@@ -2,7 +2,9 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
-import categoriesData from '../content/categories.json';
+import { getAllCategories } from '../lib/cdn';
+
+const categoriesData = await getAllCategories();
 ---
 
 <Layout title="Categories" description="Explore poetry and shayari by mood, theme, and category.">

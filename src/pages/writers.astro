@@ -2,7 +2,9 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
-import writersData from '../content/writers.json';
+import { getAllWriters } from '../lib/cdn';
+
+const writersData = await getAllWriters();
 ---
 
 <Layout title="All Writers" description="Browse our curated list of poetic masters and writers.">

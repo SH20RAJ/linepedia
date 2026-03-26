@@ -1,5 +1,5 @@
----
 import { Copy, Heart } from 'lucide-astro';
+import { getPosterUrl } from '../lib/cdn';
 
 interface Props {
   id: string;
@@ -76,7 +76,7 @@ const { id, slug, content, writer, writerName } = Astro.props;
     pinBtn?.addEventListener('click', () => {
       const text = poemText?.textContent?.replace(/^"|"$/g, '').trim() || '';
       const url = `${window.location.origin}/line/${card.getAttribute('data-slug') || ''}/`;
-      const imageUrl = `${window.location.origin}/posters/${card.getAttribute('data-slug') || ''}.png`;
+      const imageUrl = `https://cdn.jsdelivr.net/gh/BluredCodes/linespedia-data@main/posters/v1/${card.getAttribute('data-slug') || ''}.png`;
       const pinUrl = `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(url)}&media=${encodeURIComponent(imageUrl)}&description=${encodeURIComponent(text.slice(0, 200))}`;
       window.open(pinUrl, '_blank');
     });

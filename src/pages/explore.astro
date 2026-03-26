@@ -3,120 +3,85 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import PoemCard from '../components/PoemCard.astro';
-import { Search } from 'lucide-astro';
-import poemsData from '../content/poems.json';
-import writersData from '../content/writers.json';
+import Search from '../components/Search';
+import { Quote, Search as SearchIcon, Filter, Sparkles } from 'lucide-astro';
+
+import { getAllWriters, getAllCategories, getFeaturedPoems } from '../lib/cdn';
+
+const writers = await getAllWriters();
+const categories = await getAllCategories();
+const poemsData = await getFeaturedPoems();
+
+const featuredPoems = poemsData.slice(0, 12);
 ---
 
-<Layout title="Explore Poetry" description="Discover a world of beautiful shayari, quotes, and poetic lines.">
+<Layout title="Explore Poetry — Linespedia" description="Discover the world's best poetry collection. Filter by mood, writer, or theme.">
 	<Navbar />
-	<main class="min-h-screen py-20 px-4 poetic-gradient">
-		<div class="container mx-auto">
-			<div class="max-w-4xl mb-16">
-				<h1 class="text-6xl font-serif font-black text-primary mb-6">Discovery</h1>
-				<p class="text-xl text-primary/60 leading-relaxed max-w-2xl">
-					Browse through our complete collection. Filter by mood, writer, or just search for the words that resonate with you.
-				</p>
+	
+	<main class="min-h-screen poetic-gradient py-20">
+		<div class="container mx-auto px-4">
+			<div class="max-w-4xl mx-auto text-center mb-16">
+				<h1 class="text-5xl md:text-7xl font-serif font-black text-primary mb-6">Discovery</h1>
+				<p class="text-xl text-primary/50">Search through 75,000+ curated lines and poems.</p>
 			</div>
 
-			{/* Search Input */}
-			<div class="max-w-xl mb-12">
-				<div class="relative group">
-					<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-						<Search size={22} class="text-primary/30 group-focus-within:text-accent transition-colors" />
+			<div class="max-w-3xl mx-auto mb-20">
+				<Search client:load />
+			</div>
+
+			<div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+				{/* Sidebar Filters */}
+				<aside class="space-y-10">
+					<div>
+						<h3 class="flex items-center space-x-3 text-sm font-bold uppercase tracking-[0.2em] text-primary/40 mb-6">
+							<Filter size={16} />
+							<span>Top Categories</span>
+						</h3>
+						<div class="flex flex-wrap gap-2">
+							{categories.slice(0, 15).map((cat: any) => (
+								<a href={`/${cat.slug}/`} class="px-4 py-2 bg-white border border-indigo-50 rounded-full text-sm font-medium text-primary hover:bg-primary hover:text-white transition-all">
+									{cat.name}
+								</a>
+							))}
+						</div>
 					</div>
-					<input 
-						type="text" 
-						id="search-input" 
-						placeholder="Search for keywords, authors, or feelings..." 
-						class="w-full bg-white border-2 border-indigo-50 rounded-2xl py-5 pl-12 pr-4 outline-none focus:border-accent focus:shadow-2xl focus:shadow-accent/5 transition-all text-primary font-medium"
-					/>
-				</div>
-				<div id="search-status" class="mt-4 text-sm text-primary/40 font-medium hidden">
-					Showing <span id="match-count">0</span> matching lines
-				</div>
-			</div>
-			
-			<div id="poems-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-				{poemsData.slice(0, 12).map(poem => (
-					<PoemCard 
-						id={poem.id}
-						slug={poem.slug}
-						content={poem.content}
-						writer={poem.writer}
-						writerName={writersData.find(w => w.slug === poem.writer)?.name || poem.writer}
-					/>
-				))}
-			</div>
 
-			<div class="mt-20 flex justify-center">
-				<button id="load-more-btn" class="px-12 py-4 bg-primary text-white rounded-full font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all">
-					Load More Discovery
-				</button>
+					<div>
+						<h3 class="flex items-center space-x-3 text-sm font-bold uppercase tracking-[0.2em] text-primary/40 mb-6">
+							<Sparkles size={16} />
+							<span>Popular Poets</span>
+						</h3>
+						<div class="space-y-4">
+							{writers.slice(0, 8).map((writer: any) => (
+								<a href={`/${writer.slug}/`} class="flex items-center space-x-4 group">
+									<img src={writer.photo} class="w-10 h-10 rounded-full object-cover grayscale group-hover:grayscale-0 transition-all" />
+									<span class="font-bold text-primary group-hover:text-accent transition-colors">{writer.name}</span>
+								</a>
+							))}
+						</div>
+					</div>
+				</aside>
+
+				{/* Results Grid */}
+				<div class="lg:col-span-3">
+					<div class="flex items-center justify-between mb-8">
+						<h2 class="text-2xl font-serif font-black text-primary">Featured Selection</h2>
+						<span class="text-sm text-primary/40 font-bold">{poemsData.length} items curated</span>
+					</div>
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+						{featuredPoems.map((poem: any) => (
+							<PoemCard
+								id={poem.id}
+								slug={poem.slug}
+								content={poem.content.slice(0, 200)}
+								writer={poem.writer}
+								writerName={writers.find((w: any) => w.slug === poem.writer)?.name || poem.writer}
+							/>
+						))}
+					</div>
+				</div>
 			</div>
 		</div>
 	</main>
 	<Footer />
 </Layout>
-
-<script>
-	const searchInput = document.getElementById('search-input') as HTMLInputElement;
-	const poemsGrid = document.getElementById('poems-grid');
-	const searchStatus = document.getElementById('search-status');
-	const matchCount = document.getElementById('match-count');
-	const loadMoreBtn = document.getElementById('load-more-btn');
-    
-    // We'll use the pre-rendered cards for initial view
-	let visibleCount = 12;
-
-	function filterPoems(query: string) {
-		const q = query.toLowerCase().trim();
-		const cards = document.querySelectorAll('#poems-grid > div');
-		let count = 0;
-
-		cards.forEach(card => {
-			const content = card.querySelector('.poem-text')?.textContent?.toLowerCase() || '';
-			const writer = card.querySelector('span')?.textContent?.toLowerCase() || '';
-			
-			if (content.includes(q) || writer.includes(q)) {
-				(card as HTMLElement).classList.remove('hidden');
-				count++;
-			} else {
-				(card as HTMLElement).classList.add('hidden');
-			}
-		});
-
-		if (searchStatus && matchCount) {
-			if (q.length > 0) {
-				searchStatus.classList.remove('hidden');
-				matchCount.textContent = count.toString();
-                if (loadMoreBtn) loadMoreBtn.style.display = 'none';
-			} else {
-				searchStatus.classList.add('hidden');
-                if (loadMoreBtn) loadMoreBtn.style.display = 'block';
-			}
-		}
-	}
-
-	if (searchInput) {
-		searchInput.addEventListener('input', (e) => {
-			filterPoems((e.target as HTMLInputElement).value);
-		});
-
-		// Handle URL params on load
-		const urlParams = new URLSearchParams(window.location.search);
-		const queryParam = urlParams.get('q');
-		if (queryParam) {
-			searchInput.value = queryParam;
-			filterPoems(queryParam);
-		}
-	}
-
-    // Since we are static, for "Load More" we might need to have more items hidden or fetch them.
-    // For now, let's just make the existing ones work better.
-    if (loadMoreBtn) {
-        loadMoreBtn.addEventListener('click', () => {
-            alert("Loading more lines from our 75k collection... Try searching for specific keywords!");
-        });
-    }
-</script>
