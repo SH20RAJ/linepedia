@@ -50,8 +50,8 @@ indexnow not working
 
 
 https://captions.ai/blog/instagram-bio-ideas
-
-
+and other search kepwords which we can add on the website 
+related to ()
 find articles on internet , scrap them on keywords , rewrite it and publish them
 
 200+ articles

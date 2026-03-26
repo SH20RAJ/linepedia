@@ -1,0 +1,72 @@
+---
+import { ChevronLeft, ChevronRight } from 'lucide-astro';
+
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  baseUrl: string;
+}
+
+const { currentPage, totalPages, baseUrl } = Astro.props;
+
+const maxVisible = 5;
+let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+if (endPage - startPage + 1 < maxVisible) {
+    startPage = Math.max(1, endPage - maxVisible + 1);
+}
+
+const pages = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+---
+
+<div class="flex items-center justify-center gap-2 mt-16 font-sans">
+    {currentPage > 1 && (
+        <a 
+            href={`${baseUrl}?page=${currentPage - 1}`} 
+            class="p-3 bg-white border border-slate-200 rounded-2xl text-slate-400 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm hover:shadow-md"
+            aria-label="Previous Page"
+        >
+            <ChevronLeft size={20} />
+        </a>
+    )}
+
+    <div class="flex items-center gap-2">
+        {startPage > 1 && (
+            <>
+                <a href={`${baseUrl}?page=1`} class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-200 text-sm font-bold text-slate-600 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm">1</a>
+                {startPage > 2 && <span class="text-slate-300 px-1">...</span>}
+            </>
+        )}
+
+        {pages.map(page => (
+            <a 
+                href={`${baseUrl}?page=${page}`} 
+                class={`w-12 h-12 flex items-center justify-center rounded-2xl text-sm font-bold transition-all shadow-sm ${
+                    page === currentPage 
+                    ? 'bg-indigo-600 text-white shadow-indigo-100' 
+                    : 'bg-white border border-slate-200 text-slate-600 hover:text-indigo-600 hover:border-indigo-200'
+                }`}
+            >
+                {page}
+            </a>
+        ))}
+
+        {endPage < totalPages && (
+            <>
+                {endPage < totalPages - 1 && <span class="text-slate-300 px-1">...</span>}
+                <a href={`${baseUrl}?page=${totalPages}`} class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-200 text-sm font-bold text-slate-600 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm">{totalPages}</a>
+            </>
+        )}
+    </div>
+
+    {currentPage < totalPages && (
+        <a 
+            href={`${baseUrl}?page=${currentPage + 1}`} 
+            class="p-3 bg-white border border-slate-200 rounded-2xl text-slate-400 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm hover:shadow-md"
+            aria-label="Next Page"
+        >
+            <ChevronRight size={20} />
+        </a>
+    )}
+</div>
