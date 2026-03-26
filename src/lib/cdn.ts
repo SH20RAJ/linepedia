@@ -2,6 +2,7 @@ import writers from '../data/writers.json';
 import categories from '../data/categories.json';
 import collections from '../data/collections.json';
 import featuredPoemsData from '../data/featured-poems.json';
+import posterIndex from '../data/poster-index.json';
 
 const CDN_BASE = 'https://cdn.jsdelivr.net/gh/BluredCodes/linespedia-data@main';
 
@@ -68,11 +69,9 @@ export const getCategoryPoems = async (categorySlug: string) => {
 export const getRelatedPoems = async (writerSlug: string, categorySlugs: string[] = []) => {
   const related: any[] = [];
   
-  // 1. Try to get 3 more from the same writer
   const fromWriter = await getWriterPoems(writerSlug);
   related.push(...fromWriter.slice(0, 4));
 
-  // 2. Try to get some from categories if needed
   if (related.length < 6 && categorySlugs.length > 0) {
     const fromCat = await getCategoryPoems(categorySlugs[0]);
     related.push(...fromCat.slice(0, 6 - related.length));
@@ -81,5 +80,6 @@ export const getRelatedPoems = async (writerSlug: string, categorySlugs: string[
   return related;
 };
 
-export const getPosterUrl = (slug: string) => `${CDN_BASE}/posters/v1/${slug}.png`;
+export const hasPoster = (slug: string) => posterIndex.includes(slug);
+export const getPosterUrl = (slug: string) => hasPoster(slug) ? `${CDN_BASE}/posters/v1/${slug}.png` : null;
 export const getMetadataUrl = (file: string) => `${CDN_BASE}/metadata/v1/${file}`;

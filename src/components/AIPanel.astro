@@ -1,0 +1,121 @@
+---
+import { Sparkles, Brain, Zap, MessageSquareQuote } from 'lucide-astro';
+
+interface Props {
+  content: string;
+  title: string;
+  writer: string;
+}
+
+const { content, title, writer } = Astro.props;
+---
+
+<section class="mt-12 bg-indigo-900/5 backdrop-blur-3xl rounded-[3rem] p-8 md:p-12 border border-indigo-500/10 relative overflow-hidden group">
+  <!-- Animated Background Element -->
+  <div class="absolute -top-24 -right-24 w-64 h-64 bg-indigo-500/10 blur-[100px] rounded-full group-hover:bg-indigo-500/20 transition-all duration-700"></div>
+  
+  <div class="relative z-10">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+      <div>
+        <h3 class="text-2xl font-serif font-black text-primary flex items-center gap-3">
+          <Sparkles class="text-indigo-500 animate-pulse" size={28} />
+          <span>Puter Poetic Insight</span>
+        </h3>
+        <p class="text-primary/50 text-sm mt-1">AI-powered analysis and emotional context.</p>
+      </div>
+      
+      <div class="flex flex-wrap gap-4">
+        <button 
+          id="ai-summarize"
+          class="px-6 py-3 bg-white border border-indigo-100 rounded-full text-sm font-bold text-primary hover:bg-indigo-50 transition-all flex items-center gap-2 shadow-sm"
+          data-type="summary"
+        >
+          <Zap size={16} class="text-indigo-500" />
+          <span>Explain Poem</span>
+        </button>
+        <button 
+          id="ai-eli5"
+          class="px-6 py-3 bg-white border border-indigo-100 rounded-full text-sm font-bold text-primary hover:bg-indigo-50 transition-all flex items-center gap-2 shadow-sm"
+          data-type="eli5"
+        >
+          <Brain size={16} class="text-indigo-500" />
+          <span>ELI5</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- AI Output Area -->
+    <div id="ai-output-container" class="hidden">
+      <div class="bg-white/80 rounded-2xl p-6 md:p-8 border border-white shadow-inner relative">
+         <div id="ai-loading" class="hidden absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-sm rounded-2xl z-20">
+            <div class="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+         </div>
+         <div id="ai-text" class="prose prose-indigo prose-lg text-primary/80 leading-relaxed italic">
+            <!-- AI Content Streams Here -->
+         </div>
+         <div class="mt-6 pt-6 border-t border-indigo-50 flex items-center justify-between text-[10px] uppercase tracking-widest font-bold text-primary/30">
+            <span>Powered by Puter AI</span>
+            <button id="ai-reset" class="hover:text-primary transition-colors">Clear</button>
+         </div>
+      </div>
+    </div>
+
+    <div id="ai-placeholder" class="py-12 text-center border-2 border-dashed border-indigo-500/10 rounded-2xl">
+      <MessageSquareQuote size={48} class="mx-auto text-indigo-500/20 mb-4" />
+      <p class="text-primary/40 font-medium">Click a button above to generate AI poetic insight.</p>
+    </div>
+  </div>
+</section>
+
+<script is:inline define:vars={{ content, title, writer }}>
+  const summarizeBtn = document.getElementById('ai-summarize');
+  const eli5Btn = document.getElementById('ai-eli5');
+  const resetBtn = document.getElementById('ai-reset');
+  const outputContainer = document.getElementById('ai-output-container');
+  const placeholder = document.getElementById('ai-placeholder');
+  const aiText = document.getElementById('ai-text');
+  const loader = document.getElementById('ai-loading');
+
+  async function generateAI(type) {
+    if (typeof puter === 'undefined') {
+      alert("AI library not loaded. Please refresh.");
+      return;
+    }
+
+    placeholder.classList.add('hidden');
+    outputContainer.classList.remove('hidden');
+    aiText.innerHTML = '';
+    loader.classList.remove('hidden');
+
+    let prompt = "";
+    if (type === 'summary') {
+      prompt = `Provide a beautiful, insightful 3-sentence analysis of this poem titled "${title}" by ${writer}. Focus on its emotional weight and core imagery.\n\nPoem Content:\n${content}`;
+    } else {
+      prompt = `Explain the meaning of this poem titled "${title}" by ${writer} like I'm 5 years old. Keep it simple but profound.\n\nPoem Content:\n${content}`;
+    }
+
+    try {
+      const response = await puter.ai.chat(prompt, { stream: true });
+      loader.classList.add('hidden');
+      
+      for await (const part of response) {
+        if (part?.text) {
+          aiText.innerHTML += part.text.replaceAll('\n', '<br>');
+          // Auto-scroll logic if needed
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      aiText.innerHTML = "Sorry, I couldn't generate an insight right now. Please try again.";
+      loader.classList.add('hidden');
+    }
+  }
+
+  summarizeBtn?.addEventListener('click', () => generateAI('summary'));
+  eli5Btn?.addEventListener('click', () => generateAI('eli5'));
+  resetBtn?.addEventListener('click', () => {
+    placeholder.classList.remove('hidden');
+    outputContainer.classList.add('hidden');
+    aiText.innerHTML = '';
+  });
+</script>
