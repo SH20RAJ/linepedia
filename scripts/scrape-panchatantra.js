@@ -62,7 +62,7 @@ async function scrapeStory(url) {
         const hasImage = imgUrl ? await downloadImage(imgUrl, `${path.basename(url)}.png`) : false;
 
         // Extract Moral
-        const moralMatch = cleanText.match(/"([^"]+)"/);
+        const moralMatch = text.match(/"([^"]+)"/);
         const moral = moralMatch ? moralMatch[1] : null;
 
         return {

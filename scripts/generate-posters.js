@@ -81,6 +81,7 @@ async function main() {
     
     // Use slug-map to get poems
     const slugMap = JSON.parse(fs.readFileSync(path.join(DATA_REPO, 'metadata/v1/slug-map.json'), 'utf-8'));
+    const slugs = Object.keys(slugMap).slice(0, 50); // Just top 50 for now
     const generatedSlugs = [];
     for (const slug of slugs) {
         const id = slugMap[slug];
