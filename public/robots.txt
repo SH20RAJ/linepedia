@@ -9,5 +9,5 @@ Disallow: /admin/
 Disallow: /scripts/
 Disallow: /_astro/
 
-Sitemap: https://linespedia.com/sitemap-index.xml
+Sitemap: https://linespedia.com/sitemap.xml
 Sitemap: https://linespedia.com/sitemap-poems.xml
