@@ -20,7 +20,7 @@ const categories = defineCollection({
   }),
 });
 
-const collections = defineCollection({
+const collectionsData = defineCollection({
   schema: z.object({
     name: z.string(),
     description: z.string(),
@@ -29,4 +29,4 @@ const collections = defineCollection({
   }),
 });
 
-export const collections = { writers, categories, collections };
+export const collections = { writers, categories, collections: collectionsData };

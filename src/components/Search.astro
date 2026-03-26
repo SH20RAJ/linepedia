@@ -1,0 +1,124 @@
+---
+import { Search as SearchIcon, Quote, Loader2 } from 'lucide-astro';
+---
+
+<div class="relative w-full group" id="search-container">
+    <div class="absolute inset-y-0 left-6 flex items-center pointer-events-none text-primary/30 group-focus-within:text-accent transition-colors">
+        <div id="search-icon-container">
+            <SearchIcon size={20} />
+        </div>
+        <div id="search-loader" class="hidden animate-spin">
+            <Loader2 size={20} />
+        </div>
+    </div>
+    
+    <input
+        type="text"
+        id="search-input"
+        placeholder="Search for keywords, authors, or themes..."
+        class="w-full bg-white/80 backdrop-blur-xl border-2 border-indigo-50/50 rounded-full py-5 pl-16 pr-8 shadow-xl focus:outline-none focus:border-accent/30 focus:shadow-accent/5 transition-all text-lg"
+    />
+
+    <div id="search-results" class="hidden absolute top-full left-0 right-0 mt-4 bg-white/90 backdrop-blur-2xl border border-indigo-50 rounded-3xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-4 duration-300">
+        <!-- Results will be injected here -->
+    </div>
+</div>
+
+<script>
+    const CDN_BASE = 'https://cdn.jsdelivr.net/gh/BluredCodes/linespedia-data@main';
+    let slugMap: Record<string, string> = {};
+    let loading = true;
+
+    const input = document.getElementById('search-input') as HTMLInputElement;
+    const resultsContainer = document.getElementById('search-results');
+    const loader = document.getElementById('search-loader');
+    const iconContainer = document.getElementById('search-icon-container');
+
+    async function loadIndex() {
+        try {
+            const res = await fetch(`${CDN_BASE}/metadata/v1/slug-map.json`);
+            if (res.ok) {
+                slugMap = await res.json();
+                if (input) input.placeholder = "Search for keywords, authors, or themes...";
+            }
+        } catch (e) {
+            console.error('Failed to load search index', e);
+        } finally {
+            loading = false;
+        }
+    }
+
+    function updateResults(query: string) {
+        if (!resultsContainer) return;
+        
+        if (!query.trim()) {
+            resultsContainer.innerHTML = '';
+            resultsContainer.classList.add('hidden');
+            return;
+        }
+
+        const searchTerms = query.toLowerCase().split(' ');
+        const matchedSlugs = Object.keys(slugMap)
+            .filter(slug => searchTerms.every(term => slug.replace(/-/g, ' ').includes(term)))
+            .slice(0, 8);
+
+        if (matchedSlugs.length === 0) {
+            resultsContainer.innerHTML = `
+                <div class="p-8 text-center text-primary/40">
+                    <p class="font-bold">No verses found</p>
+                    <p class="text-sm">Try different keywords or poet names</p>
+                </div>
+            `;
+            resultsContainer.classList.remove('hidden');
+            return;
+        }
+
+        const html = matchedSlugs.map(slug => {
+            const title = slug.replace(/-/g, ' ').replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())));
+            return `
+                <a href="/p/${slug}/" class="flex items-center space-x-4 p-5 hover:bg-accent/5 border-b border-indigo-50/50 last:border-0 group/item">
+                    <div class="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center text-primary group-hover/item:bg-accent group-hover/item:text-white transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-quote"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-primary group-hover/item:text-accent transition-colors line-clamp-1">${title}</h4>
+                        <span class="text-[10px] uppercase tracking-widest text-primary/30 font-bold">Poem Discovery</span>
+                    </div>
+                </a>
+            `;
+        }).join('');
+
+        resultsContainer.innerHTML = html + `
+            <div class="p-4 bg-indigo-50/30 text-center">
+                <a href="/explore?q=${query}" class="text-[10px] uppercase tracking-widest font-black text-accent hover:underline">
+                    View All Search Results
+                </a>
+            </div>
+        `;
+        resultsContainer.classList.remove('hidden');
+    }
+
+    let searchTimer: any;
+    input?.addEventListener('input', (e) => {
+        const query = (e.target as HTMLInputElement).value;
+        
+        if (loader) loader.classList.remove('hidden');
+        if (iconContainer) iconContainer.classList.add('hidden');
+        
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+            updateResults(query);
+            if (loader) loader.classList.add('hidden');
+            if (iconContainer) iconContainer.classList.remove('hidden');
+        }, 300);
+    });
+
+    // Close on click outside
+    document.addEventListener('click', (e) => {
+        if (resultsContainer && !resultsContainer.contains(e.target as Node) && e.target !== input) {
+            resultsContainer.classList.add('hidden');
+        }
+    });
+
+    loadIndex();
+</script>

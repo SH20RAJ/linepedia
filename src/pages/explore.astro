@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import PoemCard from '../components/PoemCard.astro';
-import Search from '../components/Search';
+import Search from '../components/Search.astro';
 import { Quote, Search as SearchIcon, Filter, Sparkles } from 'lucide-astro';
 
 import { getAllWriters, getAllCategories, getFeaturedPoems } from '../lib/cdn';
@@ -26,7 +26,7 @@ const featuredPoems = poemsData.slice(0, 12);
 			</div>
 
 			<div class="max-w-3xl mx-auto mb-20">
-				<Search client:load />
+				<Search />
 			</div>
 
 			<div class="grid grid-cols-1 lg:grid-cols-4 gap-12">

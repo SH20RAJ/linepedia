@@ -1,7 +1,9 @@
 import rss from '@astrojs/rss';
-import poemsData from '../content/poems.json';
+import { getFeaturedPoems } from '../lib/cdn';
 
 export async function GET(context) {
+  const poemsData = await getFeaturedPoems();
+  
   return rss({
     title: 'Linespedia',
     description: 'Ultra fast static pages for poetry, shayari, and quotes.',
