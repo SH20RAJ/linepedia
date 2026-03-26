@@ -1,0 +1,173 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import AIPanel from '../../components/AIPanel.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { BookOpen, Sparkles, GraduationCap, ChevronLeft, ChevronRight, Share2, Copy } from 'lucide-astro';
+import { getPanchatantraStories } from '../../lib/cdn';
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+
+// Fetch all stories to find the current one and neighbors
+const stories = await getPanchatantraStories();
+const storyIndex = stories.findIndex((s: any) => s.slug === slug);
+const story = stories[storyIndex];
+
+if (!story) {
+    return Astro.redirect('/404');
+}
+
+const prevStory = storyIndex > 0 ? stories[storyIndex - 1] : null;
+const nextStory = storyIndex < stories.length - 1 ? stories[storyIndex + 1] : null;
+
+// SEO
+const title = `${story.title} — Panchatantra Moral Story | Linespedia`;
+const description = `${story.content.slice(0, 150)}... Discover the timeless wisdom and moral of this classic fable.`;
+
+const breadcrumbs = [
+    { name: 'Panchatantra', href: '/panchtantra/' },
+    { name: story.title, href: `/panchtantra/${slug}/` }
+];
+---
+
+<Layout title={title} description={description}>
+    <Navbar />
+    
+    <main class="min-h-screen bg-[#fdfaf6] pt-24 pb-20">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <Breadcrumb items={breadcrumbs} />
+
+            <article class="mt-8 bg-white rounded-[3rem] shadow-2xl border border-slate-100 overflow-hidden relative">
+                {/* Decorative Accent */}
+                <div class="absolute top-0 left-0 w-full h-2 bg-linear-to-r from-amber-400 via-emerald-400 to-indigo-400"></div>
+                
+                <div class="p-8 md:p-16">
+                    {/* Story Header */}
+                    <header class="text-center mb-12">
+                         <div class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">
+                            <Sparkles size={12} />
+                            <span>Classic Fable</span>
+                        </div>
+                        <h1 class="text-4xl md:text-6xl font-serif font-black text-slate-900 mb-6 leading-tight">
+                            {story.title}
+                        </h1>
+                        <div class="w-24 h-1 bg-amber-200 mx-auto rounded-full"></div>
+                    </header>
+
+                    {/* Story Image */}
+                    {story.image && (
+                        <div class="mb-12 rounded-3xl overflow-hidden shadow-lg border-4 border-white aspect-video relative group">
+                            <img src={story.image} alt={story.title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                            <div class="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        </div>
+                    )}
+
+                    {/* Moral Box - Top */}
+                    {story.moral && (
+                        <div class="bg-amber-50 rounded-2xl p-6 md:p-8 border border-amber-100 mb-12 relative group overflow-hidden text-center">
+                            <div class="absolute -top-4 -left-4 opacity-5 text-amber-900 group-hover:rotate-12 transition-transform duration-500">
+                                <GraduationCap size={80} />
+                            </div>
+                            <h2 class="text-xs font-black uppercase tracking-[0.3em] text-amber-600/50 mb-3">The Moral of the Story</h2>
+                            <p class="text-xl md:text-2xl font-serif font-bold text-amber-900 italic leading-relaxed">
+                                "{story.moral}"
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Story Content */}
+                    <div class="prose prose-slate prose-lg md:prose-xl max-w-none text-slate-700 leading-relaxed font-serif space-y-6 first-letter:text-5xl first-letter:font-black first-letter:text-amber-600 first-letter:mr-3 first-letter:float-left">
+                         <div id="story-body" class="whitespace-pre-line story-text selection:bg-amber-100">
+                            {story.content}
+                         </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div class="flex flex-wrap justify-center gap-6 mt-16 pt-12 border-t border-slate-50">
+                        <button id="copy-story" class="flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-full font-bold hover:bg-slate-800 transition-all shadow-xl shadow-slate-200">
+                            <Copy size={18} />
+                            <span>Copy Story</span>
+                        </button>
+                        <button id="share-story" class="flex items-center gap-3 px-8 py-4 bg-white border-2 border-slate-200 text-slate-700 rounded-full font-bold hover:bg-slate-50 transition-all">
+                            <Share2 size={18} />
+                            <span>Share</span>
+                        </button>
+                    </div>
+
+                    {/* AI Insight for Story */}
+                    <div class="mt-16">
+                        <AIPanel 
+                            content={story.content} 
+                            title={story.title} 
+                            writer="The Panchatantra" 
+                        />
+                    </div>
+                </div>
+            </article>
+
+            {/* Navigation */}
+            <nav class="flex justify-between items-center mt-12 gap-8">
+                {prevStory ? (
+                    <a href={`/panchtantra/${prevStory.slug}/`} class="flex-1 group p-6 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-xl transition-all flex items-center gap-4">
+                        <div class="p-3 bg-slate-50 rounded-full group-hover:bg-amber-100 transition-colors">
+                            <ChevronLeft size={24} class="text-slate-400 group-hover:text-amber-600" />
+                        </div>
+                        <div class="grow">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-300">Previous</span>
+                            <div class="text-slate-900 font-bold line-clamp-1">{prevStory.title}</div>
+                        </div>
+                    </a>
+                ) : <div class="flex-1"></div>}
+
+                {nextStory ? (
+                    <a href={`/panchtantra/${nextStory.slug}/`} class="flex-1 group p-6 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-xl transition-all flex items-center justify-end gap-4 text-right">
+                        <div class="grow">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-300">Next Story</span>
+                            <div class="text-slate-900 font-bold line-clamp-1">{nextStory.title}</div>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-full group-hover:bg-emerald-100 transition-colors">
+                            <ChevronRight size={24} class="text-slate-400 group-hover:text-emerald-600" />
+                        </div>
+                    </a>
+                ) : <div class="flex-1"></div>}
+            </nav>
+        </div>
+    </main>
+
+    <Footer />
+</Layout>
+
+<script>
+    const copyBtn = document.getElementById('copy-story');
+    const shareBtn = document.getElementById('share-story');
+    const storyText = document.getElementById('story-body')?.textContent || '';
+
+    copyBtn?.addEventListener('click', () => {
+        navigator.clipboard.writeText(storyText).then(() => {
+            const span = copyBtn.querySelector('span');
+            if (span) {
+                span.textContent = 'Story Copied!';
+                setTimeout(() => { span.textContent = 'Copy Story'; }, 2000);
+            }
+        });
+    });
+
+    shareBtn?.addEventListener('click', () => {
+        if (navigator.share) {
+            navigator.share({
+                title: document.title,
+                text: "Read this amazing Panchatantra story on Linespedia!",
+                url: window.location.href
+            });
+        }
+    });
+</script>
+
+<style>
+    .story-text {
+        font-family: inherit;
+    }
+</style>

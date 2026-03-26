@@ -69,7 +69,7 @@ const year = new Date().getFullYear();
     class="container mx-auto border-t border-secondary/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs opacity-60"
   >
     <div class="flex flex-col items-center md:items-start space-y-4">
-      <p>&copy; {year} linespedia.com - All rights reserved.</p>
+      <p>&copy; {year} linespedia.com - All rights reserved. | Powered by <a href="https://30tools.com" class="hover:text-white transition-colors decoration-dotted underline-offset-4 underline">30tools.com</a></p>
       <a href={`https://visitorbadge.io/status?path=${encodeURIComponent(Astro.url.href)}`}>
         <img src={`https://api.visitorbadge.io/api/visitors?path=${encodeURIComponent(Astro.url.href)}&countColor=%23263759`} alt="Visitor Badge" class="h-6" />
       </a>

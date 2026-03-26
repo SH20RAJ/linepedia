@@ -181,72 +181,149 @@ const posterUrl = type === 'line' ? getPosterUrl(data.slug) : null;
     <main class="min-h-screen poetic-gradient">
 
         {/* ========== LINE PAGE ========== */}
+        {/* ========== LINE PAGE ========== */}
         {type === 'line' && (
-            <div class="container mx-auto px-4 py-12 md:py-32 max-w-5xl animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <div class="container mx-auto px-4 py-12 md:py-32 max-w-7xl animate-in fade-in slide-in-from-bottom-8 duration-1000">
                 <Breadcrumb items={breadcrumbs} />
                 
-                <article class="mt-8 bg-white/70 backdrop-blur-2xl border border-white/40 rounded-[4rem] p-10 md:p-20 shadow-2xl relative overflow-hidden group">
-                    <div class="absolute top-0 right-0 p-12 opacity-[0.03] text-primary group-hover:scale-110 transition-transform duration-700">
-                        <Quote size={120} />
-                    </div>
-                    
-                    <div class="relative z-10 flex flex-col items-center text-center">
-                        <h1 class="text-xs font-bold uppercase tracking-[0.4em] text-primary/30 mb-8 md:mb-12">Poetic Insight</h1>
-                        
-                        <blockquote class="text-3xl md:text-6xl font-serif font-black text-primary leading-tight md:leading-snug mb-16 selection:bg-accent/20 max-w-4xl mx-auto">
-                            <p class="whitespace-pre-line drop-shadow-sm italic">{data.content}</p>
-                        </blockquote>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mt-8">
+                    {/* Main Content Column */}
+                    <div class="lg:col-span-8 space-y-12">
+                        <article class="bg-white/70 backdrop-blur-2xl border border-white/40 rounded-[4rem] p-10 md:p-16 shadow-2xl relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 p-12 opacity-[0.03] text-primary group-hover:scale-110 transition-transform duration-700">
+                                <Quote size={120} />
+                            </div>
+                            
+                            <div class="relative z-10">
+                                <h1 class="text-xs font-bold uppercase tracking-[0.4em] text-primary/30 mb-8 md:mb-12 text-center">Poetic Insight</h1>
+                                
+                                <blockquote class="text-3xl md:text-5xl font-serif font-black text-primary leading-tight md:leading-snug mb-16 selection:bg-accent/20 max-w-4xl mx-auto text-center">
+                                    <p class="whitespace-pre-line drop-shadow-sm italic">{data.content}</p>
+                                </blockquote>
 
-                        <div class="flex flex-wrap justify-center gap-6 mb-16">
-                            <button id="copy-btn" class="bg-primary text-white px-10 py-5 rounded-full font-bold flex items-center space-x-3 hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-primary/20">
-                                <Copy size={20} />
-                                <span>Copy Line</span>
-                            </button>
-                            <button id="pin-btn" class="bg-[#E60023] text-white px-10 py-5 rounded-full font-bold flex items-center space-x-3 hover:bg-[#ad001a] hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-red-500/20">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-1.14 0-2.22-.23-3.21-.64.45-.89 1.11-2.47 1.37-3.57.14-.58.72-2.97.72-2.97.38.72 1.48 1.33 2.65 1.33 3.49 0 6.03-3.2 6.03-7.18 0-3.81-3.11-6.67-7.18-6.67C8.09 2.3 4 5.7 4 10.12c0 2.42 1.27 4.32 3.29 5.08.17.07.33 0 .38-.18.04-.14.13-.49.17-.64.06-.21.04-.28-.12-.46-.35-.4-.64-1.13-.64-1.82 0-2.63 1.97-5.17 5.32-5.17 2.9 0 4.94 1.97 4.94 4.78 0 3.19-1.61 5.41-3.71 5.41-1.16 0-2.02-.96-1.74-2.13.33-1.4 .97-2.91.97-3.92 0-.9-.48-1.65-1.49-1.65-1.18 0-2.13 1.22-2.13 2.86 0 1.04.35 1.75.35 1.75s-1.2 5.11-1.41 5.96c-.21.86-.12 2.08-.04 2.87A9.96 9.96 0 012 12c0-5.52 4.48-10 10-10s10 4.48 10 10-4.48 10-10 10z"/></svg>
-                                <span>Pin</span>
-                            </button>
-                            <button id="share-btn" class="bg-white border-2 border-primary text-primary px-10 py-5 rounded-full font-bold flex items-center space-x-3 hover:bg-indigo-50 hover:scale-105 active:scale-95 transition-all">
-                                <Share2 size={20} />
-                                <span>Share</span>
-                            </button>
-                        </div>
+                                <div class="flex flex-wrap justify-center gap-4 mb-16">
+                                    <button id="copy-btn" class="bg-primary text-white px-8 py-4 rounded-full text-sm font-bold flex items-center space-x-3 hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/10">
+                                        <Copy size={18} />
+                                        <span>Copy</span>
+                                    </button>
+                                    <button id="pin-btn" class="bg-[#E60023] text-white px-8 py-4 rounded-full text-sm font-bold flex items-center space-x-3 hover:bg-[#ad001a] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-red-500/10">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-1.14 0-2.22-.23-3.21-.64.45-.89 1.11-2.47 1.37-3.57.14-.58.72-2.97.72-2.97.38.72 1.48 1.33 2.65 1.33 3.49 0 6.03-3.2 6.03-7.18 0-3.81-3.11-6.67-7.18-6.67C8.09 2.3 4 5.7 4 10.12c0 2.42 1.27 4.32 3.29 5.08.17.07.33 0 .38-.18.04-.14.13-.49.17-.64.06-.21.04-.28-.12-.46-.35-.4-.64-1.13-.64-1.82 0-2.63 1.97-5.17 5.32-5.17 2.9 0 4.94 1.97 4.94 4.78 0 3.19-1.61 5.41-3.71 5.41-1.16 0-2.02-.96-1.74-2.13.33-1.4 .97-2.91.97-3.92 0-.9-.48-1.65-1.49-1.65-1.18 0-2.13 1.22-2.13 2.86 0 1.04.35 1.75.35 1.75s-1.2 5.11-1.41 5.96c-.21.86-.12 2.08-.04 2.87A9.96 9.96 0 012 12c0-5.52 4.48-10 10-10s10 4.48 10 10-4.48 10-10 10z"/></svg>
+                                        <span>Pin</span>
+                                    </button>
+                                    <button id="share-btn" class="bg-white border-2 border-primary/10 text-primary px-8 py-4 rounded-full text-sm font-bold flex items-center space-x-3 hover:bg-indigo-50 hover:scale-105 active:scale-95 transition-all">
+                                        <Share2 size={18} />
+                                        <span>Share</span>
+                                    </button>
+                                </div>
 
-                        {/* AIPanel integration */}
-                        <AIPanel content={data.content} title={data.title} writer={writer?.name || data.writer} />
+                                <AIPanel content={data.content} title={data.title} writer={writer?.name || data.writer} />
 
-                        {/* Meaning & Context */}
-                        <div class="w-full text-left bg-indigo-50/40 backdrop-blur-md rounded-[2.5rem] p-10 md:p-14 border border-indigo-100/30 mt-12">
-                            <h2 class="font-bold text-xs uppercase tracking-[0.3em] text-primary/40 mb-8 flex items-center space-x-3">
-                                <BookOpen size={18} />
-                                <span>Meaning & Deep Context</span>
-                            </h2>
-                            <div class="prose prose-indigo prose-lg text-primary/70 leading-relaxed space-y-6 max-w-none font-medium">
-                                <p class="text-primary/80 italic">"{data.content?.split('\n')[0]}..."</p>
-                                <p>{data.meaning || `This powerful line by ${writer?.name || 'the poet'} explores the delicate balance of emotion and expression. It serves as a testament to the enduring power of verse.`}</p>
+                                <div class="mt-12 bg-indigo-50/40 backdrop-blur-md rounded-[2.5rem] p-8 md:p-12 border border-indigo-100/30">
+                                    <h2 class="font-bold text-xs uppercase tracking-[0.3em] text-primary/40 mb-8 flex items-center space-x-3">
+                                        <BookOpen size={18} />
+                                        <span>Meaning & Context</span>
+                                    </h2>
+                                    <div class="prose prose-indigo prose-lg text-primary/70 leading-relaxed space-y-6 max-w-none font-medium">
+                                        <p class="text-primary/80 italic">"{data.content?.split('\n')[0]}..."</p>
+                                        <p>{data.meaning || `This powerful line by ${writer?.name || 'the poet'} explores the delicate balance of emotion and expression. It serves as a testament to the enduring power of verse.`}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+
+                        {/* Tags / Categories */}
+                        <div class="bg-white/30 backdrop-blur-xl rounded-[2.5rem] p-8 md:p-10 border border-white/40">
+                            <h3 class="text-xs font-black text-primary/30 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+                                <Bookmark size={16} />
+                                <span>Classified Tags</span>
+                            </h3>
+                            <div class="flex flex-wrap gap-3">
+                                {data.category?.map((cat: string) => (
+                                    <a href={`/${slugify(cat)}/`} class="px-5 py-2 bg-white border border-indigo-100 rounded-full text-xs font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
+                                        #{cat.toLowerCase()}
+                                    </a>
+                                ))}
+                                <a href={`/${writer?.slug}/`} class="px-5 py-2 bg-indigo-50 border border-indigo-100 rounded-full text-xs font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
+                                    #{writer?.name?.toLowerCase().replace(/\s+/g, '')}
+                                </a>
                             </div>
                         </div>
 
-                        {/* Digital Poster - only if it exists */}
+                        {/* Digital Poster */}
                         {posterUrl && (
-                            <div class="mt-20 w-full pt-16 border-t border-indigo-50/50 text-left">
-                                <div class="flex items-end justify-between mb-12">
+                            <div class="bg-white/70 backdrop-blur-2xl rounded-[3rem] p-10 md:p-12 border border-white/40 shadow-xl overflow-hidden">
+                                <div class="flex items-center justify-between mb-8">
                                     <div>
-                                        <h3 class="text-3xl font-serif font-black text-primary mb-2">Visual Discovery</h3>
-                                        <p class="text-primary/40">Download or share as a digital poster.</p>
+                                        <h3 class="text-2xl font-serif font-black text-primary mb-1">Visual Poster</h3>
+                                        <p class="text-primary/40 text-sm">Download for social stories.</p>
                                     </div>
-                                    <a href={posterUrl} download class="hidden md:flex items-center space-x-3 px-8 py-4 bg-white border-2 border-primary/10 rounded-full text-sm font-bold text-primary hover:bg-primary hover:text-white transition-all">
-                                        <Download size={20} />
-                                        <span>Download</span>
+                                    <a href={posterUrl} download class="p-4 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
+                                        <Download size={24} />
                                     </a>
                                 </div>
-                                <div class="rounded-3xl border border-indigo-50/50 overflow-hidden shadow-2xl max-w-lg mx-auto md:mx-0">
+                                <div class="rounded-2xl overflow-hidden border border-indigo-50 shadow-inner">
                                     <img src={posterUrl} alt={`${data.title} Poster`} class="w-full object-contain" loading="lazy" />
                                 </div>
                             </div>
                         )}
                     </div>
-                </article>
+
+                    {/* Sidebar Column */}
+                    <aside class="lg:col-span-4 space-y-8">
+                        {/* Writer Profile Mini */}
+                        {writer && (
+                            <div class="bg-indigo-900 text-white rounded-[3rem] p-8 relative overflow-hidden group shadow-2xl">
+                                <div class="absolute -top-12 -right-12 w-32 h-32 bg-white/10 blur-[60px] rounded-full"></div>
+                                <div class="relative z-10">
+                                    <div class="flex items-center gap-5 mb-6">
+                                        <img src={writer.photo} class="w-20 h-20 rounded-2xl object-cover border-2 border-white/20" alt={writer.name} />
+                                        <div>
+                                            <h3 class="font-serif font-bold text-xl">{writer.name}</h3>
+                                            <p class="text-white/50 text-xs font-bold uppercase tracking-widest">Poet & Author</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-white/70 text-sm leading-relaxed mb-6 line-clamp-3">{writer.bio}</p>
+                                    <a href={`/${writer.slug}/`} class="w-full py-4 bg-white/10 hover:bg-white/20 rounded-2xl text-center text-sm font-bold transition-all block border border-white/5">
+                                        View Full Profile
+                                    </a>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Related Content Sidebar */}
+                        <div class="bg-white rounded-[3.5rem] p-8 border border-indigo-50 shadow-xl">
+                            <h3 class="text-lg font-serif font-black text-primary mb-6 flex items-center gap-3">
+                                <Sparkles class="text-accent" size={20} />
+                                <span>More Like This</span>
+                            </h3>
+                            <div class="space-y-6">
+                                {poems.slice(0, 5).map((poem: any) => (
+                                    <a href={`/line/${poem.slug}/`} class="group block py-4 border-b border-indigo-50 last:border-0">
+                                        <p class="text-sm font-medium text-primary/80 line-clamp-2 group-hover:text-indigo-600 transition-colors mb-2 italic">"{poem.content}"</p>
+                                        <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-primary/30">
+                                            <span>Read More</span>
+                                            <ChevronRight size={12} />
+                                        </div>
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Popular Categories Widget */}
+                        <div class="bg-indigo-50/50 rounded-[3.5rem] p-8 border border-white shadow-inner">
+                            <h3 class="text-xs font-black text-primary/40 uppercase tracking-[0.2em] mb-6">Discovery</h3>
+                            <div class="flex flex-wrap gap-2">
+                                {['Life', 'Love', 'Wisdom', 'Nature', 'Time'].map(cat => (
+                                    <a href={`/${slugify(cat)}/`} class="px-4 py-2 bg-white rounded-full text-[10px] font-bold text-primary/60 hover:text-indigo-600 transition-colors border border-indigo-100/50">
+                                        {cat}
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        )}
 
                 {/* Related Lines */}
                 {poems.length > 0 && (

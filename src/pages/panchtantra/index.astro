@@ -1,0 +1,88 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import { Book, Sparkles, ChevronRight, GraduationCap } from 'lucide-astro';
+import { getPanchatantraStories } from '../../lib/cdn';
+
+const title = "Panchatantra Stories for Kids — Moral & Wisdom Tales | Linespedia";
+const description = "Discover the timeless wisdom of Panchatantra stories. Short, engaging tales with morals for children and adults alike.";
+
+// Fetch from CDN
+const stories = await getPanchatantraStories();
+const validStories = stories.filter((s: any) => s.content && s.title);
+---
+
+<Layout title={title} description={description}>
+    <Navbar />
+    
+    <main class="min-h-screen pt-24 pb-20 bg-[#fdfaf6]">
+        {/* Hero Section */}
+        <section class="container mx-auto px-4 pt-12 pb-16 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 text-amber-700 rounded-full text-xs font-bold uppercase tracking-widest mb-6 animate-bounce">
+                <Sparkles size={14} />
+                <span>Timeless Wisdom</span>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-serif font-black text-slate-900 mb-6 leading-tight">
+                Panchatantra <span class="text-amber-600 italic">Tales</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+                Explore the legendary fables from ancient India, where animals talk and every story carries a profound lesson for life.
+            </p>
+        </section>
+
+        {/* Stories Grid */}
+        <section class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {validStories.map((story: any) => (
+                    <a href={`/panchtantra/${story.slug}/`} class="group bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex flex-col">
+                        <div class="h-48 overflow-hidden relative">
+                            {story.image ? (
+                                <img src={story.image} alt={story.title} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
+                            ) : (
+                                <div class="w-full h-full bg-amber-50 flex items-center justify-center">
+                                    <Book size={48} class="text-amber-200" />
+                                </div>
+                            )}
+                            <div class="absolute inset-0 bg-linear-to-t from-black/20 to-transparent"></div>
+                        </div>
+                        <div class="p-8 flex-grow flex flex-col">
+                            <h2 class="text-2xl font-serif font-bold text-slate-900 mb-4 group-hover:text-amber-600 transition-colors">
+                                {story.title}
+                            </h2>
+                            <p class="text-slate-600 line-clamp-3 mb-6 flex-grow leading-relaxed">
+                                {story.content}
+                            </p>
+                            <div class="flex items-center justify-between pt-6 border-t border-slate-50">
+                                {story.moral ? (
+                                    <div class="flex items-center gap-2 text-xs font-bold text-emerald-600 uppercase tracking-wide">
+                                        <GraduationCap size={14} />
+                                        <span class="line-clamp-1">Moral: {story.moral}</span>
+                                    </div>
+                                ) : (
+                                    <span class="text-xs font-bold text-slate-300 uppercase tracking-widest">Read Story</span>
+                                )}
+                                <ChevronRight size={20} class="text-amber-500 group-hover:translate-x-1 transition-transform" />
+                            </div>
+                        </div>
+                    </a>
+                ))}
+            </div>
+            
+            {validStories.length === 0 && (
+                <div class="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-slate-200">
+                    <p class="text-slate-400 font-medium font-serif italic text-xl">Wisdom is travelling the world... Please refresh in a moment.</p>
+                </div>
+            )}
+        </section>
+    </main>
+    
+    <Footer />
+</Layout>
+
+<style>
+    main {
+        background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+</style>

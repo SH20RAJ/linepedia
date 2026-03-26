@@ -50,4 +50,11 @@ create /panchtantra and use all images on the website , ui ux must feel good cle
 
 
 --- 
-create poster for other tails add to linespedia-data and use it
+create poster for other lines and /p/ add to linespedia-data and use it
+
+and create /indexnow where anyone can go and submit all the pages to indexnow (in baches)
+
+
+---
+
+give backlink to 30tools.com

@@ -1,113 +1,95 @@
 import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const DATA_REPO = './linespedia-data';
+const POEMS_FILE = path.join(DATA_REPO, 'raw/poems.json'); // Smaller sample or raw
+const POSTERS_DIR = path.join(DATA_REPO, 'posters/v1');
 
-const POEMS_FILE = path.join(__dirname, '../src/content/poems.json');
-const POSTERS_DIR = path.join(__dirname, '../public/posters');
+if (!fs.existsSync(POSTERS_DIR)) fs.mkdirSync(POSTERS_DIR, { recursive: true });
 
-// Ensure posters directory exists
-if (!fs.existsSync(POSTERS_DIR)) {
-  fs.mkdirSync(POSTERS_DIR, { recursive: true });
-}
-
-function escapeXml(unsafe) {
-  return unsafe.replace(/[<>&'"]/g, function (c) {
-    switch (c) {
-      case '<': return '&lt;';
-      case '>': return '&gt;';
-      case '&': return '&amp;';
-      case '\'': return '&apos;';
-      case '"': return '&quot;';
+function wrapText(text, maxChars) {
+    const lines = [];
+    const paragraphs = text.split('\n');
+    for (const p of paragraphs) {
+        const words = p.split(' ');
+        let line = '';
+        for (const w of words) {
+            if ((line + w).length > maxChars) {
+                lines.push(line.trim());
+                line = w + ' ';
+            } else {
+                line += w + ' ';
+            }
+        }
+        lines.push(line.trim());
     }
-  });
+    return lines;
 }
 
 async function generatePoster(poem) {
-  const width = 1000;
-  const height = 1500;
-  const margin = 120;
-  const maxLineWidth = width - (margin * 2);
+    const { slug, content, writer } = poem;
+    if (!content || !slug) return;
 
-  // Simple text wrapping for SVG
-  const content = poem.content.replace(/\n/g, ' ');
-  const words = content.split(' ');
-  const lines = [];
-  let currentLine = '';
+    const width = 1080;
+    const height = 1080;
+    const wrappedContent = wrapText(content, 35).slice(0, 10);
+    const writerName = writer ? writer.replace(/-/g, ' ') : 'Anonymous';
 
-  // Approximate character width (rough serif)
-  const charWidth = 24; 
-  const charsPerLine = Math.floor(maxLineWidth / charWidth);
+    const svg = `
+    <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100%" height="100%" fill="#fdfcf7" />
+        <defs>
+            <radialGradient id="grad" cx="50%" cy="50%" r="70%" fx="80%" fy="20%">
+                <stop offset="0%" style="stop-color:rgb(99,102,241);stop-opacity:0.1" />
+                <stop offset="100%" style="stop-color:rgb(236,72,153);stop-opacity:0.05" />
+            </radialGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grad)" />
+        
+        <!-- Quote Mark Backdrop -->
+        <text x="100" y="250" font-family="serif" font-size="300" fill="#263759" opacity="0.03">"</text>
 
-  words.forEach(word => {
-    if ((currentLine + word).length > charsPerLine) {
-      lines.push(currentLine.trim());
-      currentLine = word + ' ';
-    } else {
-      currentLine += word + ' ';
-    }
-  });
-  lines.push(currentLine.trim());
+        <text x="50%" y="45%" font-family="serif" font-size="52" font-style="italic" fill="#263759" text-anchor="middle" dominant-baseline="middle">
+            ${wrappedContent.map((line, i) => `<tspan x="50%" dy="${i === 0 ? 0 : '1.4em'}">${line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</tspan>`).join('')}
+        </text>
 
-  // Limit lines to avoid overflow
-  const displayLines = lines.slice(0, 15);
-  const textYStart = height / 2 - (displayLines.length * 35);
+        <line x1="480" y1="850" x2="600" y2="850" stroke="#263759" stroke-width="2" opacity="0.2" />
 
-  const svgText = displayLines.map((line, i) => 
-    `<text x="50%" y="${textYStart + (i * 75)}" text-anchor="middle" fill="white" font-family="serif" font-size="52px" font-style="italic" font-weight="500">${escapeXml(line)}</text>`
-  ).join('');
-
-  const svgImage = `
-    <svg width="${width}" height="${height}" viewbox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100%" height="100%" fill="black"/>
-      
-      <!-- Subtle Texture Grid -->
-      <pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
-        <path d="M 100 0 L 0 0 0 100" fill="none" stroke="white" stroke-opacity="0.05" stroke-width="0.5"/>
-      </pattern>
-      <rect width="100%" height="100%" fill="url(#grid)" />
-
-      <!-- Decorative Border -->
-      <rect x="50" y="50" width="${width - 100}" height="${height - 100}" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
-      <rect x="90" y="90" width="${width - 180}" height="${height - 180}" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-      
-      <!-- Text -->
-      ${svgText}
-      
-      <!-- Footer -->
-      <line x1="${width/2 - 60}" y1="${height - 280}" x2="${width/2 + 60}" y2="${height - 280}" stroke="white" stroke-opacity="0.3" stroke-width="2" />
-      <text x="50%" y="${height - 240}" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="serif" font-size="34px" font-weight="bold" letter-spacing="4px">— ${escapeXml(poem.writer.toUpperCase())} —</text>
-      <text x="50%" y="${height - 120}" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-family="sans-serif" font-size="20px" font-weight="900" letter-spacing="10px">LINESPEDIA.COM</text>
+        <text x="50%" y="900" font-family="sans-serif" font-size="28" font-weight="bold" fill="#263759" text-anchor="middle" opacity="0.6">
+            — ${writerName.replace(/&/g, '&amp;')}
+        </text>
+        
+        <text x="50%" y="980" font-family="sans-serif" font-size="20" font-weight="bold" fill="#facc15" text-anchor="middle" letter-spacing="4">
+            LINESPEDIA
+        </text>
     </svg>
-  `;
+    `;
 
-  const outputPath = path.join(POSTERS_DIR, `${poem.slug}.png`);
-  
-  try {
-    await sharp(Buffer.from(svgImage))
-      .png()
-      .toFile(outputPath);
-  } catch (err) {
-    console.error(`Error generating poster for ${poem.slug}:`, err);
-  }
+    try {
+        await sharp(Buffer.from(svg))
+            .png()
+            .toFile(path.join(POSTERS_DIR, `${slug}.png`));
+        console.log(`✅ Generated: ${slug}`);
+    } catch (e) {
+        console.error(`❌ Failed: ${slug}`, e.message);
+    }
 }
 
 async function main() {
-  console.log('🚀 Starting static poster generation (ESM)...');
-  const poems = JSON.parse(fs.readFileSync(POEMS_FILE, 'utf-8'));
-  console.log(`Processing ${poems.length} poems...`);
-
-  const batchSize = 30;
-  for (let i = 0; i < poems.length; i += batchSize) {
-    const batch = poems.slice(i, i + batchSize);
-    await Promise.all(batch.map(poem => generatePoster(poem)));
-    console.log(`Generated posters ${i + 1} to ${Math.min(i + batchSize, poems.length)}...`);
-  }
-
-  console.log('✅ All posters generated successfully in public/posters/');
+    console.log('🎨 Starting Poster Generation...');
+    
+    // Use slug-map to get poems
+    const slugMap = JSON.parse(fs.readFileSync(path.join(DATA_REPO, 'metadata/v1/slug-map.json'), 'utf-8'));
+    const slugs = Object.keys(slugMap).slice(0, 50); // Just top 50 for now
+    
+    for (const slug of slugs) {
+        const id = slugMap[slug];
+        const poemData = JSON.parse(fs.readFileSync(path.join(DATA_REPO, `poems/v1/${id}.json`), 'utf-8'));
+        await generatePoster({ slug, ...poemData });
+    }
+    
+    console.log('🎬 Batch Completed.');
 }
 
-main();
+main().catch(console.error);

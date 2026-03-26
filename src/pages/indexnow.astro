@@ -1,0 +1,119 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import { Send, CheckCircle, AlertCircle, List } from 'lucide-astro';
+
+const title = "IndexNow Submission Portal | Linespedia";
+const description = "Batch submit your URLs to IndexNow for faster search engine discovery.";
+---
+
+<Layout title={title} description={description}>
+    <Navbar />
+    
+    <main class="min-h-screen pt-32 pb-20 bg-slate-50">
+        <div class="container mx-auto px-4 max-w-3xl">
+            <header class="text-center mb-12">
+                <h1 class="text-4xl font-serif font-black text-slate-900 mb-4">IndexNow Portal</h1>
+                <p class="text-slate-600">Instantly notify search engines (Bing, Yandex, etc.) about new or updated pages.</p>
+            </header>
+
+            <div class="bg-white rounded-[2rem] shadow-xl border border-slate-100 p-8 md:p-12">
+                <div class="mb-8">
+                    <label for="urls" class="block text-sm font-bold text-slate-700 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <List size={16} />
+                        URL List (One per line)
+                    </label>
+                    <textarea 
+                        id="urls" 
+                        rows="10" 
+                        class="w-full p-6 bg-slate-50 border-2 border-slate-100 rounded-2xl font-mono text-sm focus:border-indigo-500 focus:outline-none transition-all"
+                        placeholder="https://linespedia.com/p/your-slug/&#10;https://linespedia.com/p/another-one/"
+                    ></textarea>
+                </div>
+
+                <div class="flex items-center justify-between gap-6">
+                    <div id="status-display" class="hidden flex items-center gap-3 py-3 px-5 rounded-full text-sm font-bold">
+                        <!-- Status injected here -->
+                    </div>
+                    
+                    <button 
+                        id="submit-btn" 
+                        class="ml-auto flex items-center gap-3 px-10 py-5 bg-indigo-600 text-white rounded-full font-bold hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 active:scale-95 disabled:opacity-50"
+                    >
+                        <Send size={20} />
+                        <span>Submit Batch</span>
+                    </button>
+                </div>
+
+                <div class="mt-12 pt-8 border-t border-slate-50">
+                    <h3 class="text-xs font-black text-slate-300 uppercase tracking-[0.2em] mb-4">Technical Details</h3>
+                    <div class="grid grid-cols-2 gap-4 text-[10px] font-bold text-slate-400">
+                        <div class="bg-slate-50 p-4 rounded-xl">
+                            <span class="block text-slate-300 mb-1">Host</span>
+                            linespedia.com
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl">
+                            <span class="block text-slate-300 mb-1">Key Location</span>
+                            /d9c7e289c7e289... (Auto-managed)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <Footer />
+</Layout>
+
+<script is:inline>
+    const submitBtn = document.getElementById('submit-btn');
+    const urlsArea = document.getElementById('urls');
+    const statusDisplay = document.getElementById('status-display');
+    
+    const API_KEY = "d9c7e289c7e289c7e289c7e289c7e289";
+    const HOST = "linespedia.com";
+
+    async function submitIndexNow() {
+        const val = urlsArea?.value.trim() || '';
+        if (!val) return;
+        
+        const urls = val.split('\n').map(u => u.trim()).filter(Boolean);
+        if (urls.length === 0) return;
+
+        submitBtn.disabled = true;
+        submitBtn.querySelector('span').textContent = 'Submitting...';
+        
+        statusDisplay.className = "flex items-center gap-3 py-3 px-5 rounded-full text-sm font-bold bg-indigo-50 text-indigo-600";
+        statusDisplay.innerHTML = `<span>Processing ${urls.length} URLs...</span>`;
+        statusDisplay.classList.remove('hidden');
+
+        try {
+            const res = await fetch('https://api.indexnow.org/indexnow', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    host: HOST,
+                    key: API_KEY,
+                    keyLocation: `https://${HOST}/${API_KEY}.txt`,
+                    urlList: urls
+                })
+            });
+
+            if (res.ok) {
+                statusDisplay.className = "flex items-center gap-3 py-3 px-5 rounded-full text-sm font-bold bg-emerald-50 text-emerald-600";
+                statusDisplay.innerHTML = `<span>Successfully Submitted!</span>`;
+            } else {
+                throw new Error('Submission failed');
+            }
+        } catch (e) {
+            statusDisplay.className = "flex items-center gap-3 py-3 px-5 rounded-full text-sm font-bold bg-rose-50 text-rose-600";
+            statusDisplay.innerHTML = `<span>Submission Error</span>`;
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.querySelector('span').textContent = 'Submit Batch';
+        }
+    }
+
+    submitBtn?.addEventListener('click', submitIndexNow);
+</script>

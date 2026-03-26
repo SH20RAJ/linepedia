@@ -83,3 +83,18 @@ export const getRelatedPoems = async (writerSlug: string, categorySlugs: string[
 export const hasPoster = (slug: string) => posterIndex.includes(slug);
 export const getPosterUrl = (slug: string) => hasPoster(slug) ? `${CDN_BASE}/posters/v1/${slug}.png` : null;
 export const getMetadataUrl = (file: string) => `${CDN_BASE}/metadata/v1/${file}`;
+
+// Panchatantra
+export const getPanchatantraStories = async () => {
+  try {
+    const res = await fetch(`${CDN_BASE}/panchtantra/v1/index.json`);
+    if (!res.ok) return [];
+    const stories = await res.json();
+    return stories.map((s: any) => ({
+      ...s,
+      image: s.image ? `${CDN_BASE}/panchtantra/v1/images/${s.slug}.png` : null
+    }));
+  } catch (e) {
+    return [];
+  }
+};

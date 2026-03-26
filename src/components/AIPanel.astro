@@ -78,8 +78,12 @@ const { content, title, writer } = Astro.props;
 
   async function generateAI(type) {
     if (typeof puter === 'undefined') {
-      alert("AI library not loaded. Please refresh.");
-      return;
+       // Quick 1s retry
+       await new Promise(r => setTimeout(r, 1000));
+       if (typeof puter === 'undefined') {
+         alert("AI library not loaded. Please refresh.");
+         return;
+       }
     }
 
     placeholder.classList.add('hidden');
