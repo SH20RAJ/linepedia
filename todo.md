@@ -45,5 +45,9 @@ https://www.rekhta.org/poets/jaun-eliya/couplets fetch all authours use curl see
 ---
 
 scrap whole https://www.talesofpanchatantra.com/ and create a json file with whole dataset 
+create /panchtantra and use all images on the website , ui ux must feel good clean, fetch and save all data here....
 
 
+
+--- 
+create poster for other tails add to linespedia-data and use it
