@@ -28,8 +28,15 @@ function wrapText(text, maxChars) {
 }
 
 async function generatePoster(poem) {
-    const { slug, content, writer } = poem;
+    let { slug, content, writer } = poem;
     if (!content || !slug) return;
+
+    // Sanitize special characters for SVG/Sharp
+    content = content
+        .replace(/[‘’]/g, "'")
+        .replace(/[“”]/g, '"')
+        .replace(/—/g, '--')
+        .replace(/…/g, '...');
 
     const width = 1080;
     const height = 1080;
