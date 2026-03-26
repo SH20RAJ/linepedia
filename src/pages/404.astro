@@ -1,0 +1,60 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import { Ghost, Home, Search, Heart } from "lucide-astro";
+---
+
+<Layout
+  title="404 - Lost in Translation | Linespedia"
+  description="The page you're looking for has wandered off into the poetic void. Let's find your way back."
+>
+  <Navbar />
+  <main class="min-h-screen flex items-center justify-center poetic-gradient px-4 py-20">
+    <div class="max-w-2xl w-full text-center">
+      <div class="relative mb-12 animate-bounce duration-[2000ms]">
+        <Ghost size={120} class="mx-auto text-primary/10" />
+        <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-9xl font-serif font-black text-primary/5 select-none">404</span>
+      </div>
+
+      <h1 class="text-5xl md:text-7xl font-serif font-black text-primary mb-8 leading-tight">
+        Lost in the <span class="text-accent italic">Poetic</span> Void
+      </h1>
+      
+      <p class="text-xl text-primary/60 mb-12 leading-relaxed font-medium">
+        The lines you seek have wandered off into the silence between verses. Even the greatest poets lose their way sometimes.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl mx-auto">
+        <a href="/" class="flex items-center justify-center space-x-3 px-8 py-4 bg-primary text-white rounded-full font-bold hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/10">
+          <Home size={18} />
+          <span>Go Home</span>
+        </a>
+        <a href="/explore/" class="flex items-center justify-center space-x-3 px-8 py-4 bg-white border border-indigo-100 text-primary rounded-full font-bold hover:bg-indigo-50 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-indigo-100/50">
+          <Search size={18} />
+          <span>Explore</span>
+        </a>
+        <a href="/likes/" class="flex items-center justify-center space-x-3 px-8 py-4 bg-white border border-indigo-100 text-primary rounded-full font-bold hover:bg-indigo-50 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-indigo-100/50">
+          <Heart size={18} />
+          <span>My Likes</span>
+        </a>
+      </div>
+
+      <div class="mt-20 p-8 border border-dashed border-indigo-100 rounded-[3rem] bg-white/50 backdrop-blur-sm">
+        <p class="text-sm font-serif italic text-primary/40">
+          "The woods are lovely, dark and deep, <br/>
+          But we have miles to go before we sleep."
+        </p>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .poetic-gradient {
+    background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.05), transparent 40%),
+                radial-gradient(circle at bottom left, rgba(236, 72, 153, 0.05), transparent 40%),
+                #fdfcf7;
+  }
+</style>

@@ -29,4 +29,15 @@ const collectionsData = defineCollection({
   }),
 });
 
-export const collections = { writers, categories, collections: collectionsData };
+const blog = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    pubDate: z.coerce.date(),
+    heroImage: z.string(),
+    category: z.string(),
+    tags: z.array(z.string()).optional(),
+  }),
+});
+
+export const collections = { writers, categories, collections: collectionsData, blog };
