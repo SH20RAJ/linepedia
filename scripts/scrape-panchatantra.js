@@ -31,35 +31,45 @@ async function scrapeStory(url) {
         const doc = dom.window.document;
 
         const title = doc.querySelector('h1.textAbnormalXLarge')?.textContent?.trim() || '';
-        const contentDiv = doc.querySelector('#dvAllLft.textNormal.textFormat');
+        const contentDiv = doc.querySelector('#dvContent');
         
         if (!contentDiv) {
             console.log(`Fallback for ${url}`);
-            // Fallback for different container
-            const fallback = doc.querySelector('div.pagecenter.textBelowNormal.textFormat');
-            if (!fallback) return null;
-            contentDiv = fallback;
+            return null;
         }
 
-        // Clean content: remove breadcrumbs and common ads/social
-        contentDiv.querySelectorAll('div, script, ins, .textBelowNormal').forEach(el => el.remove());
+        // Extract Images before cleaning
+        const imgTags = [...doc.querySelectorAll('img.picDisplay')];
+        const imgUrls = imgTags.map(img => {
+            let src = img.getAttribute('src');
+            if (src && !src.startsWith('http')) {
+                src = src.startsWith('/') ? `${BASE_URL}${src}` : `${BASE_URL}/${src}`;
+            }
+            return src;
+        }).filter(Boolean);
+
+        // Download all images
+        const savedImages = [];
+        for (let i = 0; i < imgUrls.length; i++) {
+            const imgName = `${path.basename(url)}_${i + 1}.png`;
+            const success = await downloadImage(imgUrls[i], imgName);
+            if (success) savedImages.push(imgName);
+        }
+
+        // Clean content for HTML display (using dvAllLft inside dvContent)
+        const storyTextEl = doc.querySelector('#dvAllLft.textNormal.textFormat');
+        if (storyTextEl) {
+            storyTextEl.querySelectorAll('div, script, ins, .textBelowNormal').forEach(el => el.remove());
+        }
         
-        // Better HTML cleaning
-        let html = contentDiv.innerHTML
+        let html = storyTextEl ? storyTextEl.innerHTML : '';
+        html = html
             .replace(/Home\s*»\s*Complete Works\s*»\s*Stories\s*/gi, '')
             .replace(/&nbsp;/g, ' ')
             .trim();
         
-        // Extract Image (looking for illustrated frames)
-        const imgTag = contentDiv.querySelector('img.picDisplay') || contentDiv.querySelector('img');
-        let imgUrl = imgTag ? imgTag.getAttribute('src') : null;
-        if (imgUrl && !imgUrl.startsWith('http')) {
-            imgUrl = imgUrl.startsWith('/') ? `${BASE_URL}${imgUrl}` : `${BASE_URL}/${imgUrl}`;
-        }
-        
         // Extract plain text for search indices
-        const text = contentDiv.textContent.replace(/\s+/g, ' ').trim();
-        const hasImage = imgUrl ? await downloadImage(imgUrl, `${path.basename(url)}.png`) : false;
+        const text = storyTextEl ? storyTextEl.textContent.replace(/\s+/g, ' ').trim() : '';
 
         // Extract Moral
         const moralMatch = text.match(/"([^"]+)"/);
@@ -70,7 +80,7 @@ async function scrapeStory(url) {
             slug: path.basename(url),
             content: text,
             html,
-            image: hasImage ? true : null,
+            images: savedImages, // Multiple images
             moral,
             url
         };

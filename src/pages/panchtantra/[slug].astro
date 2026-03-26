@@ -57,11 +57,20 @@ const breadcrumbs = [
                         <div class="w-24 h-1 bg-amber-200 mx-auto rounded-full"></div>
                     </header>
 
-                    {/* Story Image */}
-                    {story.image && (
-                        <div class="mb-12 rounded-3xl overflow-hidden shadow-lg border-4 border-white aspect-video relative group">
-                            <img src={story.image} alt={story.title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                            <div class="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    {/* Story Images */}
+                    {story.images && story.images.length > 0 && (
+                        <div class="space-y-8 mb-12">
+                            {story.images.map((img: string, index: number) => (
+                                <div class="rounded-3xl overflow-hidden shadow-lg border-4 border-white aspect-video relative group">
+                                    <img 
+                                        src={img} 
+                                        alt={`${story.title} - Illustration ${index + 1}`} 
+                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                        loading={index === 0 ? "eager" : "lazy"}
+                                    />
+                                    <div class="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                </div>
+                            ))}
                         </div>
                     )}
 

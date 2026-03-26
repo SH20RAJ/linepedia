@@ -43,18 +43,18 @@ scrap rekha like = curl https://www.rekhta.org/PoetCollection?SEO_Slug=couplets&
 https://www.rekhta.org/poets/jaun-eliya/couplets fetch all authours use curl see https://www.rekhta.org/poets and whole website create script to create a whole dataset and create separate route and save and show it there also add them to sitemap 
 
 ---
-
-scrap whole https://www.talesofpanchatantra.com/ and create a json file with whole dataset 
-create /panchtantra and use all images on the website , ui ux must feel good clean, fetch and save all data here....
-
-
-
---- 
-create poster for other lines and /p/ add to linespedia-data and use it
-
-and create /indexnow where anyone can go and submit all the pages to indexnow (in baches)
+indexnow not working
 
 
 ---
 
-give backlink to 30tools.com
+
+https://captions.ai/blog/instagram-bio-ideas
+
+
+find articles on internet , scrap them on keywords , rewrite it and publish them
+
+200+ articles
+
+---
+

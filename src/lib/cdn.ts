@@ -92,7 +92,8 @@ export const getPanchatantraStories = async () => {
     const stories = await res.json();
     return stories.map((s: any) => ({
       ...s,
-      image: s.image ? `${CDN_BASE}/panchtantra/v1/images/${s.slug}.png` : null
+      images: (s.images || []).map((img: string) => `${CDN_BASE}/panchtantra/v1/images/${img}`),
+      image: s.images && s.images.length > 0 ? `${CDN_BASE}/panchtantra/v1/images/${s.images[0]}` : null
     }));
   } catch (e) {
     return [];
