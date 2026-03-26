@@ -12,7 +12,7 @@ import writersData from '../content/writers.json';
 			<h1 class="text-5xl font-serif font-black text-primary mb-12">Our Poets</h1>
 			<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-12">
 				{writersData.map(writer => (
-					<a href={`/${writer.slug}`} class="flex flex-col items-center group">
+					<a href={`/${writer.slug}/`} class="flex flex-col items-center group">
 						<img src={writer.photo} class="w-32 h-32 rounded-[2rem] object-cover shadow-lg card-hover mb-6" />
 						<h2 class="text-xl font-bold text-primary group-hover:text-accent transition-colors">{writer.name}</h2>
 						<span class="text-sm font-medium text-primary/40 uppercase tracking-widest">{writer.stats.poems} Poems</span>

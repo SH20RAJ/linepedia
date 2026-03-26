@@ -16,7 +16,13 @@ const blog = defineCollection({
 });
 
 const poems = defineCollection({
-    loader: glob({ pattern: "**/*.json", base: "./src/content/poems" }),
+    loader: async () => {
+        const { default: data } = await import('./content/poems.json');
+        return data.map((item: any) => ({
+            id: item.id,
+            ...item
+        }));
+    },
     schema: z.object({
         id: z.string(),
         slug: z.string(),

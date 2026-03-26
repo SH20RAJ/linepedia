@@ -18,9 +18,10 @@ const { Content } = await render(post);
 
 const breadcrumbs = [
   { name: "Home", href: "/" },
-  { name: "Blog", href: "/blog" },
-  { name: post.data.title, href: `/blog/${post.id}` },
+  { name: "Blog", href: "/blog/" },
+  { name: post.data.title, href: `/blog/${post.id}/` },
 ];
+export const prerender = true;
 ---
 
 <Layout

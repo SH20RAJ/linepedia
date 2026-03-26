@@ -22,7 +22,7 @@ const { id, slug, content, writer, writerName } = Astro.props;
   </div>
 
   <div class="flex items-center justify-between border-t border-indigo-50 pt-4">
-    <a href={`/${writer}`} class="flex items-center space-x-2 group/writer">
+    <a href={`/${writer}/`} class="flex items-center space-x-2 group/writer">
       <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center overflow-hidden">
         <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${writer}`} alt={writerName} loading="lazy" />
       </div>
@@ -36,7 +36,7 @@ const { id, slug, content, writer, writerName } = Astro.props;
       <button class="copy-card-btn p-2 text-primary/30 hover:text-accent transition-colors" title="Copy">
         <Copy size={16} />
       </button>
-      <a href={`/line/${slug}`} class="ml-4 text-xs font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition-colors">
+      <a href={`/line/${slug}/`} class="ml-4 text-xs font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition-colors">
         Read More
       </a>
     </div>
@@ -75,7 +75,7 @@ const { id, slug, content, writer, writerName } = Astro.props;
     const pinBtn = card.querySelector('.pin-card-btn');
     pinBtn?.addEventListener('click', () => {
       const text = poemText?.textContent?.replace(/^"|"$/g, '').trim() || '';
-      const url = `${window.location.origin}/line/${card.getAttribute('data-slug') || ''}`;
+      const url = `${window.location.origin}/line/${card.getAttribute('data-slug') || ''}/`;
       const imageUrl = `${window.location.origin}/posters/${card.getAttribute('data-slug') || ''}.png`;
       const pinUrl = `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(url)}&media=${encodeURIComponent(imageUrl)}&description=${encodeURIComponent(text.slice(0, 200))}`;
       window.open(pinUrl, '_blank');

@@ -2,10 +2,10 @@
 import { Search, Menu, X, Home, Compass, PenTool, LayoutGrid, Layers, Heart } from 'lucide-astro';
 
 const navItems = [
-  { name: 'Explore', href: '/explore', icon: Compass },
-  { name: 'Blog', href: '/blog', icon: Search },
-  { name: 'Writers', href: '/writers', icon: PenTool },
-  { name: 'Likes', href: '/likes', icon: Heart },
+  { name: 'Explore', href: '/explore/', icon: Compass },
+  { name: 'Blog', href: '/blog/', icon: Search },
+  { name: 'Writers', href: '/writers/', icon: PenTool },
+  { name: 'Likes', href: '/likes/', icon: Heart },
 ];
 ---
 
@@ -21,7 +21,7 @@ const navItems = [
           {item.name}
         </a>
       ))}
-      <a href="/submit" class="px-4 py-2 bg-primary text-white text-sm font-medium rounded-full hover:bg-primary/90 transition-colors">
+      <a href="/submit/" class="px-4 py-2 bg-primary text-white text-sm font-medium rounded-full hover:bg-primary/90 transition-colors">
         Submit Line
       </a>
     </nav>

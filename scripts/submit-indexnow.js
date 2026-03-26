@@ -1,64 +1,66 @@
 import fs from 'fs';
 import path from 'path';
 
-const HOST = 'https://linespedia.com';
-const KEY = '2f3a29d127b84110a911375a73d97702';
-const KV_BATCH_FILE = './src/data/poems-kv-batch.json';
+const INDEXNOW_KEY = '2f3a29d127b84110a911375a73d97702';
+const HOST = 'linespedia.com';
+const SITEMAP_FILE = './public/sitemap-poems.xml';
 
-async function submit() {
-    console.log('🔍 Preparing IndexNow submission for 37,000+ URLs...');
+async function submitToIndexNow() {
+    console.log('🚀 Starting IndexNow submission...');
     
-    if (!fs.existsSync(KV_BATCH_FILE)) {
-        console.error('Error: KV batch file not found. Run ingest-data.js first.');
+    if (!fs.existsSync(SITEMAP_FILE)) {
+        console.error('Sitemap not found!');
         return;
     }
 
-    const kvBulk = JSON.parse(fs.readFileSync(KV_BATCH_FILE, 'utf-8'));
-    const urlList = [];
-
-    // Base pages
-    urlList.push(`${HOST}/`);
-    urlList.push(`${HOST}/explore`);
-    urlList.push(`${HOST}/blog`);
-    urlList.push(`${HOST}/likes`);
-    urlList.push(`${HOST}/writers`);
-    urlList.push(`${HOST}/categories`);
-    urlList.push(`${HOST}/collections`);
-
-    // Poem pages (from slugs)
-    for (const item of kvBulk) {
-        if (item.key.startsWith('slug:')) {
-            const slug = item.key.replace('slug:', '');
-            urlList.push(`${HOST}/line/${slug}`);
-        }
+    const sitemapContent = fs.readFileSync(SITEMAP_FILE, 'utf-8');
+    const urls = [];
+    const urlRegex = /<loc>(https:\/\/linespedia.com\/[^<]+)<\/loc>/g;
+    let match;
+    while ((match = urlRegex.exec(sitemapContent)) !== null) {
+        urls.push(match[1]);
     }
 
-    console.log(`🚀 Submitting ${urlList.length} URLs to IndexNow...`);
+    // Add main pages
+    urls.push(`https://${HOST}/`);
+    urls.push(`https://${HOST}/explore/`);
+    urls.push(`https://${HOST}/writers/`);
+    urls.push(`https://${HOST}/categories/`);
+    urls.push(`https://${HOST}/collections/`);
 
-    // Split into batches of 10,000 per request (Bings limit is relatively high)
-    const batchSize = 10000;
-    for (let i = 0; i < urlList.length; i += batchSize) {
-        const batch = urlList.slice(i, i + batchSize);
-        
+    console.log(`Found ${urls.length} URLs to submit.`);
+
+    const BATCH_SIZE = 9000; // IndexNow limit is typically around 10k
+    for (let i = 0; i < urls.length; i += BATCH_SIZE) {
+        const batch = urls.slice(i, i + BATCH_SIZE);
+        console.log(`Submitting batch ${Math.floor(i / BATCH_SIZE) + 1}...`);
+
+        const body = {
+            host: HOST,
+            key: INDEXNOW_KEY,
+            keyLocation: `https://${HOST}/${INDEXNOW_KEY}.txt`,
+            urlList: batch
+        };
+
         try {
-            const response = await fetch('https://www.bing.com/indexnow', {
+            // Using fetch (available in Node 18+)
+            const response = await fetch('https://api.indexnow.org/indexnow', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    host: 'linespedia.com',
-                    key: KEY,
-                    keyLocation: `${HOST}/${KEY}.txt`,
-                    urlList: batch
-                })
+                body: JSON.stringify(body)
             });
 
-            console.log(`Batch ${Math.floor(i / batchSize) + 1}: Status ${response.status}`);
+            if (response.ok) {
+                console.log(`Batch ${Math.floor(i / BATCH_SIZE) + 1} submitted successfully (Status: ${response.status})`);
+            } else {
+                console.error(`Error submitting batch ${Math.floor(i / BATCH_SIZE) + 1}: ${response.status} ${response.statusText}`);
+            }
         } catch (error) {
-            console.error(`Error submitting batch ${Math.floor(i / batchSize) + 1}:`, error.message);
+            console.error(`Fetch error for batch ${Math.floor(i / BATCH_SIZE) + 1}:`, error.message);
         }
     }
 
-    console.log('DONE!');
+    console.log('✅ IndexNow submission complete!');
 }
 
-submit();
+submitToIndexNow();

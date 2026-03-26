@@ -24,32 +24,14 @@ async function getPageData(pathSlug: string | undefined) {
     try {
         if (!pathSlug) return null;
 
-        // 1. Line Page — /line/:slug
+        // 1. Line Page — /line/:slug/
         if (pathSlug.startsWith('line/')) {
             const lineSlugOrId = pathSlug.replace('line/', '');
             const parts = lineSlugOrId.split('-');
             const idFromSlug = parts[parts.length - 1];
 
-            let entry = await getEntry('poems', idFromSlug);
+            const entry = await getEntry('poems', idFromSlug);
             
-            if (!entry) {
-                const runtime = (Astro.locals as any).runtime || (Astro.locals as any).env;
-                const kv = runtime?.env?.SESSION || (Astro.locals as any).SESSION;
-                if (kv) {
-                    const kvDataBySlug = await kv.get(`slug:${lineSlugOrId}`);
-                    if (kvDataBySlug) {
-                        const data = JSON.parse(kvDataBySlug);
-                        entry = { data, id: data.id } as any;
-                    } else {
-                        const kvDataById = await kv.get(`poem:${idFromSlug}`);
-                        if (kvDataById) {
-                            const data = JSON.parse(kvDataById);
-                            entry = { data, id: data.id } as any;
-                        }
-                    }
-                }
-            }
-
             if (entry) {
                 return {
                     type: 'line',
@@ -105,18 +87,18 @@ const { type, data, writer, poems = [], allWriters = [] } = (pageData || {}) as 
 // Breadcrumbs
 const breadcrumbs: any[] = [];
 if (type === 'line' && data) {
-    breadcrumbs.push({ name: 'Poetry', href: '/explore' });
-    if (writer) breadcrumbs.push({ name: writer.name, href: `/${writer.slug}` });
-    breadcrumbs.push({ name: data.title, href: `/line/${data.slug}` });
+    breadcrumbs.push({ name: 'Poetry', href: '/explore/' });
+    if (writer) breadcrumbs.push({ name: writer.name, href: `/${writer.slug}/` });
+    breadcrumbs.push({ name: data.title, href: `/line/${data.slug}/` });
 } else if (type === 'writer' && data) {
-    breadcrumbs.push({ name: 'Writers', href: '/writers' });
-    breadcrumbs.push({ name: data.name, href: `/${data.slug}` });
+    breadcrumbs.push({ name: 'Writers', href: '/writers/' });
+    breadcrumbs.push({ name: data.name, href: `/${data.slug}/` });
 } else if (type === 'category' && data) {
-    breadcrumbs.push({ name: 'Categories', href: '/categories' });
-    breadcrumbs.push({ name: data.name, href: `/${data.slug}` });
+    breadcrumbs.push({ name: 'Categories', href: '/categories/' });
+    breadcrumbs.push({ name: data.name, href: `/${data.slug}/` });
 } else if (type === 'collection' && data) {
-    breadcrumbs.push({ name: 'Collections', href: '/collections' });
-    breadcrumbs.push({ name: data.name, href: `/${data.slug}` });
+    breadcrumbs.push({ name: 'Collections', href: '/collections/' });
+    breadcrumbs.push({ name: data.name, href: `/${data.slug}/` });
 }
 
 function getCTRTitle() {

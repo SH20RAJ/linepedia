@@ -49,13 +49,13 @@ const trendingLines = poemsData.slice(-6).reverse();
 						"{poemOfTheDay.content.slice(0, 150)}..."
 					</blockquote>
 					<div class="flex items-center justify-between">
-						<a href={`/line/${poemOfTheDay.slug}`} class="flex items-center space-x-3 group/author">
+						<a href={`/line/${poemOfTheDay.slug}/`} class="flex items-center space-x-3 group/author">
 							<div class="w-10 h-10 rounded-full bg-white/20 border border-white/20 overflow-hidden">
 								<img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${poemOfTheDay.writer}`} alt={poemOfTheDay.writer} />
 							</div>
 							<span class="font-bold border-b border-transparent group-hover/author:border-white transition-all underline-offset-4">{writersData.find(w => w.slug === poemOfTheDay.writer)?.name || poemOfTheDay.writer}</span>
 						</a>
-						<a href={`/line/${poemOfTheDay.slug}`} class="px-6 py-3 bg-white text-primary rounded-full font-bold text-sm hover:bg-accent hover:text-white transition-all shadow-lg">Read Full Poem &rarr;</a>
+						<a href={`/line/${poemOfTheDay.slug}/`} class="px-6 py-3 bg-white text-primary rounded-full font-bold text-sm hover:bg-accent hover:text-white transition-all shadow-lg">Read Full Poem &rarr;</a>
 					</div>
 				</div>
 			</div>
@@ -68,11 +68,11 @@ const trendingLines = poemsData.slice(-6).reverse();
 					<h2 class="text-3xl font-serif font-black text-primary">Trending Categories</h2>
 					<p class="text-primary/50 mt-1">Explore curated themes and moods</p>
 				</div>
-				<a href="/categories" class="text-accent font-bold text-sm uppercase tracking-widest hover:underline">View All</a>
+				<a href="/categories/" class="text-accent font-bold text-sm uppercase tracking-widest hover:underline">View All</a>
 			</div>
 			<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 				{trendingCategories.map(cat => (
-					<a href={`/${cat.slug}`} class="group p-6 bg-white border border-indigo-50 rounded-2xl shadow-sm hover:shadow-xl transition-all card-hover">
+					<a href={`/${cat.slug}/`} class="group p-6 bg-white border border-indigo-50 rounded-2xl shadow-sm hover:shadow-xl transition-all card-hover">
 						<h3 class="text-xl font-serif font-bold text-primary group-hover:text-accent transition-colors mb-2">{cat.name}</h3>
 						<p class="text-xs text-primary/40 line-clamp-2">{cat.description}</p>
 					</a>
@@ -88,11 +88,11 @@ const trendingLines = poemsData.slice(-6).reverse();
 						<h2 class="text-3xl font-serif font-black text-primary">Featured Poets</h2>
 						<p class="text-primary/50 mt-1">The masters of the spoken word</p>
 					</div>
-					<a href="/writers" class="text-accent font-bold text-sm uppercase tracking-widest hover:underline">See All</a>
+					<a href="/writers/" class="text-accent font-bold text-sm uppercase tracking-widest hover:underline">See All</a>
 				</div>
 				<div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
 					{featuredWriters.map(writer => (
-						<a href={`/${writer.slug}`} class="flex flex-col items-center group">
+						<a href={`/${writer.slug}/`} class="flex flex-col items-center group">
 							<img src={writer.photo} alt={writer.name} class="w-20 h-20 md:w-28 md:h-28 rounded-full object-cover shadow-lg border-4 border-white card-hover mb-4" loading="lazy" />
 							<h3 class="text-sm md:text-base font-bold text-primary group-hover:text-accent transition-colors text-center">{writer.name}</h3>
 							<span class="text-[10px] text-primary/40 font-medium uppercase tracking-widest">{writer.stats.poems} Poems</span>
@@ -109,11 +109,11 @@ const trendingLines = poemsData.slice(-6).reverse();
 					<h2 class="text-3xl font-serif font-black text-primary">Popular Collections</h2>
 					<p class="text-primary/50 mt-1">Curated for every mood and occasion</p>
 				</div>
-				<a href="/collections" class="text-accent font-bold text-sm uppercase tracking-widest hover:underline">View All</a>
+				<a href="/collections/" class="text-accent font-bold text-sm uppercase tracking-widest hover:underline">View All</a>
 			</div>
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				{featuredCollections.map(col => (
-					<a href={`/${col.slug}`} class="group p-8 bg-white border border-indigo-50 rounded-[2rem] shadow-sm hover:shadow-xl transition-all card-hover">
+					<a href={`/${col.slug}/`} class="group p-8 bg-white border border-indigo-50 rounded-[2rem] shadow-sm hover:shadow-xl transition-all card-hover">
 						<h3 class="text-2xl font-serif font-bold text-primary group-hover:text-accent transition-colors mb-3">{col.name}</h3>
 						<p class="text-primary/50 text-sm line-clamp-2 mb-4">{col.description}</p>
 						<span class="text-xs font-bold uppercase tracking-widest text-accent">Browse Collection &rarr;</span>
@@ -142,7 +142,7 @@ const trendingLines = poemsData.slice(-6).reverse();
 				))}
 			</div>
 			<div class="mt-16 flex justify-center">
-				<a href="/explore" class="px-12 py-4 bg-white border border-indigo-100 rounded-full text-primary font-bold shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
+				<a href="/explore/" class="px-12 py-4 bg-white border border-indigo-100 rounded-full text-primary font-bold shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
 					Explore All Lines &rarr;
 				</a>
 			</div>
@@ -157,7 +157,7 @@ const trendingLines = poemsData.slice(-6).reverse();
 				</div>
 				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 					{trendingLines.map(line => (
-						<a href={`/line/${line.slug}`} class="flex items-start space-x-4 p-4 rounded-2xl hover:bg-indigo-50 transition-all border border-transparent hover:border-indigo-100 group">
+						<a href={`/line/${line.slug}/`} class="flex items-start space-x-4 p-4 rounded-2xl hover:bg-indigo-50 transition-all border border-transparent hover:border-indigo-100 group">
 							<div class="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center grow-0 shrink-0 text-primary group-hover:bg-primary group-hover:text-white transition-all">
 								<Quote size={20} />
 							</div>

@@ -1,10 +1,19 @@
 {
+	"name": "linepedia",
 	"compatibility_date": "2026-03-17",
 	"compatibility_flags": [
 		"global_fetch_strictly_public"
 	],
-	"name": "linepedia",
-	"pages_build_output_dir": "dist",
+	"assets": {
+		"directory": "./dist/client",
+		"binding": "ASSETS"
+	},
+	"kv_namespaces": [
+		{
+			"binding": "SESSION",
+			"id": "1f78d006bb7b4d0e81ef26b128f63e28"
+		}
+	],
 	"observability": {
 		"enabled": true
 	}

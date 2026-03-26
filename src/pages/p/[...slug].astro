@@ -1,0 +1,123 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import PoemCard from '../../components/PoemCard.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { Share2, Copy, Heart, BookOpen, Quote, ChevronRight, Bookmark, Download, Sparkles } from 'lucide-astro';
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+
+let error = null;
+let pageData = null;
+
+async function getEnrichedPoem(pathSlug: string | undefined) {
+    try {
+        if (!pathSlug) return null;
+
+        // Astro v6 compatibility: Use Astro.locals.runtime.env
+        const runtime = (Astro.locals as any).runtime;
+        const kv = runtime?.env?.SESSION || runtime?.SESSION || (Astro.locals as any).SESSION;
+        
+        if (!kv) {
+            console.error('KV Storage not found in runtime');
+            return null;
+        }
+
+        const kvDataBySlug = await kv.get(`slug:${pathSlug}`);
+        if (kvDataBySlug) {
+            return JSON.parse(kvDataBySlug);
+        }
+
+        // Try ID fallback
+        const parts = pathSlug.split('-');
+        const idFromSlug = parts[parts.length - 1];
+        const kvDataById = await kv.get(`poem:${idFromSlug}`);
+        if (kvDataById) {
+            return JSON.parse(kvDataById);
+        }
+
+        return null;
+    } catch (e) {
+        console.error('Error fetching enriched poem:', e);
+        return null;
+    }
+}
+
+const data = await getEnrichedPoem(slug);
+
+if (!data) {
+    return Astro.redirect('/404');
+}
+
+pageData = {
+    type: 'line',
+    data: data
+};
+
+const poem = pageData.data;
+---
+
+<Layout title={poem.title} description={poem.meaning}>
+  <Navbar />
+  
+  <main class="min-h-screen bg-slate-50 pt-24 pb-12 px-4 md:px-6">
+    <div class="max-w-4xl mx-auto">
+      <Breadcrumb items={[
+        { name: 'Home', href: '/' },
+        { name: 'Poems', href: '/explore/' },
+        { name: poem.title, href: `/p/${slug}/` }
+      ]} />
+
+      <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden mb-8">
+        <div class="p-8 md:p-12">
+          <div class="flex items-center gap-2 mb-6">
+            <span class="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full flex items-center gap-1 uppercase tracking-wider">
+              <Sparkles size={12} /> Enriched Content
+            </span>
+          </div>
+
+          <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4 leading-tight">
+            {poem.title}
+          </h1>
+
+          <div class="flex items-center gap-4 mb-8">
+             <a href={`/writer/${poem.writer}/`} class="text-amber-600 font-medium hover:underline text-lg uppercase tracking-wide">
+                {poem.writer?.replace(/-/g, ' ')}
+             </a>
+          </div>
+
+          <div class="prose prose-slate prose-lg max-w-none mb-12">
+            <pre class="whitespace-pre-wrap font-serif text-xl md:text-2xl leading-relaxed text-slate-800 italic bg-slate-50 p-6 md:p-8 rounded-2xl border-l-4 border-amber-400 font-medium tracking-tight">
+              {poem.content}
+            </pre>
+          </div>
+
+          {poem.meaning && (
+            <div class="bg-indigo-50/50 rounded-2xl p-6 md:p-8 border border-indigo-100 mb-12">
+              <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <BookOpen size={20} class="text-indigo-600" />
+                Poem Meaning & Analysis
+              </h2>
+              <p class="text-slate-700 leading-relaxed text-lg">
+                {poem.meaning}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+  <StructuredData 
+    type="line" 
+    title={poem.title} 
+    description={poem.meaning || "Deep poetry lines and emotional verse."} 
+    url={`/p/${slug}/`}
+    authorName={poem.writer}
+  />
+</Layout>

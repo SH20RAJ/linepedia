@@ -37,7 +37,7 @@ const breadcrumbs = [
       <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
         {posts.map((post) => (
           <article class="group">
-            <a href={`/blog/${post.id}`} class="block mb-6 overflow-hidden rounded-3xl aspect-video bg-indigo-50">
+            <a href={`/blog/${post.id}/`} class="block mb-6 overflow-hidden rounded-3xl aspect-video bg-indigo-50">
               <img 
                 src={post.data.heroImage} 
                 alt={post.data.title}
@@ -53,12 +53,12 @@ const breadcrumbs = [
               </time>
             </div>
             <h2 class="text-3xl font-serif font-black text-primary mb-4 group-hover:text-accent transition-colors">
-              <a href={`/blog/${post.id}`}>{post.data.title}</a>
+              <a href={`/blog/${post.id}/`}>{post.data.title}</a>
             </h2>
             <p class="text-primary/60 line-clamp-2 mb-6">
               {post.data.description}
             </p>
-            <a href={`/blog/${post.id}`} class="inline-flex items-center text-primary font-bold hover:text-accent transition-all group/link">
+            <a href={`/blog/${post.id}/`} class="inline-flex items-center text-primary font-bold hover:text-accent transition-all group/link">
               <span>Read Full Article</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2 group-hover/link:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3" />

@@ -2,100 +2,95 @@ import fs from 'fs';
 import path from 'path';
 
 const BLOG_DIR = './src/content/blog';
-const writers = JSON.parse(fs.readFileSync('./src/content/writers.json', 'utf-8'));
-const categories = JSON.parse(fs.readFileSync('./src/content/categories.json', 'utf-8'));
+const WRITERS_FILE = './src/content/writers.json';
+const CATEGORIES_FILE = './src/content/categories.json';
+
+if (!fs.existsSync(BLOG_DIR)) {
+    fs.mkdirSync(BLOG_DIR, { recursive: true });
+}
+
+const writers = JSON.parse(fs.readFileSync(WRITERS_FILE, 'utf-8'));
+const categories = JSON.parse(fs.readFileSync(CATEGORIES_FILE, 'utf-8'));
 
 function slugify(text) {
-    return text.toString().toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+    return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]+/g, '')
+        .replace(/--+/g, '-');
 }
 
-async function generate() {
-    console.log('📝 Generating 20+ SEO Blogs...');
-    
-    if (fs.existsSync(BLOG_DIR)) fs.rmSync(BLOG_DIR, { recursive: true, force: true });
-    fs.mkdirSync(BLOG_DIR, { recursive: true });
-
-    const blogs = [];
-
-    // 1. Writer Focus Blogs (10)
-    for (const writer of writers.slice(0, 10)) {
-        blogs.push({
-            title: `The Timeless Legacy of ${writer.name}: A Deep Dive into Their Most Moving Lines`,
-            description: `Explore the life and most famous poetic works of ${writer.name}. From classic verses to hidden gems, discover why their words still resonate.`,
-            content: `
-# The Timeless Legacy of ${writer.name}
-
-${writer.name} is one of the most celebrated figures in the world of literature. Their contribution to the art of poetry has left an indelible mark on generations of readers and writers alike.
-
-## Why ${writer.name} Matters Today
-
-In an era of fast-paced digital communication, the structured beauty of ${writer.name}'s lines provides a much-needed sanctuary of reflection. Whether you are looking for solace in sorrow or celebration in joy, their work offers a mirror to the human soul.
-
-### Exploring the Masterpieces
-
-Many readers are familiar with the major works, but the true depth of ${writer.name} lies in the shorter lines—the sharp, poignant observations that capture a lifetime of experience in just a few words.
-
-At Linespedia, we have curated the most comprehensive collection of ${writer.name}'s best lines, optimized for sharing and deep reading. [Explore the collection directly here](https://linespedia.com/${writer.slug}).
-
-## Conclusion
-
-Understanding the context behind the words of ${writer.name} allows us to appreciate the craft in its entirety. Stay tuned for more deep dives into the masters of verse.
-            `,
-            category: 'writers',
-            author: 'Linespedia Editorial',
-            date: new Date().toISOString()
-        });
-    }
-
-    // 2. Category Focus Blogs (10)
-    for (const cat of categories.slice(0, 10)) {
-        blogs.push({
-            title: `Top ${cat.name} Lines for Your Next Social Media Post (${new Date().getFullYear()})`,
-            description: `Searching for the perfect ${cat.name} caption? Look no further. Here is our curated list of the most impactful lines for Instagram and WhatsApp.`,
-            content: `
-# 10+ Most Impactful ${cat.name} Lines for Instagram and WhatsApp
-
-Sometimes, a single line can say more than a thousand-word letter. When it comes to ${cat.name.toLowerCase()}, the right words can make all the difference in how we connect with others.
-
-## The Power of ${cat.name} in Modern Life
-
-Expression is a core part of being human. In this guide, we explore why ${cat.name} remains one of the most searched and shared categories on Linespedia.
-
-### Why These Lines Trend
-
-Our data shows that readers favor lines that are:
-1. **Short and Punchy**: Perfect for mobile screens.
-2. **Relatable**: Touching on universal truths.
-3. **Visually Stunning**: Ready to be turned into posters.
-
-[Browse the full ${cat.name} collection on Linespedia](https://linespedia.com/${cat.slug}).
-
-## How to Share Your Favorite Lines
-
-We recommend using our **Digital Poster** feature to turn any text into a beautiful image for Pinterest or Google Images. It's the best way to ensure your favorite ${cat.name} quotes get the reach they deserve.
-            `,
-            category: 'trends',
-            author: 'Linespedia Editorial',
-            date: new Date().toISOString()
-        });
-    }
-
-    // Write to files
-    blogs.forEach(blog => {
-        const slug = slugify(blog.title);
-        const frontmatter = `---
-title: "${blog.title}"
-description: "${blog.description}"
-pubDate: ${blog.date}
-heroImage: "/posters/blog-placeholder.png"
-category: "${blog.category}"
-author: "${blog.author}"
+function generateBlog(title, description, content, category, tags) {
+    const slug = slugify(title);
+    const pubDate = new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toISOString().split('T')[0];
+    const fileContent = `---
+title: "${title}"
+description: "${description}"
+pubDate: "${pubDate}"
+author: "Linespedia Editorial"
+category: "${category}"
+tags: ${JSON.stringify(tags)}
+heroImage: "https://images.unsplash.com/photo-1471107340929-a87cd0f5b5f3?q=80&w=2573&auto=format&fit=crop"
 ---
-`;
-        fs.writeFileSync(path.join(BLOG_DIR, `${slug}.md`), frontmatter + blog.content);
-    });
 
-    console.log(`✅ Successfully generated ${blogs.length} SEO blogs.`);
+${content}
+
+## Related Explorations
+If you enjoyed these insights, we invite you to explore more on Linespedia. We have curated thousands of lines from the world's most influential poets.
+
+- [Browse all poets](/writers/)
+- [Explore categories](/categories/)
+- [Discover trending lines](/explore/)
+
+At Linespedia, we believe every word has a story. Stay tuned for more deep dives into the world of literature and verse.
+`;
+    fs.writeFileSync(path.join(BLOG_DIR, `${slug}.md`), fileContent);
+    console.log(`Generated blog: ${slug}`);
 }
 
-generate();
+// 1. Generate Writer Spotlights (Top 15)
+writers.slice(0, 15).forEach(writer => {
+    const title = `The Timeless Legacy of ${writer.name}: A Deep Dive into Their Most Moving Lines`;
+    const description = `Explore the profound impact of ${writer.name}'s poetry. From classic verses to hidden gems, discover the lines that defined a generation.`;
+    const content = `
+${writer.name} remains a titan of the literary world, a poet whose words continue to echo through the halls of history. In this spotlight, we take a closer look at the specific lines and themes that make ${writer.name}'s work so enduringly relevant.
+
+### The Voice of an Era
+Whether writing about the complexities of human emotion or the sheer beauty of the natural world, ${writer.name} had a unique ability to capture the essence of their subject. Their use of language was both revolutionary and deeply rooted in tradition, creating a style that is instantly recognizable and profoundly moving.
+
+### Key Themes in ${writer.name}'s Work
+A survey of ${writer.name}'s bibliography reveals a recurring fascination with themes of love, loss, and the search for meaning in an ever-changing world. It is this universal quality that allows their work to transcend its original context and speak directly to the hearts of modern readers.
+
+We have curated a selection of ${writer.name}'s most impactful lines here on Linespedia. Each piece is accompanied by a modern interpretation and deep context to help you fully appreciate the genius of this legendary figures.
+
+[Explore all lines by ${writer.name}](/${writer.slug}/)
+`;
+    generateBlog(title, description, content, 'Writers', [writer.slug, 'poetry', 'classic-literature']);
+});
+
+// 2. Generate Category Guides (Top 10)
+categories.slice(0, 10).forEach(category => {
+    const title = `Top ${category.name} Lines for Your Next Social Media Post (${new Date().getFullYear()})`;
+    const description = `Looking for the perfect ${category.name} quote? Discover our curated list of the best lines and shayari for Instagram, WhatsApp, and more.`;
+    const content = `
+Finding the right words to express your feelings can be a challenge. That's why we've put together this comprehensive guide to the best ${category.name} lines available on Linespedia today.
+
+### Why ${category.name} Poetry Resonates
+There is something uniquely powerful about ${category.name} verse. It speaks to a part of the human experience that is often difficult to articulate, providing a bridge between our inner thoughts and the outside world.
+
+### How to Use These Lines
+Whether you're looking for a thoughtful Instagram caption, a poignant WhatsApp status, or a meaningful quote to include in a personal message, these selections are designed to make an impact. We recommend pairing these lines with a visual from our [Digital Posters](/${category.slug}/) collection for maximum engagement.
+
+### Our Top Picks
+1. **Classic Resonance**: Lines that have stood the test of time and continue to inspire.
+2. **Modern Interpretations**: New perspectives on traditional themes.
+3. **Hidden Gems**: Deep cuts from lesser-known works that offer a fresh take on ${category.name}.
+
+Explore our full collection of [${category.name} lines](/${category.slug}/) to find the perfect match for your mood.
+`;
+    generateBlog(title, description, content, 'Categories', [category.slug, 'quotes', 'shayar']);
+});
+
+console.log('✅ Generated 25 blog posts!');

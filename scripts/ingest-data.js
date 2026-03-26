@@ -4,7 +4,7 @@ import { parse } from 'csv-parse/sync';
 import crypto from 'crypto';
 
 const DATA_DIR = './src/data';
-const LEGACY_PATH = '/tmp/poems-legacy.json';
+const LEGACY_PATH = './src/content/poems.json';
 const POEMS_DIR = './src/content/poems';
 const KV_BATCH_FILE = './src/data/poems-kv-batch.json';
 
@@ -24,13 +24,30 @@ function generateId(text) {
 
 function getEnrichedMeaning(poem) {
     const author = poem.writer || 'the poet';
+    const title = poem.title || 'this piece';
     const category = poem.category?.[0] || 'classic poetry';
     
-    return `This evocative piece by ${author} represents a masterful exploration of ${category}. The lines capture a profound emotional resonance, inviting the reader to reflect on the deeper themes of human experience and artistic expression.
+    const templates = [
+        `This evocative piece by ${author}, titled "${title}", represents a masterful exploration of ${category}. The lines capture a profound emotional resonance, inviting the reader to reflect on the deeper themes of human experience and artistic expression. In the broader context of ${author}'s bibliography, these specific lines stand out for their clarity and poignancy. Whether you are searching for inspiration or a moment of quiet contemplation, this work offers a timeless perspective that transcends its original era.`,
+        
+        `"${title}" is a quintessential example of ${author}'s signature style, blending technical precision with raw emotional depth. These lines specifically focus on the nuances of ${category}, offering a unique window into the poet's psyche. At Linespedia, we have curated this work because it continues to resonate with modern readers, proving that great poetry remains relevant across centuries. This selection is perfect for those who appreciate the delicate craft of verse and the power of a well-placed word.`,
+        
+        `Exploring the themes of ${category}, ${author} delivers a powerful performance in "${title}". The imagery used in these lines is both startling and familiar, creating a sensory experience that lingers long after the first reading. As part of our commitment to preserving literary excellence, Linespedia provides this deep context to help you connect more personally with the work. We recommend reflecting on these lines during moments of solitude or sharing them with fellow poetry enthusiasts to spark meaningful dialogue.`,
+        
+        `${author}'s contribution to ${category} is further solidified by the brilliance found in "${title}". These lines are often cited by critics and scholars for their innovative use of language and their ability to capture complex human emotions in a few brief expressions. Whether you're encountering ${author} for the first time or are a long-time admirer, this piece offers fresh insights into the enduring legacy of classical poetry. It serves as a beautiful reminder of the impact that a few carefully chosen lines can have on the world.`
+    ];
 
-In the broader context of ${author}'s bibliography, these specific lines stand out for their clarity and poignancy. Whether you are searching for inspiration or a moment of quiet contemplation, this work offers a timeless perspective that transcends its original era.
+    // Pick a template based on the poem hash to keep it stable
+    const templateIndex = parseInt(generateId(`${author}-${title}`).slice(0, 1), 16) % templates.length;
+    const baseMeaning = templates[templateIndex] || templates[0];
 
-At Linespedia, we have curated this specific poem to ensure it reaches a modern audience. We recommend sharing these lines as a digital poster or using them as a thoughtful caption to connect with others who appreciate the enduring beauty of verse.`;
+    return `${baseMeaning}
+
+### Why We Love This Line
+At Linespedia, we believe that poetry is the ultimate sanctuary for the soul. This specific line by ${author} is a favorite among our editors because of its sheer honesty and the way it masterfully utilizes the conventions of ${category}. It's a perfect candidate for your digital collection, whether as a thoughtful social media caption or a printed poster for your personal space.
+
+### About ${author}
+${author} remains one of the most influential figures in the world of ${category}. Their ability to transcend time and culture through verse is what makes them a cornerstone of the literary world. We invite you to explore more of their work right here on Linespedia, where we continue to celebrate the power of words every single day.`;
 }
 
 async function ingest() {
@@ -133,18 +150,7 @@ async function ingest() {
     // Sort by popularity
     results.sort((a, b) => (b.meta?.views || 0) - (a.meta?.views || 0));
 
-    // CLEAN EXPORT
-    if (fs.existsSync(POEMS_DIR)) fs.rmSync(POEMS_DIR, { recursive: true, force: true });
-    fs.mkdirSync(POEMS_DIR, { recursive: true });
-
-    // 1. Export Legacy Poems to Content Collection (Pinned)
-    console.log(`Exporting ${legacyMap.size} legacy poems to content collection...`);
-    for (const [id, poem] of legacyMap) {
-        fs.writeFileSync(path.join(POEMS_DIR, `${id}.json`), JSON.stringify(poem, null, 2));
-    }
-
-    // 2. Prepare ALL (Legacy + New) for KV storage
-    // We will use a separate script to upload to KV, but we generate the file here
+    // 1. Prepare ALL (Legacy + New) for KV storage
     const kvData = [...legacyMap.values(), ...results];
     console.log(`Preparing ${kvData.length} poems for KV...`);
     
@@ -165,22 +171,23 @@ async function ingest() {
     fs.writeFileSync(KV_BATCH_FILE, JSON.stringify(kvBulk));
     console.log(`KV Bulk batch saved to ${KV_BATCH_FILE}`);
 
-    // 3. Export Top 500 new poems to content collection (keep bundle small for CF Pages 25MB limit)
-    // The remaining 37k+ poems are served via Cloudflare KV on-demand
-    console.log('Exporting top 500 new poems to content collection...');
-    for (const poem of results.slice(0, 500)) {
-        fs.writeFileSync(path.join(POEMS_DIR, `${poem.id}.json`), JSON.stringify(poem, null, 2));
-    }
-
-    // 4. Generate Sitemap for ALL 75,000+ poems
+    // 2. Generate Sitemap for ALL 75,000+ poems
+    // Legacy poems go to /line/, New ones go to /p/
     console.log('Generating sitemap.xml for all poems...');
     const SITEMAP_FILE = './public/sitemap-poems.xml';
     let sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n';
     sitemap += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
     
-    for (const poem of kvData) {
-        sitemap += `  <url>\n    <loc>https://linespedia.com/line/${poem.slug}</loc>\n    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n    <priority>0.8</priority>\n  </url>\n`;
+    // Legacy Sitemap (/line/)
+    for (const poem of legacyMap.values()) {
+        sitemap += `  <url>\n    <loc>https://linespedia.com/line/${poem.slug}/</loc>\n    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n    <priority>0.8</priority>\n  </url>\n`;
     }
+
+    // New Enriched Sitemap (/p/)
+    for (const poem of results) {
+        sitemap += `  <url>\n    <loc>https://linespedia.com/p/${poem.slug}/</loc>\n    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n    <priority>0.6</priority>\n  </url>\n`;
+    }
+
     sitemap += '</urlset>';
     fs.writeFileSync(SITEMAP_FILE, sitemap);
     console.log(`Sitemap saved to ${SITEMAP_FILE}`);
