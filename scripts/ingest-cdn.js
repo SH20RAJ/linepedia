@@ -12,6 +12,7 @@ if (!fs.existsSync(OUTPUT_POEMS_DIR)) fs.mkdirSync(OUTPUT_POEMS_DIR, { recursive
 if (!fs.existsSync(OUTPUT_METADATA_DIR)) fs.mkdirSync(OUTPUT_METADATA_DIR, { recursive: true });
 
 function slugify(text) {
+    if (!text) return 'unknown';
     return text
         .toString()
         .toLowerCase()
@@ -28,7 +29,8 @@ function generateId(text) {
 function getEnrichedMeaning(poem) {
     const author = poem.writer || 'the poet';
     const title = poem.title || 'this piece';
-    const category = poem.category?.[0] || 'classic poetry';
+    const categories = poem.category || ['classic poetry'];
+    const category = categories[0];
     
     // Pick a template based on the poem hash to keep it stable
     const hash = generateId(`${author}-${title}`);
@@ -49,11 +51,27 @@ async function ingest() {
     console.log('🚀 Starting CDN Ingestion (Individual Files)...');
     
     const slugMap = {}; // mapping of slug -> id
+    const writerIndex = {}; // writer slug -> array of poem identifiers
+    const categoryIndex = {}; // category slug -> array of poem identifiers
     const seen = new Set();
     const seenTitles = new Set();
     const results = [];
 
-    // 1. Load Legacy Poems (Static + CDN mirror)
+    function indexPoem(poem) {
+        const writerSlug = slugify(poem.writer);
+        if (!writerIndex[writerSlug]) writerIndex[writerSlug] = [];
+        writerIndex[writerSlug].push({ id: poem.id, slug: poem.slug, title: poem.title });
+
+        if (poem.category) {
+            poem.category.forEach(cat => {
+                const catSlug = slugify(cat);
+                if (!categoryIndex[catSlug]) categoryIndex[catSlug] = [];
+                categoryIndex[catSlug].push({ id: poem.id, slug: poem.slug, title: poem.title });
+            });
+        }
+    }
+
+    // 1. Load Legacy Poems
     if (fs.existsSync(LEGACY_PATH)) {
         console.log('Processing Legacy Poems...');
         const legacyPoems = JSON.parse(fs.readFileSync(LEGACY_PATH, 'utf-8'));
@@ -63,7 +81,7 @@ async function ingest() {
             seen.add(poem.id);
             slugMap[poem.slug] = poem.id;
             
-            // Save individual file
+            indexPoem(poem);
             fs.writeFileSync(path.join(OUTPUT_POEMS_DIR, `${poem.id}.json`), JSON.stringify(poem));
         }
     }
@@ -106,6 +124,7 @@ async function ingest() {
             };
 
             slugMap[slug] = hash;
+            indexPoem(poem);
             fs.writeFileSync(path.join(OUTPUT_POEMS_DIR, `${hash}.json`), JSON.stringify(poem));
             results.push(poem);
         }
@@ -148,6 +167,7 @@ async function ingest() {
             };
 
             slugMap[slug] = hash;
+            indexPoem(poem);
             fs.writeFileSync(path.join(OUTPUT_POEMS_DIR, `${hash}.json`), JSON.stringify(poem));
             results.push(poem);
         }
@@ -157,29 +177,21 @@ async function ingest() {
 
     // 4. Save Metadata
     fs.writeFileSync(path.join(OUTPUT_METADATA_DIR, 'slug-map.json'), JSON.stringify(slugMap));
-    console.log(`Slug map saved to metadata/v1/slug-map.json`);
-
-    // Create a featured index (first 100 poems for the homepage/explore)
+    fs.writeFileSync(path.join(OUTPUT_METADATA_DIR, 'writer-poems.json'), JSON.stringify(writerIndex));
+    fs.writeFileSync(path.join(OUTPUT_METADATA_DIR, 'category-poems.json'), JSON.stringify(categoryIndex));
+    
+    // Create a featured index
     const featuredPoems = results.slice(0, 100);
     fs.writeFileSync(path.join(OUTPUT_METADATA_DIR, 'featured-poems.json'), JSON.stringify(featuredPoems));
-    console.log(`Featured poems index saved to metadata/v1/featured-poems.json`);
 
     // 5. Generate Sitemap
     const SITEMAP_FILE = './linespedia-data/metadata/v1/sitemap-poems.xml';
     let sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
-    
-    // Sort keys by priority or something else for better structure
     for (const slug of Object.keys(slugMap)) {
-        // We still need to know which ones are /line/ and which /p/
-        // For simplicity, let's say all new ones are /p/ and we track legacy separately if needed
-        // but the user wants everything in the new repo.
-        // I'll use a heuristic or just keep current separation logic if possible.
-        // Actually, let's just use /p/ for everything in the new sitemap to unify.
         sitemap += `  <url>\n    <loc>https://linespedia.com/p/${slug}/</loc>\n    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n    <priority>0.6</priority>\n  </url>\n`;
     }
     sitemap += '</urlset>';
     fs.writeFileSync(SITEMAP_FILE, sitemap);
-    console.log(`Sitemap saved to metadata/v1/sitemap-poems.xml`);
 
     console.log('DONE!');
 }

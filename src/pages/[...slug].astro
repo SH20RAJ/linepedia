@@ -5,9 +5,19 @@ import Footer from '../components/Footer.astro';
 import PoemCard from '../components/PoemCard.astro';
 import StructuredData from '../components/StructuredData.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
-import { Share2, Copy, Heart, BookOpen, Quote, ChevronRight, Bookmark, Download } from 'lucide-astro';
+import { Share2, Copy, Heart, BookOpen, Quote, ChevronRight, Bookmark, Download, Sparkles } from 'lucide-astro';
 
-import { fetchMetadata, getAllWriters, getAllCategories, getAllCollections, CDN_BASE, getPosterUrl } from '../lib/cdn';
+import { 
+    getPoem, 
+    getAllWriters, 
+    getAllCategories, 
+    getAllCollections, 
+    getPoemIdBySlug,
+    getWriterPoems,
+    getCategoryPoems,
+    getRelatedPoems,
+    getPosterUrl 
+} from '../lib/cdn';
 
 export const prerender = false;
 
@@ -20,27 +30,27 @@ async function getPageData(pathSlug: string | undefined) {
     try {
         if (!pathSlug) return null;
 
-        // Load metadata from CDN
         const writers = await getAllWriters();
         const categories = await getAllCategories();
         const collections = await getAllCollections();
-        const slugMap = await fetchMetadata('slug-map.json') as any;
 
         // 1. Line Page — /line/:slug/
         if (pathSlug.startsWith('line/')) {
             const lineSlug = pathSlug.replace('line/', '');
-            const id = slugMap[lineSlug];
+            const id = await getPoemIdBySlug(lineSlug);
             
             if (id) {
-                const poemRes = await fetch(`${CDN_BASE}/poems/v1/${id}.json`);
-                if (poemRes.ok) {
-                    const data = await poemRes.json();
+                const data = await getPoem(id);
+                if (data) {
+                    const writerSlug = typeof data.writer === 'string' ? slugify(data.writer) : '';
+                    const related = await getRelatedPoems(writerSlug, data.category || []);
+                    
                     return {
                         type: 'line',
                         data: data,
-                        writer: writers.find((w: any) => w.slug === data.writer),
+                        writer: writers.find((w: any) => w.slug === writerSlug),
                         allWriters: writers,
-                        poems: []
+                        poems: related.filter(p => p.slug !== data.slug)
                     };
                 }
             }
@@ -49,19 +59,24 @@ async function getPageData(pathSlug: string | undefined) {
         // 2. Writer Page
         const writer = writers.find((w: any) => w.slug === pathSlug);
         if (writer) {
-            return { type: 'writer', data: writer, poems: [], allWriters: writers };
+            const writerPoems = await getWriterPoems(writer.slug);
+            return { type: 'writer', data: writer, poems: writerPoems, allWriters: writers };
         }
 
         // 3. Category Page
         const category = categories.find((c: any) => c.slug === pathSlug);
         if (category) {
-            return { type: 'category', data: category, poems: [], allWriters: writers };
+            const categoryPoems = await getCategoryPoems(category.slug);
+            return { type: 'category', data: category, poems: categoryPoems, allWriters: writers };
         }
         
         // 4. Collection Page
         const collection = collections.find((c: any) => c.slug === pathSlug);
         if (collection) {
-            return { type: 'collection', data: collection, poems: [], allWriters: writers };
+            // collections usually map to categories or specific tags, for now we can fallback to category logic if needed
+            // but let's assume they are handled like categories
+            const collectionPoems = await getCategoryPoems(collection.slug);
+            return { type: 'collection', data: collection, poems: collectionPoems, allWriters: writers };
         }
 
         return null;
@@ -69,6 +84,10 @@ async function getPageData(pathSlug: string | undefined) {
         console.error("Error in getPageData:", e);
         throw e;
     }
+}
+
+function slugify(text: string) {
+    return text.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]+/g, '').replace(/--+/g, '-');
 }
 
 try {
@@ -130,13 +149,6 @@ function getDescription() {
 
     <Navbar />
     
-    {error && (
-        <div class="container mx-auto px-4 py-20 text-center">
-            <h1 class="text-4xl font-serif font-black text-primary mb-4">Rendering Error</h1>
-            <p class="text-red-500 bg-red-50 p-4 rounded-2xl inline-block border border-red-100">{error}</p>
-        </div>
-    )}
-
     <main class="min-h-screen poetic-gradient">
 
         {/* ========== LINE PAGE ========== */}
@@ -202,6 +214,21 @@ function getDescription() {
                         </div>
                     </div>
                 </article>
+
+                {/* Related Lines */}
+                {poems.length > 0 && (
+                    <div class="mt-24">
+                        <h3 class="text-2xl font-serif font-black text-primary mb-10 flex items-center space-x-4">
+                            <Sparkles class="text-accent" size={24} />
+                            <span>Related Poetic Lines</span>
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {poems.map((poem: any) => (
+                                <PoemCard id={poem.id} slug={poem.slug} content={poem.content} writer={poem.writer} writerName={poem.writer?.replace(/-/g, ' ')} />
+                            ))}
+                        </div>
+                    </div>
+                )}
                 
                 {/* Writer Profile */}
                 {writer && (
@@ -233,7 +260,7 @@ function getDescription() {
                         <p class="text-xl text-primary/60 max-w-2xl leading-relaxed">{data.bio}</p>
                         <div class="mt-8 flex space-x-12">
                             <div class="text-center">
-                                <span class="block text-3xl font-serif font-bold text-primary">{poems.length || data.stats?.poems || 0}</span>
+                                <span class="block text-3xl font-serif font-bold text-primary">{poems.length}</span>
                                 <span class="text-xs uppercase tracking-[0.2em] font-bold text-primary/40">Lines Published</span>
                             </div>
                         </div>
@@ -242,8 +269,8 @@ function getDescription() {
                 <div class="container mx-auto px-4 -mt-20">
                     {poems.length > 0 ? (
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-24">
-                            {poems.slice(0, 30).map((poem: any) => (
-                                <PoemCard id={poem.id} slug={poem.slug} content={poem.content?.slice(0, 200)} writer={poem.writer} writerName={data.name} />
+                            {poems.map((poem: any) => (
+                                <PoemCard id={poem.id} slug={poem.slug} content={poem.content} writer={poem.writer} writerName={data.name} />
                             ))}
                         </div>
                     ) : (
@@ -270,8 +297,8 @@ function getDescription() {
                 <div class="container mx-auto px-4 py-16">
                     {poems.length > 0 ? (
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-24">
-                            {poems.slice(0, 30).map((poem: any) => (
-                                <PoemCard id={poem.id} slug={poem.slug} content={poem.content?.slice(0, 200)} writer={poem.writer} writerName={allWriters?.find((w: any) => w.slug === poem.writer)?.name || poem.writer} />
+                            {poems.map((poem: any) => (
+                                <PoemCard id={poem.id} slug={poem.slug} content={poem.content} writer={poem.writer} writerName={poem.writer?.replace(/-/g, ' ')} />
                             ))}
                         </div>
                     ) : (
@@ -288,7 +315,6 @@ function getDescription() {
 
     <Footer />
 
-    {/* Floating Mobile Share Bar - only on line pages */}
     {!error && type === 'line' && (
         <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 md:hidden">
             <div class="bg-primary/90 backdrop-blur-xl text-white px-8 py-4 rounded-full shadow-2xl shadow-primary/40 flex items-center space-x-8">

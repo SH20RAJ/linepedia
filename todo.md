@@ -36,3 +36,14 @@ for fast cdn and free storage for this , this has a goos limit
 
 need not to use kv or any db , wish you can manage a lock file or log file for poems or data sets to show things on frontend and load data fast , after one fetch catch it heavily 
 
+---
+
+
+scrap rekha like = curl https://www.rekhta.org/PoetCollection?SEO_Slug=couplets&Id=c7a3450c-a91a-4799-aee4-6c2fb55d2f8d&lang=1&pageNumber=2&Info=sher&StartsWith=a&typeID=659186cb-44e7-4d94-8b1a-fc70f939a733&sort=popularity-desc&_=1774512005377
+https://www.rekhta.org/poets/jaun-eliya/couplets fetch all authours use curl see https://www.rekhta.org/poets and whole website create script to create a whole dataset and create separate route and save and show it there also add them to sitemap 
+
+---
+
+scrap whole https://www.talesofpanchatantra.com/ and create a json file with whole dataset 
+
+
