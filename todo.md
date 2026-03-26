@@ -51,7 +51,14 @@ indexnow not working
 
 https://captions.ai/blog/instagram-bio-ideas
 and other search kepwords which we can add on the website 
-related to ()
+related to ((🌐 Content Websites (Programmatic SEO)
+Shayari / Poems (you already did ✅)
+Quotes (motivational / love / startup / anime)
+Meanings / dictionary / slang / Gen-Z words
+Festival wishes / captions / bios
+AI prompts library
+Resume templates / SOP samples
+Interview questions bank))
 find articles on internet , scrap them on keywords , rewrite it and publish them
 
 200+ articles

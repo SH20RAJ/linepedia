@@ -59,7 +59,7 @@ async function scrapeStory(url) {
         // Clean content for HTML display (using dvAllLft inside dvContent)
         const storyTextEl = doc.querySelector('#dvAllLft.textNormal.textFormat');
         if (storyTextEl) {
-            storyTextEl.querySelectorAll('div, script, ins, .textBelowNormal').forEach(el => el.remove());
+            storyTextEl.querySelectorAll('div, script, ins, .textBelowNormal, table, .neoButton').forEach(el => el.remove());
         }
         
         let html = storyTextEl ? storyTextEl.innerHTML : '';

@@ -88,9 +88,8 @@ const breadcrumbs = [
                     )}
 
                     {/* Story Content */}
-                    <div class="prose prose-slate prose-lg md:prose-xl max-w-none text-slate-700 leading-relaxed font-serif space-y-6 first-letter:text-5xl first-letter:font-black first-letter:text-amber-600 first-letter:mr-3 first-letter:float-left">
-                         <div id="story-body" class="whitespace-pre-line story-text selection:bg-amber-100">
-                            {story.content}
+                    <div class="prose prose-slate prose-lg md:prose-xl max-w-none text-slate-700 leading-relaxed font-serif first-letter:text-5xl first-letter:font-black first-letter:text-amber-600 first-letter:mr-3 first-letter:float-left">
+                         <div id="story-body" class="story-text selection:bg-amber-100" set:html={story.html || story.content}>
                          </div>
                     </div>
 
