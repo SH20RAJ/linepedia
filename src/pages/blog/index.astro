@@ -3,6 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/Navbar.astro";
 import Footer from "../../components/Footer.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
+import Pagination from "../../components/Pagination.astro";
 import { getCollection } from "astro:content";
 
 const allPosts = (await getCollection("blog")).sort(
@@ -39,46 +40,78 @@ const breadcrumbs = [
         <h1 class="text-5xl md:text-7xl font-serif font-black text-primary mb-6">
           The <span class="text-accent">Poetic</span> Journal
         </h1>
-        <p class="text-xl text-primary/60 max-w-2xl mx-auto">
+        <p class="text-xl text-primary/60 max-w-2xl mx-auto mb-12">
           Insights, trends, and guides from the intersection of tradition and modern expression.
         </p>
+
+        <!-- Search Bar -->
+        <form action="/blog/" class="relative max-w-2xl mx-auto group">
+          <input 
+            type="text" 
+            name="q" 
+            placeholder="Search articles..." 
+            value={search}
+            class="w-full px-8 py-5 bg-white border-2 border-indigo-50 rounded-4xl text-lg focus:border-accent focus:outline-none transition-all shadow-xl shadow-indigo-100/20 group-hover:shadow-indigo-100/40"
+          />
+          <button type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-primary text-white rounded-2xl hover:bg-accent transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+        </form>
       </div>
     </div>
 
-    <div class="container mx-auto px-4 py-20">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-        {posts.map((post) => (
-          <article class="group">
-            <a href={`/blog/${post.id}/`} class="block mb-6 overflow-hidden rounded-3xl aspect-video bg-indigo-50">
-              <img 
-                src={post.data.heroImage} 
-                alt={post.data.title}
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+    <div class="container mx-auto px-4 py-20 max-w-6xl">
+      {filteredPosts.length === 0 ? (
+        <div class="text-center py-20 bg-indigo-50/30 rounded-[3rem] border border-dashed border-indigo-100">
+           <h3 class="text-2xl font-serif font-black text-primary/40">No articles found matching your search.</h3>
+           <a href="/blog/" class="text-accent font-bold mt-4 inline-block">Clear Search</a>
+        </div>
+      ) : (
+        <>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            {posts.map((post) => (
+              <article class="group">
+                <a href={`/blog/${post.id}/`} class="block mb-6 overflow-hidden rounded-4xl aspect-16/10 bg-indigo-50 shadow-lg shadow-indigo-100/20">
+                  <img 
+                    src={post.data.heroImage} 
+                    alt={post.data.title}
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
+                </a>
+                <div class="flex items-center space-x-4 mb-4">
+                  <span class="px-3 py-1 bg-accent/10 text-accent text-[10px] font-black uppercase tracking-widest rounded-full">
+                    {post.data.category.replace('_', ' ')}
+                  </span>
+                  <time class="text-xs text-primary/30 font-bold uppercase tracking-widest">
+                    {post.data.pubDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </time>
+                </div>
+                <h2 class="text-2xl font-serif font-black text-primary mb-4 group-hover:text-accent transition-colors leading-tight">
+                  <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                </h2>
+                <p class="text-primary/50 text-sm line-clamp-3 mb-6">
+                  {post.data.description}
+                </p>
+                <a href={`/blog/${post.id}/`} class="inline-flex items-center text-primary font-bold group/link text-sm">
+                  <span class="border-b-2 border-accent/30 group-hover/link:border-accent transition-all">Read Full Article</span>
+                </a>
+              </article>
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div class="mt-20">
+              <Pagination 
+                currentPage={currentPage} 
+                totalPages={totalPages} 
+                baseUrl="/blog/" 
               />
-            </a>
-            <div class="flex items-center space-x-4 mb-4">
-              <span class="px-3 py-1 bg-indigo-50 text-accent text-[10px] font-black uppercase tracking-widest rounded-full">
-                {post.data.category}
-              </span>
-              <time class="text-xs text-primary/40 font-bold uppercase tracking-widest">
-                {post.data.pubDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
-              </time>
             </div>
-            <h2 class="text-3xl font-serif font-black text-primary mb-4 group-hover:text-accent transition-colors">
-              <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-            </h2>
-            <p class="text-primary/60 line-clamp-2 mb-6">
-              {post.data.description}
-            </p>
-            <a href={`/blog/${post.id}/`} class="inline-flex items-center text-primary font-bold hover:text-accent transition-all group/link">
-              <span>Read Full Article</span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2 group-hover/link:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </a>
-          </article>
-        ))}
-      </div>
+          )}
+        </>
+      )}
     </div>
   </main>
   <Footer />

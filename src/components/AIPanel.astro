@@ -99,18 +99,25 @@ const { content, title, writer } = Astro.props;
     }
 
     try {
+      console.log("Puter AI Request:", prompt);
       const response = await puter.ai.chat(prompt, { stream: true });
       loader.classList.add('hidden');
       
+      if (!response || typeof response[Symbol.asyncIterator] !== 'function') {
+        console.warn("Streaming not supported or failed, trying non-streaming...");
+        const fallback = await puter.ai.chat(prompt);
+        aiText.innerHTML = (fallback?.text || "No response").replaceAll('\n', '<br>');
+        return;
+      }
+
       for await (const part of response) {
         if (part?.text) {
           aiText.innerHTML += part.text.replaceAll('\n', '<br>');
-          // Auto-scroll logic if needed
         }
       }
     } catch (e) {
-      console.error(e);
-      aiText.innerHTML = "Sorry, I couldn't generate an insight right now. Please try again.";
+      console.error("Puter AI Error:", e);
+      aiText.innerHTML = "Sorry, I couldn't generate an insight right now. Please try again later.";
       loader.classList.add('hidden');
     }
   }

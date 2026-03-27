@@ -33,6 +33,16 @@ const fullTitle = `${title} | ${siteName}`;
 		<meta name="google-adsense-account" content="ca-pub-1828915420581549">
 		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1828915420581549"
      crossorigin="anonymous"></script>
+	 
+		<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-9LWSBZ57GZ"></script>
+		<script is:inline>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+
+			gtag('config', 'G-9LWSBZ57GZ');
+		</script>
 
 		<!-- Primary Meta Tags -->
 		<title>{fullTitle}</title>
@@ -43,6 +53,7 @@ const fullTitle = `${title} | ${siteName}`;
 		<!-- Open Graph / Facebook -->
 		<meta property="og:type" content={type} />
 		<meta property="og:url" content={Astro.url.href} />
+		<meta property="og:site_name" content={siteName} />
 		<meta property="og:title" content={fullTitle} />
 		<meta property="og:description" content={description} />
 		<meta property="og:image" content={new URL(image, Astro.url)} />
@@ -53,6 +64,11 @@ const fullTitle = `${title} | ${siteName}`;
 		<meta property="twitter:title" content={fullTitle} />
 		<meta property="twitter:description" content={description} />
 		<meta property="twitter:image" content={new URL(image, Astro.url)} />
+		<meta name="twitter:site" content="@sh20raj" />
+
+		<!-- Verification Tags -->
+		<meta name="robots" content="index, follow" />
+		<meta name="theme-color" content="#4f46e5" />
 
 		<!-- Fonts -->
 		<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -61,6 +77,7 @@ const fullTitle = `${title} | ${siteName}`;
 		
 		<slot name="head" />
 		<script src="https://js.puter.com/v2/"></script>
+		
 	</head>
 	<body class="min-h-screen flex flex-col">
 		<slot />
