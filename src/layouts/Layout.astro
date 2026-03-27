@@ -80,23 +80,35 @@ const fullTitle = `${title} | ${siteName}`;
 		<script is:inline src="https://js.puter.com/v2/" defer></script>
 		
 		<script is:inline>
-			window.TallyConfig = {
-			  "formId": "0QLAzQ",
-			  "popup": {
-				"emoji": {
-				  "text": "👋",
-				  "animation": "wave"
-				},
-				"open": {
-				  "trigger": "scroll",
-				  "scrollPercent": 20
-				},
-				"doNotShowAfterSubmit": true,
-				"autoClose": 3000
+			(function() {
+			  if (typeof localStorage !== 'undefined' && !localStorage.getItem('tally-popup-seen')) {
+				window.TallyConfig = {
+				  "formId": "0QLAzQ",
+				  "popup": {
+					"emoji": {
+					  "text": "👋",
+					  "animation": "wave"
+					},
+					"open": {
+					  "trigger": "scroll",
+					  "scrollPercent": 20
+					},
+					"doNotShowAfterSubmit": true,
+					"autoClose": 3000
+				  }
+				};
+				
+				var script = document.createElement('script');
+				script.src = "https://tally.so/widgets/embed.js";
+				script.async = true;
+				document.head.appendChild(script);
+				
+				// Optional: Mark as seen immediately or upon first scroll
+				// Let's mark as seen immediately to satisfy "show it once per user"
+				localStorage.setItem('tally-popup-seen', 'true');
 			  }
-			};
+			})();
 		</script>
-		<script async src="https://tally.so/widgets/embed.js"></script>
 	</head>
 	<body class="min-h-screen flex flex-col">
 		<slot />

@@ -7,6 +7,7 @@ import Search from '../components/Search.astro';
 import { Quote, Search as SearchIcon, Filter, Sparkles } from 'lucide-astro';
 
 import Pagination from '../components/Pagination.astro';
+import { getAllWriters, getAllCategories, getFeaturedPoems } from '../lib/cdn';
 
 const writers = await getAllWriters();
 const categories = await getAllCategories();
