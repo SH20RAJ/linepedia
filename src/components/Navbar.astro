@@ -8,6 +8,20 @@ const navItems = [
   { name: 'Archive', href: '/ap/1/', icon: Layers },
   { name: 'Likes', href: '/likes/', icon: Heart },
 ];
+
+const languages = [
+  { code: 'en', name: 'English' },
+  { code: 'es', name: 'Español' },
+  { code: 'hi', name: 'हिन्दी' },
+  { code: 'fr', name: 'Français' },
+  { code: 'de', name: 'Deutsch' },
+  { code: 'ar', name: 'العربية' },
+  { code: 'zh', name: '中文' },
+  { code: 'ja', name: '日本語' },
+  { code: 'ru', name: 'Русский' },
+  { code: 'pt', name: 'Português' },
+  { code: 'it', name: 'Italiano' }
+];
 ---
 
 <header class="sticky top-0 z-50 bg-cream/80 backdrop-blur-md border-b border-indigo-100">
@@ -16,12 +30,23 @@ const navItems = [
       <span class="text-2xl font-serif font-black text-primary tracking-tight">Linespedia</span>
     </a>
 
-    <nav class="hidden md:flex items-center space-x-8">
-      {navItems.map(item => (
-        <a href={item.href} class="text-sm font-medium text-primary/70 hover:text-primary transition-colors">
-          {item.name}
-        </a>
-      ))}
+      <div class="relative group h-full flex items-center">
+        <button class="flex items-center space-x-1 text-sm font-medium text-primary/70 hover:text-primary transition-colors py-2 cursor-pointer">
+          <Compass size={16} />
+          <span>Language</span>
+        </button>
+        <div class="absolute top-full right-0 mt-1 w-48 bg-white/95 backdrop-blur-xl border border-indigo-100 rounded-2xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 p-2 grid grid-cols-1 gap-1">
+          {languages.map(lang => (
+            <button 
+              class="lang-select-btn px-4 py-2 text-left text-xs font-bold text-primary/70 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+              data-lang={lang.code}
+            >
+              {lang.name}
+            </button>
+          ))}
+        </div>
+      </div>
+      
       <a href="/submit/" class="px-4 py-2 bg-primary text-white text-sm font-medium rounded-full hover:bg-primary/90 transition-colors">
         Submit Line
       </a>
@@ -58,8 +83,23 @@ const navItems = [
 
 <script>
   const menuBtn = document.getElementById('mobile-menu-btn');
-  // Simple toggle logic for future expansion if needed
   menuBtn?.addEventListener('click', () => {
-    alert('Mobile menu clicked! (Placeholder for menu expansion)');
+    // Reveal a simple language picker on mobile
+    const langPicker = document.getElementById('mobile-lang-picker');
+    langPicker?.classList.toggle('hidden');
+  });
+
+  // Language Selection Logic
+  document.querySelectorAll('.lang-select-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = (btn as HTMLElement).dataset.lang;
+      const url = new URL(window.location.href);
+      if (lang === 'en') {
+        url.searchParams.delete('lang');
+      } else {
+        url.searchParams.set('lang', lang!);
+      }
+      window.location.href = url.toString();
+    });
   });
 </script>

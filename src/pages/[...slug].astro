@@ -198,7 +198,7 @@ if (pageData.redirect) return Astro.redirect(pageData.redirect, 301);
 const { type, data, writer, poems = [], allWriters = [] } = (pageData || {}) as any;
 const allCategories = await getAllCategories();
 
-const currentWriterSlug = writer?.slug?.replace('poet/', '') || (type === 'writer' ? data.slug : '');
+const currentWriterSlug = writer?.slug?.replace('poet/', '') || (type === 'writer' ? data.slug?.replace('poet/', '') : '');
 
 function getCategorySlug(catName: string) {
     const cat = allCategories.find((c: any) => c.name.toLowerCase() === catName.toLowerCase());
@@ -206,6 +206,8 @@ function getCategorySlug(catName: string) {
 }
 
 const breadcrumbs: any[] = [];
+const lang = Astro.url.searchParams.get('lang') || 'en';
+
 if (type === 'line' && data) {
     breadcrumbs.push({ name: 'Poetry', href: '/explore/' });
     if (writer) breadcrumbs.push({ name: writer.name, href: `/${writer.slug}/` });
@@ -241,6 +243,14 @@ const posterUrl = type === 'line' ? getPosterUrl(data.slug) : null;
 ---
 
 <Layout title={getCTRTitle()} description={getDescription()} type={type === 'line' ? 'article' : 'website'}>
+    <link slot="head" rel="alternate" hreflang="es" href={`${Astro.url.origin}${Astro.url.pathname}?lang=es`} />
+    <link slot="head" rel="alternate" hreflang="fr" href={`${Astro.url.origin}${Astro.url.pathname}?lang=fr`} />
+    <link slot="head" rel="alternate" hreflang="de" href={`${Astro.url.origin}${Astro.url.pathname}?lang=de`} />
+    <link slot="head" rel="alternate" hreflang="hi" href={`${Astro.url.origin}${Astro.url.pathname}?lang=hi`} />
+    <link slot="head" rel="alternate" hreflang="ar" href={`${Astro.url.origin}${Astro.url.pathname}?lang=ar`} />
+    <link slot="head" rel="alternate" hreflang="zh" href={`${Astro.url.origin}${Astro.url.pathname}?lang=zh`} />
+    <meta slot="head" name="lang-trigger" content={lang} />
+    
     {type === 'line' && (
         <StructuredData
             type="line"
@@ -294,12 +304,20 @@ const posterUrl = type === 'line' ? getPosterUrl(data.slug) : null;
 
                                 <AIPanel content={data.content} title={data.title} writer={writer?.name || data.writer} />
 
-                                <div class="mt-12 bg-indigo-50/40 backdrop-blur-md rounded-[2.5rem] p-8 md:p-12 border border-indigo-100/30">
+                                <div class="mt-12 bg-indigo-50/40 backdrop-blur-md rounded-[2.5rem] p-8 md:p-12 border border-indigo-100/30 relative">
+                                    <div id="translation-loader" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center rounded-[2.5rem] hidden">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                                            <div class="w-2 h-2 bg-primary rounded-full animate-bounce delay-75"></div>
+                                            <div class="w-2 h-2 bg-primary rounded-full animate-bounce delay-150"></div>
+                                            <span class="text-xs font-bold uppercase tracking-widest text-primary/40">Translating...</span>
+                                        </div>
+                                    </div>
                                     <h2 class="font-bold text-xs uppercase tracking-[0.3em] text-primary/40 mb-8 flex items-center space-x-3">
                                         <BookOpen size={18} />
                                         <span>Meaning & Context</span>
                                     </h2>
-                                    <div class="prose prose-indigo prose-lg text-primary/70 leading-relaxed space-y-6 max-w-none font-medium">
+                                    <div id="translated-content" class="prose prose-indigo prose-lg text-primary/70 leading-relaxed space-y-6 max-w-none font-medium">
                                         <p class="text-primary/80 italic">"{data.content?.split('\n')[0]}..."</p>
                                         <p>{data.meaning || `This powerful line by ${writer?.name || 'the poet'} explores the delicate balance of emotion and expression. It serves as a testament to the enduring power of verse.`}</p>
                                     </div>
@@ -477,7 +495,7 @@ const posterUrl = type === 'line' ? getPosterUrl(data.slug) : null;
                         {poems.map((poem: any) => (
                             <PoemCard 
                                 id={poem.id} 
-                                slug={poem.id.startsWith('ap-') ? `ap/${poem.writerSlug || data.slug}/${poem.slug}` : poem.slug} 
+                                slug={poem.id.startsWith('ap-') ? `ap/${poem.writerSlug || currentWriterSlug}/${poem.slug}` : poem.slug} 
                                 content={poem.content || `Discover the soul-stirring poetry and profound lines of ${type === 'writer' ? data.name : (poem.writerName || poem.writer)}. A featured work from our extended library.`} 
                                 writer={poem.id.startsWith('ap-') ? `poet/${poem.writerSlug || data.slug}` : poem.writer} 
                                 writerName={type === 'writer' ? data.name : (poem.writerName || poem.writer?.replace(/-/g, ' '))} 
@@ -526,6 +544,48 @@ const posterUrl = type === 'line' ? getPosterUrl(data.slug) : null;
     copyBtn?.addEventListener('click', () => doCopy(copyBtn));
     whatsappBtn?.addEventListener('click', doWhatsApp);
     pinBtn?.addEventListener('click', doPin);
+
+    // Auto-translation logic
+    async function triggerAutoTranslation() {
+        const langCode = document.querySelector('meta[name="lang-trigger"]')?.getAttribute('content');
+        if (!langCode || langCode === 'en') return;
+
+        const loader = document.getElementById('translation-loader');
+        const contentContainer = document.getElementById('translated-content');
+        const mainQuote = document.querySelector('blockquote p');
+
+        if (!loader || !contentContainer || !mainQuote) return;
+
+        loader.classList.remove('hidden');
+
+        try {
+            const { translateContent } = await import('../lib/translate');
+            
+            // Translate the main poem content
+            const translatedPoem = await translateContent(mainQuote.textContent, langCode);
+            if (translatedPoem) mainQuote.textContent = translatedPoem;
+
+            // Translate the meaning/context
+            const paragraphs = contentContainer.querySelectorAll('p');
+            for (const p of paragraphs) {
+                const translated = await translateContent(p.textContent, langCode);
+                if (translated) p.textContent = translated;
+            }
+
+            // Update Page Title
+            const translatedTitle = await translateContent(document.title.split('|')[0], langCode);
+            if (translatedTitle) document.title = `${translatedTitle} | Linespedia`;
+
+        } catch (e) {
+            console.error("Translation Auto-Trigger Error:", e);
+        } finally {
+            loader.classList.add('hidden');
+        }
+    }
+
+    if (window.location.search.includes('lang=')) {
+        triggerAutoTranslation();
+    }
 </script>
 
 <style>
