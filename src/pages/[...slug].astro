@@ -127,6 +127,12 @@ pageData = await getPageData(slug);
 if (!pageData) return Astro.redirect('/404');
 
 const { type, data, writer, poems = [], allWriters = [] } = (pageData || {}) as any;
+const allCategories = await getAllCategories();
+
+function getCategorySlug(catName: string) {
+    const cat = allCategories.find((c: any) => c.name.toLowerCase() === catName.toLowerCase());
+    return cat ? cat.slug : slugify(catName);
+}
 
 const breadcrumbs: any[] = [];
 if (type === 'line' && data) {
@@ -238,13 +244,15 @@ const posterUrl = type === 'line' ? getPosterUrl(data.slug) : null;
                             </h3>
                             <div class="flex flex-wrap gap-3">
                                 {data.category?.map((cat: string) => (
-                                    <a href={`/${slugify(cat)}/`} class="px-5 py-2 bg-white border border-indigo-100 rounded-full text-xs font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
+                                    <a href={`/${getCategorySlug(cat)}/`} class="px-5 py-2 bg-white border border-indigo-100 rounded-full text-xs font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
                                         #{cat.toLowerCase()}
                                     </a>
                                 ))}
-                                <a href={`/${writer?.slug}/`} class="px-5 py-2 bg-indigo-50 border border-indigo-100 rounded-full text-xs font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
-                                    #{writer?.name?.toLowerCase().replace(/\s+/g, '')}
-                                </a>
+                                {writer && (
+                                    <a href={`/${writer.slug}/`} class="px-5 py-2 bg-indigo-50 border border-indigo-100 rounded-full text-xs font-bold text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
+                                        #{writer.name?.toLowerCase().replace(/\s+/g, '')}
+                                    </a>
+                                )}
                             </div>
                         </div>
 
