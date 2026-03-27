@@ -71,6 +71,26 @@ async function getPageData(pathSlug: string | undefined) {
 
         // 1. Line Page
         if (pathSlug.startsWith('line/')) {
+            // AllPoetry special route: line/ap/writer-slug/poem-slug
+            if (pathSlug.startsWith('line/ap/')) {
+                const parts = pathSlug.replace('line/ap/', '').split('/');
+                const writerSlug = parts[0];
+                const poemSlug = parts[parts.length - 1]; // Handle potential trailing slashes
+                
+                const { getAllPoetryPoem } = await import('../lib/cdn');
+                const data = await getAllPoetryPoem(writerSlug, poemSlug);
+                
+                if (data) {
+                    return {
+                        type: 'line',
+                        data: data,
+                        writer: { name: data.writer, slug: writerSlug, photo: 'https://cdn.jsdelivr.net/gh/BluredCodes/linespedia-data@main/metadata/v1/writers/photos/default.png' },
+                        allWriters: writers,
+                        poems: [] // Could add related AllPoetry poems later
+                    };
+                }
+            }
+
             let lineSlug = pathSlug.replace('line/', '');
             
             // Remove trailing slash for lookup if any

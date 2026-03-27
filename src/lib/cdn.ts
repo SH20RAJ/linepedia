@@ -99,3 +99,37 @@ export const getPanchatantraStories = async () => {
     return [];
   }
 };
+// AllPoetry Resolver
+export const getAllPoetryPoem = async (writerSlug: string, poemSlug: string): Promise<Poem | null> => {
+  try {
+    const res = await fetch(`${CDN_BASE}/allpoetry/${writerSlug}/${poemSlug}.md`);
+    if (!res.ok) return null;
+    const text = await res.text();
+    
+    // Simple frontmatter parser
+    const fmMatch = text.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+    if (!fmMatch) return null;
+    
+    const fmContent = fmMatch[1];
+    const content = fmMatch[2].trim();
+    
+    const fm: any = {};
+    fmContent.split('\n').forEach(line => {
+      const [key, ...val] = line.split(':');
+      if (key && val) fm[key.trim()] = val.join(':').trim().replace(/^"(.*)"$/, '$1');
+    });
+
+    return {
+      id: `ap-${writerSlug}-${poemSlug}`,
+      slug: poemSlug,
+      title: fm.title || 'Untitled',
+      writer: fm.writer || writerSlug,
+      content: content,
+      category: fm.category ? fm.category.split(',').map((c: string) => c.trim()) : ['Poetry'],
+      meaning: fm.meaning || '',
+      meta: { source: 'AllPoetry', url: fm.url }
+    };
+  } catch (e) {
+    return null;
+  }
+};
