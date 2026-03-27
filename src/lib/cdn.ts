@@ -145,7 +145,12 @@ export const getAllPoetryWriters = async () => {
       const slug = m.writerSlug || m.writer?.toLowerCase().replace(/\s+/g, '-');
       if (slug) writersMap[slug] = m.writer;
     });
-    return Object.entries(writersMap).map(([slug, name]) => ({ slug, name }));
+    return Object.entries(writersMap).map(([slug, name]) => ({ 
+      slug, 
+      name,
+      photo: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff&size=128`,
+      bio: `Explore the profound poetry and moving lines of ${name}. This collection features a curated selection of their work from our extended library.`
+    }));
   } catch (e) {
     return [];
   }
@@ -161,6 +166,7 @@ export const getPoetryWriterPoems = async (writerSlug: string) => {
       .map((m: any) => ({
         ...m,
         id: `ap-${writerSlug}-${m.slug}`,
+        writerSlug: writerSlug,
         url: `/line/ap/${writerSlug}/${m.slug}/`
       }));
   } catch (e) {

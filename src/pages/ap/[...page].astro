@@ -1,0 +1,129 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import PoemCard from '../../components/PoemCard.astro';
+import { Sparkles, ChevronLeft, ChevronRight, PenTool } from 'lucide-astro';
+import { getAllPoetryWriters, getAllPoetryWriters as getWriters } from '../../lib/cdn';
+
+export async function getStaticPaths({ paginate }) {
+  const CDN_BASE = 'https://cdn.jsdelivr.net/gh/BluredCodes/linespedia-data@main';
+  const res = await fetch(`${CDN_BASE}/automation/all-poems-metadata.json`);
+  if (!res.ok) return paginate([], { pageSize: 12 });
+  
+  const metadata = await res.json();
+  
+  // Sort by most recent (assuming last in list is newest)
+  const sortedMetadata = [...metadata].reverse().map(m => ({
+    ...m,
+    id: `ap-${m.writerSlug || m.writer?.toLowerCase().replace(/\s+/g, '-')}-${m.slug}`,
+    // Ensure writerSlug is there
+    writerSlug: m.writerSlug || m.writer?.toLowerCase().replace(/\s+/g, '-')
+  }));
+
+  return paginate(sortedMetadata, { pageSize: 12 });
+}
+
+const { page } = Astro.props;
+const poetryWriters = await getAllPoetryWriters();
+const randomWriters = poetryWriters.sort(() => 0.5 - Math.random()).slice(0, 10);
+
+---
+
+<Layout 
+  title={`Extended Poetry Library — Page ${page.currentPage} | Linespedia`}
+  description="Explore millions of poems from our extended library. Discover new poets, timeless lines, and soul-stirring verses from around the world."
+>
+  <Navbar />
+  
+  <main class="min-h-screen bg-[#fdfcf7]">
+    {/* Hero Section */}
+    <section class="pt-24 pb-16 bg-gradient-to-b from-indigo-50/50 to-transparent">
+      <div class="container mx-auto px-4 text-center max-w-4xl">
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-100/50 border border-indigo-200 rounded-full text-xs font-black text-indigo-600 uppercase tracking-widest mb-6 animate-in fade-in slide-in-from-top-4 duration-700">
+           <Sparkles size={14} />
+           <span>Discover Millions</span>
+        </div>
+        <h1 class="text-4xl md:text-7xl font-serif font-black text-primary mb-6">Extended Library</h1>
+        <p class="text-lg md:text-xl text-primary/60 leading-relaxed max-w-2xl mx-auto">
+          Explore a vast ocean of poetry from our global collection. Thousands of poets, millions of lines, one simple archive.
+        </p>
+      </div>
+    </section>
+
+    {/* Quick Writer Filter */}
+    <section class="pb-12 border-b border-indigo-50/50">
+      <div class="container mx-auto px-4 overflow-x-auto whitespace-nowrap scrollbar-hide flex gap-3 pb-4">
+        {randomWriters.map(writer => (
+          <a href={`/poet/${writer.slug}/`} class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-indigo-100 rounded-full text-xs font-bold text-primary hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
+            <PenTool size={14} />
+            <span>{writer.name}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    {/* Content Grid */}
+    <section class="py-16">
+      <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between mb-10">
+           <h2 class="text-xs font-black text-primary/30 uppercase tracking-[0.2em]">Latest Additions</h2>
+           <div class="text-[10px] font-bold text-primary/40 uppercase tracking-widest">
+              Showing {page.start + 1}-{page.end + 1} of {page.total}
+           </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {page.data.map((poem: any) => (
+            <PoemCard 
+              id={poem.id}
+              slug={`ap/${poem.writerSlug}/${poem.slug}`}
+              content={poem.content || `Discover the soul-stirring poetry of ${poem.writer}. A featured work from our extended library.`}
+              writer={`poet/${poem.writerSlug}`}
+              writerName={poem.writer}
+            />
+          ))}
+        </div>
+
+        {/* Pagination Interface */}
+        <div class="mt-20 flex items-center justify-center gap-4">
+          {page.url.prev ? (
+            <a href={page.url.prev} class="p-4 bg-white border border-indigo-100 rounded-2xl text-primary hover:bg-indigo-50 transition-all shadow-sm">
+              <ChevronLeft size={24} />
+            </a>
+          ) : (
+            <div class="p-4 bg-indigo-50/50 border border-indigo-50 rounded-2xl text-primary/20 cursor-not-allowed">
+               <ChevronLeft size={24} />
+            </div>
+          )}
+          
+          <div class="px-8 py-4 bg-white border border-indigo-100 rounded-2xl font-serif font-black text-primary shadow-sm">
+             Page {page.currentPage} <span class="text-primary/20 mx-2">/</span> {page.lastPage}
+          </div>
+
+          {page.url.next ? (
+            <a href={page.url.next} class="p-4 bg-white border border-indigo-100 rounded-2xl text-primary hover:bg-indigo-50 transition-all shadow-sm">
+              <ChevronRight size={24} />
+            </a>
+          ) : (
+            <div class="p-4 bg-indigo-50/50 border border-indigo-50 rounded-2xl text-primary/20 cursor-not-allowed">
+               <ChevronRight size={24} />
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>

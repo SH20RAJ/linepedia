@@ -12,4 +12,7 @@
   <sitemap>
     <loc>https://linespedia.com/sitemap-seo.xml</loc>
   </sitemap>
+  <sitemap>
+    <loc>https://linespedia.com/sitemap-allpoetry.xml</loc>
+  </sitemap>
 </sitemapindex>

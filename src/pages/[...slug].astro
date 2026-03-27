@@ -88,7 +88,8 @@ async function getPageData(pathSlug: string | undefined) {
                         writer: { 
                             name: data.writer, 
                             slug: `poet/${writerSlug}`, 
-                            photo: 'https://cdn.jsdelivr.net/gh/BluredCodes/linespedia-data@main/metadata/v1/writers/photos/default.png' 
+                            photo: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.writer)}&background=6366f1&color=fff&size=128`,
+                            bio: `Explore the profound poetry and moving lines of ${data.writer}. This collection features a curated selection of their work from our extended library.`
                         },
                         allWriters: writers,
                         poems: authorPoems.filter((p: any) => p.slug !== poemSlug).slice(0, 6)
@@ -196,6 +197,8 @@ if (pageData.redirect) return Astro.redirect(pageData.redirect, 301);
 
 const { type, data, writer, poems = [], allWriters = [] } = (pageData || {}) as any;
 const allCategories = await getAllCategories();
+
+const currentWriterSlug = writer?.slug?.replace('poet/', '') || (type === 'writer' ? data.slug : '');
 
 function getCategorySlug(catName: string) {
     const cat = allCategories.find((c: any) => c.name.toLowerCase() === catName.toLowerCase());
@@ -373,7 +376,7 @@ const posterUrl = type === 'line' ? getPosterUrl(data.slug) : null;
                             </h3>
                             <div class="space-y-6">
                                 {poems.slice(0, 5).map((poem: any) => (
-                                    <a href={poem.id?.startsWith('ap-') ? `/line/ap/${poem.writerSlug}/${poem.slug}/` : `/line/${poem.slug}/`} class="group block py-4 border-b border-indigo-50 last:border-0">
+                                    <a href={poem.id?.startsWith('ap-') ? `/line/ap/${poem.writerSlug || currentWriterSlug}/${poem.slug}/` : `/line/${poem.slug}/`} class="group block py-4 border-b border-indigo-50 last:border-0">
                                         <p class="text-sm font-medium text-primary/80 line-clamp-2 group-hover:text-indigo-600 transition-colors mb-2 italic">
                                             "{poem.content || `Discover this poetic masterpiece by ${poem.writerName || poem.writer?.replace(/-/g, ' ')}...`}"
                                         </p>
@@ -474,9 +477,9 @@ const posterUrl = type === 'line' ? getPosterUrl(data.slug) : null;
                         {poems.map((poem: any) => (
                             <PoemCard 
                                 id={poem.id} 
-                                slug={poem.id.startsWith('ap-') ? `ap/${poem.writerSlug}/${poem.slug}` : poem.slug} 
+                                slug={poem.id.startsWith('ap-') ? `ap/${poem.writerSlug || data.slug}/${poem.slug}` : poem.slug} 
                                 content={poem.content || `Discover the soul-stirring poetry and profound lines of ${type === 'writer' ? data.name : (poem.writerName || poem.writer)}. A featured work from our extended library.`} 
-                                writer={poem.id.startsWith('ap-') ? `poet/${poem.writerSlug}` : poem.writer} 
+                                writer={poem.id.startsWith('ap-') ? `poet/${poem.writerSlug || data.slug}` : poem.writer} 
                                 writerName={type === 'writer' ? data.name : (poem.writerName || poem.writer?.replace(/-/g, ' '))} 
                             />
                         ))}
