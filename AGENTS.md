@@ -28,8 +28,10 @@ To prevent sitemap size limit issues and ensure rapid indexing:
 - **Total URLs**: This system handles roughly 150k - 200k unique poetry entries.
 
 ### 3. Search Engine Submission
-Use `scripts/submit-indexnow.js` to notify search engines of updates.
-- **TLS Bypass**: The script includes `NODE_TLS_REJECT_UNAUTHORIZED='0'` to bypass common local certificate issues during automated runs.
+We use a **Codebase-Driven Submission** strategy via `scripts/submit-indexnow.js`.
+- **Logic**: Instead of crawling site-generated maps, the script harvests URLs directly from `src/data/` and `linespedia-data/`.
+- **Scaling**: It automatically generates localized URLs (11 languages) for all writers, categories, and poems, reaching ~2 million indexable URLs.
+- **TLS Bypass**: The script includes `tls: { rejectUnauthorized: false }` to bypass common local certificate issues during automated runs.
 
 ## 📂 Data Management
 
@@ -39,6 +41,7 @@ All poetry metadata and writer profiles are decoupled from the main app.
 
 ## 🧠 AI Integration
 
+- **SSR-Safe Wrapper**: `src/lib/puter.ts` provides a safety layer for the Puter SDK, ensuring the build doesn't crash during SSR evaluation while maintaining full functionality in the browser.
 - **Puter Insight**: Managed by `src/components/AIPanel.astro`. It supports stateful, streaming chat messages between users and the AI about specific poems.
 - **Translation**: `src/lib/translate.ts` encapsulates the prompting logic used for on-the-fly localization.
 

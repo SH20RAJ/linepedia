@@ -1,65 +1,82 @@
+import fs from 'fs';
+import path from 'path';
+
 const INDEXNOW_KEY = '2f3a29d127b84110a911375a73d97702';
 const HOST = 'linespedia.com';
-const SITEMAP_URLS = [
-    'https://linespedia.com/sitemap-seo.xml',
-    'https://linespedia.com/sitemap-stories.xml',
-    'https://linespedia.com/sitemap-allpoetry.xml',
-    'https://linespedia.com/sitemap-index.xml'
-];
+const PROTOCOL = 'https://';
+const LANGUAGES = ['en', 'es', 'fr', 'de', 'hi', 'ar', 'zh', 'ja', 'ru', 'pt', 'it'];
 
 async function submitToIndexNow() {
-    console.log('🚀 Starting IndexNow submission...');
+    console.log('🚀 Starting Codebase-Driven IndexNow submission...');
     
     const urls = new Set();
-    const urlRegex = /<loc>(https:\/\/linespedia.com\/[^<]+)<\/loc>/g;
+    const addUrl = (path) => {
+        const fullPath = path.startsWith('/') ? path : `/${path}`;
+        LANGUAGES.forEach(lang => {
+            const langParam = lang === 'en' ? '' : `?lang=${lang}`;
+            urls.add(`${PROTOCOL}${HOST}${fullPath}${langParam}`);
+        });
+    };
 
-    for (const sitemapUrl of SITEMAP_URLS) {
-        try {
-            console.log(`Processing sitemap: ${sitemapUrl}`);
-            const res = await fetch(sitemapUrl, {
-                // @ts-ignore - Bun/Node specific TLS bypass for local/intermediate cert issues
-                tls: { rejectUnauthorized: false },
-                // Node specific
-                agent: new (await import('https')).Agent({ rejectUnauthorized: false })
+    try {
+        // 1. Static & Core Pages
+        ['/', '/explore/', '/writers/', '/categories/', '/collections/', '/ap/1/'].forEach(addUrl);
+
+        // 2. Local Metadata (Writers, Categories, Collections)
+        const writers = JSON.parse(fs.readFileSync('src/data/writers.json', 'utf8'));
+        writers.forEach(w => addUrl(w.slug));
+
+        const categories = JSON.parse(fs.readFileSync('src/data/categories.json', 'utf8'));
+        categories.forEach(c => addUrl(c.slug));
+
+        const collections = JSON.parse(fs.readFileSync('src/data/collections.json', 'utf8'));
+        collections.forEach(c => addUrl(c.slug));
+
+        // 3. AllPoetry Metadata Expansion (~200k poems)
+        const allPoetryPath = 'linespedia-data/automation/all-poems-metadata.json';
+        if (fs.existsSync(allPoetryPath)) {
+            console.log('📦 Processing AllPoetry Metadata...');
+            const allPoetry = JSON.parse(fs.readFileSync(allPoetryPath, 'utf8'));
+            const uniquePoets = new Set();
+
+            allPoetry.forEach(poem => {
+                // Poet Page
+                if (poem.writerSlug) {
+                    uniquePoets.add(poem.writerSlug);
+                }
+                // Poem Page
+                if (poem.writerSlug && poem.slug) {
+                    addUrl(`line/ap/${poem.writerSlug}/${poem.slug}`);
+                }
             });
-            if (!res.ok) {
-                console.warn(`Failed to fetch sitemap: ${sitemapUrl} (${res.status})`);
-                continue;
-            }
-            const sitemapContent = await res.text();
-            let match;
-            while ((match = urlRegex.exec(sitemapContent)) !== null) {
-                urls.add(match[1]);
-            }
-        } catch (e) {
-            console.error(`Error processing ${sitemapUrl}:`, e.message);
+
+            // Add all unique AllPoetry poets
+            uniquePoets.forEach(slug => addUrl(`poet/${slug}`));
+            console.log(`✅ AllPoetry processing complete. Poets: ${uniquePoets.size}, Poems: ${allPoetry.length}`);
         }
+
+    } catch (e) {
+        console.error('❌ Error harvesting URLs from codebase:', e.message);
     }
 
-    // Add main pages
-    urls.add(`https://${HOST}/`);
-    urls.add(`https://${HOST}/explore/`);
-    urls.add(`https://${HOST}/writers/`);
-    urls.add(`https://${HOST}/categories/`);
-    urls.add(`https://${HOST}/collections/`);
-
     const urlList = Array.from(urls);
-    console.log(`Found ${urlList.length} total URLs to submit.`);
+    console.log(`📊 Total localized URLs harvested: ${urlList.length}`);
 
     if (urlList.length === 0) {
         console.error('No URLs found to submit!');
         return;
     }
 
+    // IndexNow Batch Submission
     const BATCH_SIZE = 9000;
     for (let i = 0; i < urlList.length; i += BATCH_SIZE) {
         const batch = urlList.slice(i, i + BATCH_SIZE);
-        console.log(`Submitting batch ${Math.floor(i / BATCH_SIZE) + 1} (${batch.length} URLs)...`);
+        console.log(`📤 Submitting batch ${Math.floor(i / BATCH_SIZE) + 1} of ${Math.ceil(urlList.length / BATCH_SIZE)} (${batch.length} URLs)...`);
 
         const body = {
             host: HOST,
             key: INDEXNOW_KEY,
-            keyLocation: `https://${HOST}/${INDEXNOW_KEY}.txt`,
+            keyLocation: `${PROTOCOL}${HOST}/${INDEXNOW_KEY}.txt`,
             urlList: batch
         };
 
@@ -71,9 +88,10 @@ async function submitToIndexNow() {
             });
 
             if (response.ok) {
-                console.log(`✅ Batch ${Math.floor(i / BATCH_SIZE) + 1} submitted successfully (Status: ${response.status})`);
+                console.log(`✅ Batch ${Math.floor(i / BATCH_SIZE) + 1} success (${response.status})`);
             } else {
-                console.error(`❌ Error submitting batch ${Math.floor(i / BATCH_SIZE) + 1}: ${response.status} ${response.statusText}`);
+                console.error(`❌ Batch ${Math.floor(i / BATCH_SIZE) + 1} error: ${response.status}`);
+                // Break or continue? Continue for now as per "run it once" to get as much as possible out
             }
         } catch (error) {
             console.error(`Fetch error for batch ${Math.floor(i / BATCH_SIZE) + 1}:`, error.message);
@@ -84,8 +102,8 @@ async function submitToIndexNow() {
     return urlList.length;
 }
 
-// Allow importing or direct execution
-if (process.argv[1]?.endsWith('submit-indexnow.js')) {
+// Direct execution
+if (process.argv[1]?.includes('submit-indexnow.js')) {
     submitToIndexNow();
 }
 
