@@ -79,6 +79,24 @@ const fullTitle = `${title} | ${siteName}`;
 		<slot name="head" />
 		<script is:inline src="https://js.puter.com/v2/" defer></script>
 		
+		<script is:inline>
+			window.TallyConfig = {
+			  "formId": "0QLAzQ",
+			  "popup": {
+				"emoji": {
+				  "text": "👋",
+				  "animation": "wave"
+				},
+				"open": {
+				  "trigger": "scroll",
+				  "scrollPercent": 20
+				},
+				"doNotShowAfterSubmit": true,
+				"autoClose": 3000
+			  }
+			};
+		</script>
+		<script async src="https://tally.so/widgets/embed.js"></script>
 	</head>
 	<body class="min-h-screen flex flex-col">
 		<slot />
