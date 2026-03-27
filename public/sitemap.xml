@@ -9,4 +9,7 @@
   <sitemap>
     <loc>https://linespedia.com/sitemap-stories.xml</loc>
   </sitemap>
+  <sitemap>
+    <loc>https://linespedia.com/sitemap-seo.xml</loc>
+  </sitemap>
 </sitemapindex>

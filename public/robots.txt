@@ -11,3 +11,4 @@ Disallow: /_astro/
 
 Sitemap: https://linespedia.com/sitemap.xml
 Sitemap: https://linespedia.com/sitemap-poems.xml
+Sitemap: https://linespedia.com/sitemap-seo.xml

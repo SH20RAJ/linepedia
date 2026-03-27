@@ -3,36 +3,44 @@ import path from 'path';
 
 const INDEXNOW_KEY = '2f3a29d127b84110a911375a73d97702';
 const HOST = 'linespedia.com';
-const SITEMAP_FILE = './public/sitemap-poems.xml';
+const SITEMAP_FILES = [
+    './public/sitemap-poems.xml',
+    './public/sitemap.xml'
+];
 
 async function submitToIndexNow() {
     console.log('🚀 Starting IndexNow submission...');
     
-    if (!fs.existsSync(SITEMAP_FILE)) {
-        console.error('Sitemap not found!');
+    const existingSitemaps = SITEMAP_FILES.filter((file) => fs.existsSync(file));
+    if (existingSitemaps.length === 0) {
+        console.error('No sitemap files found!');
         return;
     }
 
-    const sitemapContent = fs.readFileSync(SITEMAP_FILE, 'utf-8');
-    const urls = [];
+    const urls = new Set();
     const urlRegex = /<loc>(https:\/\/linespedia.com\/[^<]+)<\/loc>/g;
-    let match;
-    while ((match = urlRegex.exec(sitemapContent)) !== null) {
-        urls.push(match[1]);
+
+    for (const sitemapFile of existingSitemaps) {
+        const sitemapContent = fs.readFileSync(sitemapFile, 'utf-8');
+        let match;
+        while ((match = urlRegex.exec(sitemapContent)) !== null) {
+            urls.add(match[1]);
+        }
     }
 
     // Add main pages
-    urls.push(`https://${HOST}/`);
-    urls.push(`https://${HOST}/explore/`);
-    urls.push(`https://${HOST}/writers/`);
-    urls.push(`https://${HOST}/categories/`);
-    urls.push(`https://${HOST}/collections/`);
+    urls.add(`https://${HOST}/`);
+    urls.add(`https://${HOST}/explore/`);
+    urls.add(`https://${HOST}/writers/`);
+    urls.add(`https://${HOST}/categories/`);
+    urls.add(`https://${HOST}/collections/`);
 
-    console.log(`Found ${urls.length} URLs to submit.`);
+    const urlList = Array.from(urls);
+    console.log(`Found ${urlList.length} URLs to submit.`);
 
     const BATCH_SIZE = 9000; // IndexNow limit is typically around 10k
-    for (let i = 0; i < urls.length; i += BATCH_SIZE) {
-        const batch = urls.slice(i, i + BATCH_SIZE);
+    for (let i = 0; i < urlList.length; i += BATCH_SIZE) {
+        const batch = urlList.slice(i, i + BATCH_SIZE);
         console.log(`Submitting batch ${Math.floor(i / BATCH_SIZE) + 1}...`);
 
         const body = {

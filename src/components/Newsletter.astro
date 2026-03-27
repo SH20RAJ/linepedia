@@ -1,0 +1,85 @@
+---
+import { Mail, Sparkles } from 'lucide-astro';
+---
+
+<section class="py-24 relative overflow-hidden">
+    <div class="container mx-auto px-4 max-w-5xl">
+        <div class="bg-indigo-900 rounded-[3.5rem] p-12 md:p-20 relative overflow-hidden shadow-2xl group border border-white/10">
+            {/* Animated Background Elements */}
+            <div class="absolute top-0 right-0 w-96 h-96 bg-accent/20 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/4 animate-pulse"></div>
+            <div class="absolute bottom-0 left-0 w-96 h-96 bg-primary/30 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/4"></div>
+
+            <div class="relative z-10 text-center space-y-8">
+                <div class="inline-flex items-center space-x-3 px-6 py-3 bg-white/10 rounded-full border border-white/5 backdrop-blur-md">
+                    <Sparkles class="text-accent" size={20} />
+                    <span class="text-white font-bold text-xs uppercase tracking-[0.3em]">Weekly Poetic Insight</span>
+                </div>
+
+                <h2 class="text-4xl md:text-6xl font-serif font-black text-white leading-tight">
+                    Join our literary <span class="text-accent underline decoration-white/20 underline-offset-8 italic">Sanctuary</span>
+                </h2>
+
+                <p class="text-white/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+                    Get the most inspiring lines, poetic analysis, and secret shayaris delivered to your inbox every Sunday.
+                </p>
+
+                <form id="newsletter-form" class="mt-12 max-w-lg mx-auto relative group/form">
+                    <div class="relative">
+                        <input 
+                            type="email" 
+                            name="email" 
+                            required 
+                            placeholder="your-email@example.com"
+                            class="w-full px-8 py-6 bg-white/10 border border-white/20 rounded-full text-white placeholder:text-white/30 focus:bg-white/15 focus:outline-none focus:border-accent transition-all text-lg shadow-inner"
+                        />
+                        <button 
+                            type="submit" 
+                            class="absolute right-2 top-2 bottom-2 bg-white text-indigo-900 px-8 rounded-full font-black text-sm uppercase tracking-widest hover:bg-accent hover:text-white transition-all active:scale-95 shadow-lg shadow-indigo-900/20"
+                        >
+                            Join Now
+                        </button>
+                    </div>
+                    <p id="status-msg" class="mt-4 text-sm font-bold opacity-0 transition-opacity duration-300"></p>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    const form = document.getElementById('newsletter-form') as HTMLFormElement;
+    const statusMsg = document.getElementById('status-msg');
+
+    form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+        
+        if (statusMsg) {
+            statusMsg.textContent = 'Enrolling...';
+            statusMsg.className = 'mt-4 text-sm font-bold text-white/60 opacity-100';
+        }
+
+        try {
+            const res = await fetch('/api/subscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+
+            if (res.ok) {
+                if (statusMsg) {
+                    statusMsg.textContent = 'Welcome to the Sanctuary! 🥀 Check your inbox.';
+                    statusMsg.className = 'mt-4 text-sm font-bold text-accent opacity-100';
+                }
+                form.reset();
+            } else {
+                throw new Error('Failed to subscribe');
+            }
+        } catch (e) {
+            if (statusMsg) {
+                statusMsg.textContent = 'Something went wrong. Please try again.';
+                statusMsg.className = 'mt-4 text-sm font-bold text-red-400 opacity-100';
+            }
+        }
+    });
+</script>
