@@ -77,20 +77,21 @@ async function getPageData(pathSlug: string | undefined) {
                 const writerSlug = parts[0];
                 const poemSlug = parts[parts.length - 1]; // Handle potential trailing slashes
                 
-                const { getAllPoetryPoem } = await import('../lib/cdn');
+                const { getAllPoetryPoem, getPoetryWriterPoems } = await import('../lib/cdn');
                 const data = await getAllPoetryPoem(writerSlug, poemSlug);
                 
                 if (data) {
+                    const authorPoems = await getPoetryWriterPoems(writerSlug);
                     return {
                         type: 'line',
                         data: data,
                         writer: { 
                             name: data.writer, 
-                            slug: `poet/${writerSlug}`, // Prefix with poet/ to hit the new route
+                            slug: `poet/${writerSlug}`, 
                             photo: 'https://cdn.jsdelivr.net/gh/BluredCodes/linespedia-data@main/metadata/v1/writers/photos/default.png' 
                         },
                         allWriters: writers,
-                        poems: [] // Could add related AllPoetry poems later
+                        poems: authorPoems.filter((p: any) => p.slug !== poemSlug).slice(0, 6)
                     };
                 }
             }
@@ -406,7 +407,13 @@ const posterUrl = type === 'line' ? getPosterUrl(data.slug) : null;
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             {poems.map((poem: any) => (
-                                <PoemCard id={poem.id} slug={poem.slug} content={poem.content} writer={poem.writer} writerName={poem.writer?.replace(/-/g, ' ')} />
+                                <PoemCard 
+                                    id={poem.id} 
+                                    slug={poem.id.startsWith('ap-') ? `ap/${poem.writerSlug}/${poem.slug}` : poem.slug} 
+                                    content={poem.content} 
+                                    writer={poem.id.startsWith('ap-') ? `poet/${poem.writerSlug}` : poem.writer} 
+                                    writerName={poem.writerName || poem.writer?.replace(/-/g, ' ')} 
+                                />
                             ))}
                         </div>
                     </div>
@@ -463,7 +470,13 @@ const posterUrl = type === 'line' ? getPosterUrl(data.slug) : null;
                 <div class="container mx-auto px-4 mt-20">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-24">
                         {poems.map((poem: any) => (
-                            <PoemCard id={poem.id} slug={poem.slug} content={poem.content} writer={poem.writer} writerName={type === 'writer' ? data.name : poem.writer?.replace(/-/g, ' ')} />
+                            <PoemCard 
+                                id={poem.id} 
+                                slug={poem.id.startsWith('ap-') ? `ap/${poem.writerSlug}/${poem.slug}` : poem.slug} 
+                                content={poem.content} 
+                                writer={poem.id.startsWith('ap-') ? `poet/${poem.writerSlug}` : poem.writer} 
+                                writerName={type === 'writer' ? data.name : (poem.writerName || poem.writer?.replace(/-/g, ' '))} 
+                            />
                         ))}
                     </div>
                 </div>
