@@ -50,7 +50,7 @@ import { Search } from 'lucide-astro';
     <div class="mt-12 flex flex-wrap justify-center gap-3 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-800">
       {['sad-shayari', 'jaun-elia', 'deep-captions', '2-line-love'].map((tag, i) => (
         <a 
-          href={`/${tag}`} 
+          href={`/${tag}/`} 
           class="px-6 py-3 bg-white/40 backdrop-blur-md border border-indigo-100/30 rounded-full hover:bg-white hover:border-accent/20 hover:scale-110 active:scale-95 transition-all text-primary/60 hover:text-accent font-bold text-sm"
         >
           #{tag.replace(/-/g, ' ')}

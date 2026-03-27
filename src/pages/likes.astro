@@ -7,7 +7,7 @@ import { Heart, Trash2, ArrowRight } from "lucide-astro";
 
 const breadcrumbs = [
   { name: "Home", href: "/" },
-  { name: "My Likes", href: "/likes" },
+  { name: "My Likes", href: "/likes/" },
 ];
 ---
 
@@ -44,7 +44,7 @@ const breadcrumbs = [
         </div>
         <h2 class="text-3xl font-serif font-black text-primary mb-4">No likes yet</h2>
         <p class="text-primary/50 mb-8 max-w-md mx-auto">Start exploring and heart the lines that resonate with you. They will appear here!</p>
-        <a href="/explore" class="inline-flex items-center space-x-2 bg-primary text-white px-8 py-4 rounded-full font-bold hover:bg-accent transition-all shadow-xl">
+        <a href="/explore/" class="inline-flex items-center space-x-2 bg-primary text-white px-8 py-4 rounded-full font-bold hover:bg-accent transition-all shadow-xl">
           <span>Explore Lines</span>
           <ArrowRight size={20} />
         </a>
@@ -95,9 +95,9 @@ const breadcrumbs = [
                     <div class="flex items-center justify-between mt-auto pt-6 border-t border-indigo-50">
                         <div>
                             <span class="block text-[10px] uppercase tracking-widest font-bold text-primary/30 mb-1">By Poet</span>
-                            <a href="/writers/${poem.writer}" class="text-sm font-bold text-primary hover:text-accent transition-colors">${poem.writerName}</a>
+                            <a href="/${poem.writer}/" class="text-sm font-bold text-primary hover:text-accent transition-colors">${poem.writerName}</a>
                         </div>
-                        <a href="/line/${poem.slug}" class="p-3 bg-indigo-50 rounded-2xl text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                        <a href="/line/${poem.slug}/" class="p-3 bg-indigo-50 rounded-2xl text-primary group-hover:bg-primary group-hover:text-white transition-all">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                         </a>
                     </div>

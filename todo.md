@@ -1,4 +1,4 @@
-if it is possible to create poster or og image of the poems and in bw images to share and get traffic from pinterest and google images
+<!-- if it is possible to create poster or og image of the poems and in bw images to share and get traffic from pinterest and google images
 
 
 create plan to create /blog
@@ -43,13 +43,7 @@ scrap rekha like = curl https://www.rekhta.org/PoetCollection?SEO_Slug=couplets&
 https://www.rekhta.org/poets/jaun-eliya/couplets fetch all authours use curl see https://www.rekhta.org/poets and whole website create script to create a whole dataset and create separate route and save and show it there also add them to sitemap 
 
 ---
-indexnow not working
-
-
----
-
-
-https://captions.ai/blog/instagram-bio-ideas
+indexnow not working  https://captions.ai/blog/instagram-bio-ideas
 and other search kepwords which we can add on the website 
 related to ((🌐 Content Websites (Programmatic SEO)
 Shayari / Poems (you already did ✅)
@@ -61,7 +55,8 @@ Resume templates / SOP samples
 Interview questions bank))
 find articles on internet , scrap them on keywords , rewrite it and publish them
 
-200+ articles
+200+ articles -->
 
 ---
 
+create /api to sell api to others 

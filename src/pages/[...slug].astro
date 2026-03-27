@@ -71,13 +71,32 @@ async function getPageData(pathSlug: string | undefined) {
 
         // 1. Line Page
         if (pathSlug.startsWith('line/')) {
-            const lineSlug = pathSlug.replace('line/', '');
-            const id = await getPoemIdBySlug(lineSlug);
+            let lineSlug = pathSlug.replace('line/', '');
             
+            // Remove trailing slash for lookup if any
+            if (lineSlug.endsWith('/')) lineSlug = lineSlug.slice(0, -1);
+
+            let id = await getPoemIdBySlug(lineSlug);
+            
+            // Fallback: If not found by slug, check if the slug ends with a numeric ID
+            if (!id) {
+                const parts = lineSlug.split('-');
+                const possibleId = parts[parts.length - 1];
+                if (/^\d+$/.test(possibleId)) {
+                    id = possibleId;
+                }
+            }
+
             if (id) {
                 const data = await getPoem(id);
                 if (data) {
                     const writerSlug = typeof data.writer === 'string' ? slugify(data.writer) : '';
+                    
+                    // Permanent Redirect if the slug is not canonical
+                    if (data.slug !== lineSlug) {
+                        return { redirect: `/line/${data.slug}/` };
+                    }
+
                     const related = await getRelatedPoems(writerSlug, data.category || []);
                     
                     return {
@@ -124,7 +143,8 @@ function slugify(text: string) {
 
 pageData = await getPageData(slug);
 
-if (!pageData) return Astro.redirect('/404');
+if (!pageData) return Astro.redirect('/404/');
+if (pageData.redirect) return Astro.redirect(pageData.redirect, 301);
 
 const { type, data, writer, poems = [], allWriters = [] } = (pageData || {}) as any;
 const allCategories = await getAllCategories();
