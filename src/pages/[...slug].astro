@@ -270,7 +270,7 @@ const posterUrl = type === 'line' ? getPosterUrl(data.slug) : null;
                             <div class="relative z-10">
                                 <h1 class="text-xs font-bold uppercase tracking-[0.4em] text-primary/30 mb-8 md:mb-12 text-center">Poetic Insight</h1>
                                 
-                                <blockquote class="text-3xl md:text-5xl font-serif font-black text-primary leading-tight md:leading-snug mb-16 selection:bg-accent/20 max-w-4xl mx-auto text-center">
+                                <blockquote class="text-2xl md:text-4xl font-serif font-black text-primary leading-tight md:leading-snug mb-16 selection:bg-accent/20 max-w-4xl mx-auto text-center">
                                     <p class="whitespace-pre-line drop-shadow-sm italic">{data.content}</p>
                                 </blockquote>
 
@@ -373,8 +373,10 @@ const posterUrl = type === 'line' ? getPosterUrl(data.slug) : null;
                             </h3>
                             <div class="space-y-6">
                                 {poems.slice(0, 5).map((poem: any) => (
-                                    <a href={`/line/${poem.slug}/`} class="group block py-4 border-b border-indigo-50 last:border-0">
-                                        <p class="text-sm font-medium text-primary/80 line-clamp-2 group-hover:text-indigo-600 transition-colors mb-2 italic">"{poem.content}"</p>
+                                    <a href={poem.id?.startsWith('ap-') ? `/line/ap/${poem.writerSlug}/${poem.slug}/` : `/line/${poem.slug}/`} class="group block py-4 border-b border-indigo-50 last:border-0">
+                                        <p class="text-sm font-medium text-primary/80 line-clamp-2 group-hover:text-indigo-600 transition-colors mb-2 italic">
+                                            "{poem.content || `Discover this poetic masterpiece by ${poem.writerName || poem.writer?.replace(/-/g, ' ')}...`}"
+                                        </p>
                                         <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-primary/30">
                                             <span>Read More</span>
                                             <ChevronRight size={12} />

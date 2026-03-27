@@ -16,7 +16,12 @@ async function submitToIndexNow() {
     for (const sitemapUrl of SITEMAP_URLS) {
         try {
             console.log(`Processing sitemap: ${sitemapUrl}`);
-            const res = await fetch(sitemapUrl);
+            const res = await fetch(sitemapUrl, {
+                // @ts-ignore - Bun/Node specific TLS bypass for local/intermediate cert issues
+                tls: { rejectUnauthorized: false },
+                // Node specific
+                agent: new (await import('https')).Agent({ rejectUnauthorized: false })
+            });
             if (!res.ok) {
                 console.warn(`Failed to fetch sitemap: ${sitemapUrl} (${res.status})`);
                 continue;
