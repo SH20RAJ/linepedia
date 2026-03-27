@@ -1,31 +1,33 @@
-import fs from 'fs';
-import path from 'path';
-
 const INDEXNOW_KEY = '2f3a29d127b84110a911375a73d97702';
 const HOST = 'linespedia.com';
-const SITEMAP_FILES = [
-    './public/sitemap-poems.xml',
-    './public/sitemap.xml',
-    './public/sitemapseo.xml'
+const SITEMAP_URLS = [
+    'https://linespedia.com/sitemap-seo.xml',
+    'https://linespedia.com/sitemap-stories.xml',
+    'https://linespedia.com/sitemap-allpoetry.xml',
+    'https://linespedia.com/sitemap-index.xml'
 ];
 
 async function submitToIndexNow() {
     console.log('🚀 Starting IndexNow submission...');
     
-    const existingSitemaps = SITEMAP_FILES.filter((file) => fs.existsSync(file));
-    if (existingSitemaps.length === 0) {
-        console.error('No sitemap files found!');
-        return;
-    }
-
     const urls = new Set();
     const urlRegex = /<loc>(https:\/\/linespedia.com\/[^<]+)<\/loc>/g;
 
-    for (const sitemapFile of existingSitemaps) {
-        const sitemapContent = fs.readFileSync(sitemapFile, 'utf-8');
-        let match;
-        while ((match = urlRegex.exec(sitemapContent)) !== null) {
-            urls.add(match[1]);
+    for (const sitemapUrl of SITEMAP_URLS) {
+        try {
+            console.log(`Processing sitemap: ${sitemapUrl}`);
+            const res = await fetch(sitemapUrl);
+            if (!res.ok) {
+                console.warn(`Failed to fetch sitemap: ${sitemapUrl} (${res.status})`);
+                continue;
+            }
+            const sitemapContent = await res.text();
+            let match;
+            while ((match = urlRegex.exec(sitemapContent)) !== null) {
+                urls.add(match[1]);
+            }
+        } catch (e) {
+            console.error(`Error processing ${sitemapUrl}:`, e.message);
         }
     }
 
@@ -37,12 +39,17 @@ async function submitToIndexNow() {
     urls.add(`https://${HOST}/collections/`);
 
     const urlList = Array.from(urls);
-    console.log(`Found ${urlList.length} URLs to submit.`);
+    console.log(`Found ${urlList.length} total URLs to submit.`);
 
-    const BATCH_SIZE = 9000; // IndexNow limit is typically around 10k
+    if (urlList.length === 0) {
+        console.error('No URLs found to submit!');
+        return;
+    }
+
+    const BATCH_SIZE = 9000;
     for (let i = 0; i < urlList.length; i += BATCH_SIZE) {
         const batch = urlList.slice(i, i + BATCH_SIZE);
-        console.log(`Submitting batch ${Math.floor(i / BATCH_SIZE) + 1}...`);
+        console.log(`Submitting batch ${Math.floor(i / BATCH_SIZE) + 1} (${batch.length} URLs)...`);
 
         const body = {
             host: HOST,
@@ -52,7 +59,6 @@ async function submitToIndexNow() {
         };
 
         try {
-            // Using fetch (available in Node 18+)
             const response = await fetch('https://api.indexnow.org/indexnow', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -60,16 +66,22 @@ async function submitToIndexNow() {
             });
 
             if (response.ok) {
-                console.log(`Batch ${Math.floor(i / BATCH_SIZE) + 1} submitted successfully (Status: ${response.status})`);
+                console.log(`✅ Batch ${Math.floor(i / BATCH_SIZE) + 1} submitted successfully (Status: ${response.status})`);
             } else {
-                console.error(`Error submitting batch ${Math.floor(i / BATCH_SIZE) + 1}: ${response.status} ${response.statusText}`);
+                console.error(`❌ Error submitting batch ${Math.floor(i / BATCH_SIZE) + 1}: ${response.status} ${response.statusText}`);
             }
         } catch (error) {
             console.error(`Fetch error for batch ${Math.floor(i / BATCH_SIZE) + 1}:`, error.message);
         }
     }
 
-    console.log('✅ IndexNow submission complete!');
+    console.log('🎉 IndexNow submission complete!');
+    return urlList.length;
 }
 
-submitToIndexNow();
+// Allow importing or direct execution
+if (process.argv[1]?.endsWith('submit-indexnow.js')) {
+    submitToIndexNow();
+}
+
+export { submitToIndexNow };

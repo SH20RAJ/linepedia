@@ -410,7 +410,7 @@ const posterUrl = type === 'line' ? getPosterUrl(data.slug) : null;
                                 <PoemCard 
                                     id={poem.id} 
                                     slug={poem.id.startsWith('ap-') ? `ap/${poem.writerSlug}/${poem.slug}` : poem.slug} 
-                                    content={poem.content} 
+                                    content={poem.content || `A featured work from our extended library. Discover the timeless poetry and moving lines of ${poem.writerName || poem.writer?.replace(/-/g, ' ')}.`} 
                                     writer={poem.id.startsWith('ap-') ? `poet/${poem.writerSlug}` : poem.writer} 
                                     writerName={poem.writerName || poem.writer?.replace(/-/g, ' ')} 
                                 />
@@ -473,7 +473,7 @@ const posterUrl = type === 'line' ? getPosterUrl(data.slug) : null;
                             <PoemCard 
                                 id={poem.id} 
                                 slug={poem.id.startsWith('ap-') ? `ap/${poem.writerSlug}/${poem.slug}` : poem.slug} 
-                                content={poem.content} 
+                                content={poem.content || `Discover the soul-stirring poetry and profound lines of ${type === 'writer' ? data.name : (poem.writerName || poem.writer)}. A featured work from our extended library.`} 
                                 writer={poem.id.startsWith('ap-') ? `poet/${poem.writerSlug}` : poem.writer} 
                                 writerName={type === 'writer' ? data.name : (poem.writerName || poem.writer?.replace(/-/g, ' '))} 
                             />
