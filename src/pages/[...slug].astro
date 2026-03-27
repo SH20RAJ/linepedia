@@ -367,7 +367,7 @@ const posterUrl = type === 'line' ? getPosterUrl(data.slug) : null;
                 
                 {/* Writer Profile */}
                 {writer && (
-                    <a href={`/${writer.slug}`} class="mt-16 p-10 bg-white border border-indigo-50 rounded-[3rem] shadow-xl flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-10 hover:shadow-2xl transition-all duration-500 block">
+                    <a href={`/${writer.slug}/`} class="mt-16 p-10 bg-white border border-indigo-50 rounded-[3rem] shadow-xl flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-10 hover:shadow-2xl transition-all duration-500 block">
                         <div class="w-32 h-32 md:w-40 md:h-40 flex-shrink-0 rounded-3xl overflow-hidden border-4 border-indigo-50">
                             <img src={writer.photo} class="w-full h-full object-cover" alt={writer.name} loading="lazy" />
                         </div>
@@ -381,6 +381,24 @@ const posterUrl = type === 'line' ? getPosterUrl(data.slug) : null;
                         </div>
                     </a>
                 )}
+
+                {/* Sticky Read Next (Reduce Bounce Rate) */}
+                <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-lg animate-in slide-in-from-bottom-20 duration-1000 delay-1000">
+                    <div class="bg-primary/90 backdrop-blur-2xl text-white p-6 rounded-[2rem] shadow-2xl border border-white/10 flex items-center justify-between group cursor-pointer" onclick={`window.location.href='/line/${poems[0]?.slug || ''}/'`}>
+                        <div class="flex items-center space-x-4 overflow-hidden">
+                            <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center grow-0 shrink-0">
+                                <Sparkles size={20} class="text-accent" />
+                            </div>
+                            <div class="overflow-hidden">
+                                <span class="block text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-1">Continure Reading</span>
+                                <p class="text-sm font-bold truncate pr-4 italic">"{poems[0]?.content?.slice(0, 50)}..."</p>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-accent rounded-xl text-white group-hover:scale-110 transition-transform">
+                            <ChevronRight size={20} />
+                        </div>
+                    </div>
+                </div>
             </div>
         )}
 

@@ -5,7 +5,8 @@ const INDEXNOW_KEY = '2f3a29d127b84110a911375a73d97702';
 const HOST = 'linespedia.com';
 const SITEMAP_FILES = [
     './public/sitemap-poems.xml',
-    './public/sitemap.xml'
+    './public/sitemap.xml',
+    './public/sitemapseo.xml'
 ];
 
 async function submitToIndexNow() {

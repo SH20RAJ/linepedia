@@ -57,7 +57,7 @@ const contentSchema =
   type === "line"
     ? {
         "@context": "https://schema.org",
-        "@type": "CreativeWork",
+        "@type": "Poem",
         name: title,
         description: description,
         author: {
@@ -70,7 +70,14 @@ const contentSchema =
         publisher: {
           "@type": "Organization",
           name: "Linespedia",
-          url: siteUrl,
+          logo: {
+            "@type": "ImageObject",
+            url: `${siteUrl}/logo.png`,
+          },
+        },
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": url.startsWith("http") ? url : `${siteUrl}${url}`,
         },
       }
     : type === "writer"
