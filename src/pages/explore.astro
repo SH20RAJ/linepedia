@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import PoemCard from '../components/PoemCard.astro';
 import Search from '../components/Search.astro';
-import { Quote, Search as SearchIcon, Filter, Sparkles } from 'lucide-astro';
+import { Quote, Search as SearchIcon, Filter, Sparkles, ChevronRight } from 'lucide-astro';
 
 import Pagination from '../components/Pagination.astro';
 import { getAllWriters, getAllCategories, getFeaturedPoems } from '../lib/cdn';
@@ -83,6 +83,36 @@ const featuredPoems = poemsData.slice((currentPage - 1) * pageSize, currentPage 
 								writerName={writers.find((w: any) => w.slug === poem.writer)?.name || poem.writer}
 							/>
 						))}
+					</div>
+
+					{/* Extended Library Discovery (pSEO) */}
+					<div class="mt-20 pt-20 border-t border-indigo-50">
+						<div class="flex items-center justify-between mb-10">
+							<div>
+								<h2 class="text-3xl font-serif font-black text-primary mb-2 flex items-center gap-3">
+									<Sparkles class="text-accent" size={28} />
+									<span>Discover Millions</span>
+								</h2>
+								<p class="text-primary/40 font-bold uppercase tracking-widest text-xs">From our Extended Library</p>
+							</div>
+							<a href="/sitemap-allpoetry.xml" class="text-sm font-bold text-indigo-600 hover:text-indigo-700">View All</a>
+						</div>
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-8 opacity-80 hover:opacity-100 transition-opacity">
+						  <div class="bg-indigo-50/30 rounded-3xl p-8 border border-indigo-100 text-center">
+							<p class="text-primary/60 italic mb-6">"Discover thousands of emerging poets and timeless classics in our high-throughput discovery engine."</p>
+							<a href="/line/ap/25905028/eyes-closed/" class="inline-flex items-center space-x-2 text-indigo-600 font-bold text-sm">
+								<span>Start Exploring</span>
+								<ChevronRight size={16} />
+							</a>
+						  </div>
+						  <div class="bg-indigo-50/30 rounded-3xl p-8 border border-indigo-100 text-center">
+							<p class="text-primary/60 italic mb-6">"Browse our collection of millions of poems indexed by writer, mood, and genre."</p>
+							<a href="/sitemap-allpoetry.xml" class="inline-flex items-center space-x-2 text-indigo-600 font-bold text-sm">
+								<span>View Sitemap Index</span>
+								<ChevronRight size={16} />
+							</a>
+						  </div>
+						</div>
 					</div>
 
 					<Pagination 

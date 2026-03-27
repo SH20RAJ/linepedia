@@ -84,7 +84,11 @@ async function getPageData(pathSlug: string | undefined) {
                     return {
                         type: 'line',
                         data: data,
-                        writer: { name: data.writer, slug: writerSlug, photo: 'https://cdn.jsdelivr.net/gh/BluredCodes/linespedia-data@main/metadata/v1/writers/photos/default.png' },
+                        writer: { 
+                            name: data.writer, 
+                            slug: `poet/${writerSlug}`, // Prefix with poet/ to hit the new route
+                            photo: 'https://cdn.jsdelivr.net/gh/BluredCodes/linespedia-data@main/metadata/v1/writers/photos/default.png' 
+                        },
                         allWriters: writers,
                         poems: [] // Could add related AllPoetry poems later
                     };
@@ -149,6 +153,29 @@ async function getPageData(pathSlug: string | undefined) {
         if (collection) {
             const collectionPoems = await getCategoryPoems(collection.slug);
             return { type: 'collection', data: collection, poems: collectionPoems, allWriters: writers };
+        }
+
+        // 5. AllPoetry Poet Page
+        if (pathSlug.startsWith('poet/')) {
+            const writerSlug = pathSlug.replace('poet/', '').replace(/\/$/, '');
+            const { getPoetryWriterPoems, getAllPoetryWriters } = await import('../lib/cdn');
+            const poetryWriters = await getAllPoetryWriters();
+            const poet = poetryWriters.find((w: any) => w.slug === writerSlug);
+            
+            if (poet) {
+                const poems = await getPoetryWriterPoems(writerSlug);
+                return {
+                    type: 'writer',
+                    data: {
+                        name: poet.name,
+                        slug: writerSlug,
+                        photo: 'https://cdn.jsdelivr.net/gh/BluredCodes/linespedia-data@main/metadata/v1/writers/photos/default.png',
+                        bio: `Explore the profound poetry and moving lines of ${poet.name}. This collection features a curated selection of their work from our extended library.`
+                    },
+                    poems: poems,
+                    allWriters: writers
+                };
+            }
         }
 
         return null;

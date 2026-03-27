@@ -133,3 +133,37 @@ export const getAllPoetryPoem = async (writerSlug: string, poemSlug: string): Pr
     return null;
   }
 };
+
+// AllPoetry pSEO Resolvers
+export const getAllPoetryWriters = async () => {
+  try {
+    const res = await fetch(`${CDN_BASE}/automation/all-poems-metadata.json`);
+    if (!res.ok) return [];
+    const metadata = await res.json() as any[];
+    const writersMap: Record<string, string> = {};
+    metadata.forEach((m: any) => {
+      const slug = m.writerSlug || m.writer?.toLowerCase().replace(/\s+/g, '-');
+      if (slug) writersMap[slug] = m.writer;
+    });
+    return Object.entries(writersMap).map(([slug, name]) => ({ slug, name }));
+  } catch (e) {
+    return [];
+  }
+};
+
+export const getPoetryWriterPoems = async (writerSlug: string) => {
+  try {
+    const res = await fetch(`${CDN_BASE}/automation/all-poems-metadata.json`);
+    if (!res.ok) return [];
+    const metadata = await res.json() as any[];
+    return metadata
+      .filter((m: any) => (m.writerSlug || m.writer?.toLowerCase().replace(/\s+/g, '-')) === writerSlug)
+      .map((m: any) => ({
+        ...m,
+        id: `ap-${writerSlug}-${m.slug}`,
+        url: `/line/ap/${writerSlug}/${m.slug}/`
+      }));
+  } catch (e) {
+    return [];
+  }
+};
