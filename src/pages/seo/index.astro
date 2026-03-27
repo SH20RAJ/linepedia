@@ -1,0 +1,55 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import { getSeoCombos, getSeoIntents, getIntentLabel } from '../../utils/programmatic-seo';
+
+const combos = await getSeoCombos();
+const intents = getSeoIntents();
+const topCombos = combos.slice(0, 250);
+
+const title = 'SEO Poetry Collections';
+const description = 'Browse curated category, poet, and intent-specific poetry collections for captions, status lines, and quotes.';
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalURL={new URL('/seo/', Astro.site).toString()}
+>
+  <Navbar />
+
+  <main class="min-h-screen py-20 px-4">
+    <div class="container mx-auto max-w-7xl">
+      <header class="mb-10">
+        <h1 class="text-4xl md:text-5xl font-serif font-black text-primary">SEO Poetry Collections</h1>
+        <p class="mt-3 text-primary/70 max-w-3xl">
+          Explore intent-driven poetry pages grouped by writer and category. Each page contains handpicked lines for specific search needs.
+        </p>
+      </header>
+
+      <div class="space-y-8">
+        {topCombos.map((combo) => (
+          <section class="rounded-2xl border border-indigo-100 bg-white p-6">
+            <h2 class="text-2xl font-serif font-bold text-primary">
+              {combo.categoryName} by {combo.writerName}
+            </h2>
+            <p class="text-sm text-primary/60 mt-1">{combo.poemCount} matched poems</p>
+            <div class="mt-4 flex flex-wrap gap-2">
+              {intents.map((intent) => (
+                <a
+                  href={`/seo/${combo.categorySlug}/${combo.writerSlug}/${intent}/`}
+                  class="px-3 py-1.5 text-xs font-bold rounded-full border border-indigo-100 text-indigo-700 hover:bg-indigo-600 hover:text-white transition-colors"
+                >
+                  {getIntentLabel(intent)}
+                </a>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

@@ -182,7 +182,7 @@ export function pickIntentPoems(poems: any[], intent: SeoIntent): any[] {
 export async function getSeoUrls(site: string): Promise<string[]> {
   const combos = await getSeoCombos();
   const base = site.endsWith('/') ? site : `${site}/`;
-  const urls: string[] = [];
+  const urls: string[] = [`${base}seo/`];
 
   for (const combo of combos) {
     for (const intent of INTENTS) {

@@ -4,6 +4,7 @@ Allow: /writers
 Allow: /categories
 Allow: /collections
 Allow: /explore
+Allow: /seo
 
 Disallow: /admin/
 Disallow: /scripts/
