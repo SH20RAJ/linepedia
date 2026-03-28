@@ -1,34 +1,54 @@
 ---
-export const prerender = true;
 import Layout from '../../layouts/Layout.astro';
 import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
 import PoemCard from '../../components/PoemCard.astro';
 import { Sparkles, ChevronLeft, ChevronRight, PenTool } from 'lucide-astro';
-import { getAllPoetryWriters, getAllPoetryWriters as getWriters } from '../../lib/cdn';
+import { getAllPoetryWriters } from '../../lib/cdn';
 
-export async function getStaticPaths({ paginate }) {
-  const CDN_BASE = 'https://cdn.jsdelivr.net/gh/BluredCodes/linespedia-data@main';
-  const res = await fetch(`${CDN_BASE}/automation/all-poems-metadata.json`);
-  if (!res.ok) return paginate([], { pageSize: 12 });
-  
-  const metadata = await res.json();
-  
-  // Sort by most recent (assuming last in list is newest)
-  const sortedMetadata = [...metadata].reverse().map(m => ({
-    ...m,
-    id: `ap-${m.writerSlug || m.writer?.toLowerCase().replace(/\s+/g, '-')}-${m.slug}`,
-    // Ensure writerSlug is there
-    writerSlug: m.writerSlug || m.writer?.toLowerCase().replace(/\s+/g, '-')
-  }));
+const pageSize = 120;
+const pageParam = Astro.params.page;
 
-  return paginate(sortedMetadata, { pageSize: 12 });
+// Handle the page parameter from the rest parameter
+// [...page] gives us "2/" or undefined for "/"
+let currentPage = 1;
+if (pageParam) {
+  const cleaned = pageParam.replace(/\/$/, '');
+  currentPage = parseInt(cleaned) || 1;
 }
 
-const { page } = Astro.props;
+const CDN_BASE = 'https://cdn.jsdelivr.net/gh/BluredCodes/linespedia-data@main';
+const res = await fetch(`${CDN_BASE}/automation/all-poems-metadata.json`);
+if (!res.ok) {
+  throw new Error(`Failed to fetch archive metadata: ${res.statusText}`);
+}
+
+const metadata = await res.json();
+const sortedMetadata = [...metadata].reverse();
+
+const total = sortedMetadata.length;
+const lastPage = Math.ceil(total / pageSize);
+
+// Mock the "page" object to keep existing UI logic working
+const page = {
+  currentPage,
+  lastPage,
+  start: (currentPage - 1) * pageSize,
+  end: Math.min(currentPage * pageSize - 1, total - 1),
+  total,
+  data: sortedMetadata.slice((currentPage - 1) * pageSize, currentPage * pageSize).map(m => ({
+    ...m,
+    id: `ap-${m.writerSlug || m.writer?.toLowerCase().replace(/\s+/g, '-')}-${m.slug}`,
+    writerSlug: m.writerSlug || m.writer?.toLowerCase().replace(/\s+/g, '-')
+  })),
+  url: {
+    prev: currentPage > 1 ? (currentPage === 2 ? '/ap/' : `/ap/${currentPage - 1}/`) : undefined,
+    next: currentPage < lastPage ? `/ap/${currentPage + 1}/` : undefined
+  }
+};
+
 const poetryWriters = await getAllPoetryWriters();
 const randomWriters = poetryWriters.sort(() => 0.5 - Math.random()).slice(0, 10);
-
 ---
 
 <Layout 
