@@ -1,4 +1,5 @@
 ---
+export const prerender = true;
 import Layout from '../../layouts/Layout.astro';
 import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
@@ -38,7 +39,7 @@ const randomWriters = poetryWriters.sort(() => 0.5 - Math.random()).slice(0, 10)
   
   <main class="min-h-screen bg-[#fdfcf7]">
     {/* Hero Section */}
-    <section class="pt-24 pb-16 bg-gradient-to-b from-indigo-50/50 to-transparent">
+    <section class="pt-24 pb-16 bg-linear-to-b from-indigo-50/50 to-transparent">
       <div class="container mx-auto px-4 text-center max-w-4xl">
         <div class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-100/50 border border-indigo-200 rounded-full text-xs font-black text-indigo-600 uppercase tracking-widest mb-6 animate-in fade-in slide-in-from-top-4 duration-700">
            <Sparkles size={14} />
