@@ -262,6 +262,21 @@ function getCategorySlug(catName: string) {
 
 const breadcrumbs: any[] = [];
 const lang = Astro.url.searchParams.get("lang") || "en";
+const pageNum = parseInt(Astro.url.searchParams.get("page") || "1") || 1;
+const pageSize = 60;
+
+const totalLines = poems.length;
+const totalPages = Math.ceil(totalLines / pageSize);
+const paginatedPoems = type !== "line" ? poems.slice((pageNum - 1) * pageSize, pageNum * pageSize) : poems;
+
+const pagination = {
+  currentPage: pageNum,
+  totalPages,
+  hasNext: pageNum < totalPages,
+  hasPrev: pageNum > 1,
+  prevUrl: `?page=${pageNum - 1}${lang !== 'en' ? `&lang=${lang}` : ''}`,
+  nextUrl: `?page=${pageNum + 1}${lang !== 'en' ? `&lang=${lang}` : ''}`
+};
 
 if (type === "line" && data) {
   breadcrumbs.push({ name: "Poetry", href: "/explore/" });
@@ -764,13 +779,13 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
               {data.bio || data.seoIntro || data.description}
             </p>
             <div class="mt-8 text-sm text-primary/40 font-bold uppercase tracking-widest">
-              {poems.length} Lines Found
+              {totalLines} Lines Found {totalPages > 1 && `(Page ${pageNum} of ${totalPages})`}
             </div>
           </div>
 
           <div class="container mx-auto px-4 mt-20">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-24">
-              {poems.map((poem: any) => (
+              {paginatedPoems.map((poem: any) => (
                 <PoemCard
                   id={poem.id}
                   slug={
@@ -795,6 +810,35 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
                 />
               ))}
             </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div class="mt-12 flex items-center justify-center gap-4">
+                {pagination.hasPrev ? (
+                  <a href={pagination.prevUrl} class="p-4 bg-white border border-indigo-100 rounded-2xl text-primary hover:bg-indigo-50 transition-all shadow-sm">
+                    <ChevronLeft size={24} />
+                  </a>
+                ) : (
+                  <div class="p-4 bg-indigo-50/50 border border-indigo-50 rounded-2xl text-primary/20 cursor-not-allowed">
+                    <ChevronLeft size={24} />
+                  </div>
+                )}
+                
+                <div class="px-8 py-4 bg-white border border-indigo-100 rounded-2xl font-serif font-black text-primary shadow-sm">
+                  Page {pagination.currentPage} <span class="text-primary/20 mx-2">/</span> {pagination.totalPages}
+                </div>
+
+                {pagination.hasNext ? (
+                  <a href={pagination.nextUrl} class="p-4 bg-white border border-indigo-100 rounded-2xl text-primary hover:bg-indigo-50 transition-all shadow-sm">
+                    <ChevronRight size={24} />
+                  </a>
+                ) : (
+                  <div class="p-4 bg-indigo-50/50 border border-indigo-50 rounded-2xl text-primary/20 cursor-not-allowed">
+                    <ChevronRight size={24} />
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )
