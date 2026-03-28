@@ -15,15 +15,21 @@ export const LANGUAGES: Record<string, string> = {
 
 export async function translateContent(text: string, langCode: string) {
   const langName = LANGUAGES[langCode];
-  if (!langName) return text;
+  if (!langName || langCode === 'en') return text;
   
-  if (typeof puter === 'undefined') return text;
-
   try {
-    const response = await puter.ai.chat(`Translate the following poem content into ${langName}. Maintain the poetic feel and rhythm. Only return the translated text:\n\n${text}`);
-    return response?.text || text;
+    // Official-feeling public Google Translate endpoint (GTX)
+    const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${langCode}&dt=t&q=${encodeURIComponent(text)}`);
+    if (!res.ok) throw new Error(`Google API responded with ${res.status}`);
+    
+    const data = await res.json() as any[];
+    // Google returns nested arrays: [[["translated_text", "source_text", null, null, 10], ...], ...]
+    if (data && data[0]) {
+      return data[0].map((part: any) => part[0]).join('') || text;
+    }
+    return text;
   } catch (e) {
-    console.error("Translation Error:", e);
+    console.error("Google Translation Error:", e);
     return text;
   }
 }

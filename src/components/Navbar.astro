@@ -30,8 +30,17 @@ const languages = [
       <span class="text-2xl font-serif font-black text-primary tracking-tight">Linespedia</span>
     </a>
 
+    <nav class="hidden md:flex items-center space-x-8">
+      {navItems.map(item => (
+        <a href={item.href} class="text-sm font-bold text-primary/60 hover:text-accent transition-all uppercase tracking-widest">
+          {item.name}
+        </a>
+      ))}
+    </nav>
+
+    <div class="flex items-center space-x-6">
       <div class="relative group h-full flex items-center">
-        <button class="flex items-center space-x-1 text-sm font-medium text-primary/70 hover:text-primary transition-colors py-2 cursor-pointer">
+        <button class="flex items-center space-x-1 text-sm font-bold uppercase tracking-widest text-primary/60 hover:text-accent transition-all py-2 cursor-pointer">
           <Compass size={16} />
           <span>Language</span>
         </button>
@@ -47,10 +56,10 @@ const languages = [
         </div>
       </div>
       
-      <a href="/submit/" class="px-4 py-2 bg-primary text-white text-sm font-medium rounded-full hover:bg-primary/90 transition-colors">
+      <a href="/submit/" class="hidden md:block px-6 py-2.5 bg-primary text-white text-xs font-black uppercase tracking-widest rounded-full hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20">
         Submit Line
       </a>
-    </nav>
+    </div>
 
     <button class="md:hidden p-2 text-primary" id="mobile-menu-btn">
       <Menu size={24} />
