@@ -171,7 +171,7 @@ async function getPageData(pathSlug: string | undefined) {
                     data: {
                         name: poet.name,
                         slug: writerSlug,
-                        photo: 'https://cdn.jsdelivr.net/gh/BluredCodes/linespedia-data@main/metadata/v1/writers/photos/default.png',
+                        photo: `https://api.dicebear.com/7.x/avataaars/svg?seed=${writerSlug}`,
                         bio: `Explore the profound poetry and moving lines of ${poet.name}. This collection features a curated selection of their work from our extended library.`
                     },
                     poems: poems,
