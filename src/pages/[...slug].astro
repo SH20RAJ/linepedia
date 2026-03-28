@@ -13,6 +13,7 @@ import {
   BookOpen,
   Quote,
   ChevronRight,
+  ChevronLeft,
   Bookmark,
   Download,
   Sparkles,
@@ -90,9 +91,12 @@ async function getPageData(pathSlug: string | undefined) {
     if (pathSlug.startsWith("line/")) {
       // AllPoetry special route: line/ap/writer-slug/poem-slug
       if (pathSlug.startsWith("line/ap/")) {
-        const parts = pathSlug.replace("line/ap/", "").split("/");
+        const parts = pathSlug
+          .replace("line/ap/", "")
+          .split("/")
+          .filter(Boolean);
         const writerSlug = parts[0];
-        const poemSlug = parts[parts.length - 1]; // Handle potential trailing slashes
+        const poemSlug = parts[parts.length - 1];
 
         const { getAllPoetryPoem, getPoetryWriterPoems } =
           await import("../lib/cdn");
@@ -106,8 +110,8 @@ async function getPageData(pathSlug: string | undefined) {
             writer: {
               name: data.writer,
               slug: `poet/${writerSlug}`,
-              photo: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.writer)}&background=6366f1&color=fff&size=128`,
-              bio: `Explore the profound poetry and moving lines of ${data.writer}. This collection features a curated selection of their work from our extended library.`,
+              photo: `https://api.dicebear.com/7.x/avataaars/svg?seed=${writerSlug}`,
+              bio: `Explore the profound poetry and moving lines of ${data.writer}. A featured work from our extended library.`,
             },
             allWriters: writers,
             poems: authorPoems
@@ -732,7 +736,11 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
           <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-lg animate-in slide-in-from-bottom-20 duration-1000 delay-1000">
             <div
               class="bg-primary/90 backdrop-blur-2xl text-white p-6 rounded-[2rem] shadow-2xl border border-white/10 flex items-center justify-between group cursor-pointer"
-              onclick={`window.location.href='/line/${poems[0]?.slug || ""}/'`}
+              onclick={`window.location.href='${
+                poems[0]?.id?.startsWith("ap-")
+                  ? `/line/ap/${poems[0].writerSlug || currentWriterSlug}/${poems[0].slug}/`
+                  : `/line/${poems[0]?.slug || ""}/`
+              }'`}
             >
               <div class="flex items-center space-x-4 overflow-hidden">
                 <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center grow-0 shrink-0">
