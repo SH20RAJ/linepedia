@@ -9,6 +9,7 @@ export default defineConfig({
   trailingSlash: 'always',
   adapter: cloudflare({
     mode: 'advanced',
+    nodejsCompat: true,
   }),
   integrations: [
     sitemap()

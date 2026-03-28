@@ -1,0 +1,3 @@
+[submodule "linespedia-data"]
+	path = linespedia-data
+	url = https://github.com/BluredCodes/linespedia-data.git
