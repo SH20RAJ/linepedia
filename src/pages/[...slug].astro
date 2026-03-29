@@ -265,9 +265,28 @@ function getCategorySlug(catName: string) {
 }
 
 const breadcrumbs: any[] = [];
-const lang = Astro.url.searchParams.get("lang") || "en";
-const pageNum = parseInt(Astro.url.searchParams.get("page") || "1") || 1;
+const supportedLanguages = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
+const requestedLang = (Astro.url.searchParams.get("lang") || "en").toLowerCase();
+const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
+const rawPageNum = Number.parseInt(Astro.url.searchParams.get("page") || "1", 10);
+const pageNum = Number.isFinite(rawPageNum) && rawPageNum > 0 ? rawPageNum : 1;
 const pageSize = 60;
+const shouldIncludePageParam = type !== "line" && pageNum > 1;
+const siteOrigin = Astro.site?.toString()?.replace(/\/$/, "") || Astro.url.origin;
+
+const canonicalUrl = new URL(Astro.url.pathname, siteOrigin);
+if (shouldIncludePageParam) canonicalUrl.searchParams.set("page", String(pageNum));
+if (lang !== "en") canonicalUrl.searchParams.set("lang", lang);
+
+const xDefaultUrl = new URL(Astro.url.pathname, siteOrigin);
+if (shouldIncludePageParam) xDefaultUrl.searchParams.set("page", String(pageNum));
+
+const alternateLanguageUrls = supportedLanguages.map((code) => {
+  const href = new URL(Astro.url.pathname, siteOrigin);
+  if (shouldIncludePageParam) href.searchParams.set("page", String(pageNum));
+  if (code !== "en") href.searchParams.set("lang", code);
+  return { code, href: href.toString() };
+});
 
 const totalLines = poems.length;
 const totalPages = Math.ceil(totalLines / pageSize);
@@ -324,43 +343,14 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
   title={getCTRTitle()}
   description={getDescription()}
   type={type === "line" ? "article" : "website"}
+  canonicalURL={canonicalUrl.toString()}
 >
-  <link
-    slot="head"
-    rel="alternate"
-    hreflang="es"
-    href={`${Astro.url.origin}${Astro.url.pathname}?lang=es`}
-  />
-  <link
-    slot="head"
-    rel="alternate"
-    hreflang="fr"
-    href={`${Astro.url.origin}${Astro.url.pathname}?lang=fr`}
-  />
-  <link
-    slot="head"
-    rel="alternate"
-    hreflang="de"
-    href={`${Astro.url.origin}${Astro.url.pathname}?lang=de`}
-  />
-  <link
-    slot="head"
-    rel="alternate"
-    hreflang="hi"
-    href={`${Astro.url.origin}${Astro.url.pathname}?lang=hi`}
-  />
-  <link
-    slot="head"
-    rel="alternate"
-    hreflang="ar"
-    href={`${Astro.url.origin}${Astro.url.pathname}?lang=ar`}
-  />
-  <link
-    slot="head"
-    rel="alternate"
-    hreflang="zh"
-    href={`${Astro.url.origin}${Astro.url.pathname}?lang=zh`}
-  />
+  {
+    alternateLanguageUrls.map(({ code, href }) => (
+      <link slot="head" rel="alternate" hreflang={code} href={href} />
+    ))
+  }
+  <link slot="head" rel="alternate" hreflang="x-default" href={xDefaultUrl.toString()} />
   <meta slot="head" name="lang-trigger" content={lang} />
 
   {
@@ -369,7 +359,8 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
         type="line"
         title={getCTRTitle()}
         description={getDescription()}
-        url={Astro.url.pathname}
+        url={canonicalUrl.toString()}
+        language={lang}
         authorName={writer?.name}
         datePublished={data.createdAt}
         breadcrumbs={breadcrumbs.map((b: any) => ({

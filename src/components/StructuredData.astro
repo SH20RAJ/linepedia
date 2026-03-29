@@ -4,6 +4,7 @@ interface Props {
   title: string;
   description: string;
   url: string;
+  language?: string;
   authorName?: string;
   datePublished?: string;
   breadcrumbs?: { name: string; url: string }[];
@@ -15,19 +16,24 @@ const {
   title,
   description,
   url,
+  language,
   authorName,
   datePublished,
   breadcrumbs = [],
   faqs = [],
 } = Astro.props;
 const siteUrl = Astro.site?.toString() || "https://linespedia.com";
+const inferredLanguage = String(Astro.url.searchParams.get("lang") || "en").toLowerCase();
+const schemaLanguage = language || inferredLanguage;
 
 // WebSite schema with SearchAction (sitewide)
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
+  "@id": `${siteUrl}#website`,
   name: "Linespedia",
   url: siteUrl,
+  inLanguage: schemaLanguage,
   potentialAction: {
     "@type": "SearchAction",
     target: `${siteUrl}/explore?q={search_term_string}`,
@@ -58,8 +64,10 @@ const contentSchema =
     ? {
         "@context": "https://schema.org",
         "@type": "Poem",
+        "@id": url.startsWith("http") ? `${url}#poem` : `${siteUrl}${url}#poem`,
         name: title,
         description: description,
+        inLanguage: schemaLanguage,
         author: {
           "@type": "Person",
           name: authorName || "Unknown",
@@ -84,15 +92,19 @@ const contentSchema =
       ? {
           "@context": "https://schema.org",
           "@type": "Person",
+          "@id": url.startsWith("http") ? `${url}#person` : `${siteUrl}${url}#person`,
           name: title,
           description: description,
+          inLanguage: schemaLanguage,
           url: url.startsWith("http") ? url : `${siteUrl}${url}`,
         }
       : {
           "@context": "https://schema.org",
           "@type": "CollectionPage",
+          "@id": url.startsWith("http") ? `${url}#collection` : `${siteUrl}${url}#collection`,
           name: title,
           description: description,
+          inLanguage: schemaLanguage,
           url: url.startsWith("http") ? url : `${siteUrl}${url}`,
           publisher: {
             "@type": "Organization",
@@ -107,6 +119,7 @@ const faqSchema =
     ? {
         "@context": "https://schema.org",
         "@type": "FAQPage",
+        inLanguage: schemaLanguage,
         mainEntity: faqs.map((faq) => ({
           "@type": "Question",
           name: faq.q,

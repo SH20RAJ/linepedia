@@ -1,15 +1,14 @@
 User-agent: *
 Allow: /line/
-Allow: /writers
-Allow: /categories
-Allow: /collections
-Allow: /explore
-Allow: /seo
+Allow: /writers/
+Allow: /categories/
+Allow: /collections/
+Allow: /explore/
+Allow: /seo/
+Allow: /panchtantra/
 
 Disallow: /admin/
 Disallow: /scripts/
 Disallow: /_astro/
 
 Sitemap: https://linespedia.com/sitemap.xml
-Sitemap: https://linespedia.com/sitemap-poems.xml
-Sitemap: https://linespedia.com/sitemap-seo.xml

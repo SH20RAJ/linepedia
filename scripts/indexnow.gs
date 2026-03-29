@@ -11,7 +11,7 @@
 
 const INDEXNOW_KEY = '2f3a29d127b84110a911375a73d97702';
 const HOST = 'linespedia.com';
-const SITEMAP_INDEX_URL = 'https://linespedia.com/sitemap-index.xml';
+const SITEMAP_INDEX_URL = 'https://linespedia.com/sitemap.xml';
 
 function submitUrlsToIndexNow() {
   const allUrls = [];
