@@ -75,6 +75,9 @@ const description = "Batch submit your URLs to IndexNow for faster search engine
                             /2f3a29d127b84110a911375a73d97702.txt
                         </div>
                     </div>
+                    <p class="mt-4 text-[11px] text-slate-500 leading-relaxed">
+                        Requests are submitted through a server-side proxy to avoid browser CORS issues with the public IndexNow endpoint.
+                    </p>
                 </div>
             </div>
         </div>
@@ -90,11 +93,10 @@ const description = "Batch submit your URLs to IndexNow for faster search engine
     const urlsArea = document.getElementById('urls');
     const statusDisplay = document.getElementById('status-display');
     
-    const API_KEY = "2f3a29d127b84110a911375a73d97702";
-    const HOST = "linespedia.com";
     const ROOT_SITEMAP = '/sitemap.xml';
     const MAX_URLS = 50000;
     const MAX_SITEMAPS = 120;
+    const PROXY_ENDPOINT = '/api/indexnow-proxy/';
 
     const fetchLabel = fetchBtn?.textContent?.trim() || 'Fetch from Sitemap';
 
@@ -186,20 +188,21 @@ const description = "Batch submit your URLs to IndexNow for faster search engine
         for (let i = 0; i < urls.length; i += batchSize) {
             const batch = urls.slice(i, i + batchSize);
             try {
-                const res = await fetch('https://api.indexnow.org/indexnow', {
+                const res = await fetch(PROXY_ENDPOINT, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        host: HOST,
-                        key: API_KEY,
-                        keyLocation: `https://${HOST}/${API_KEY}.txt`,
                         urlList: batch
                     })
                 });
 
-                if (!res.ok) throw new Error('Submission failed');
+                if (!res.ok) {
+                    const payload = await res.json().catch(() => ({}));
+                    throw new Error(payload?.error || 'Submission failed');
+                }
             } catch (e) {
-                showStatus('Submission Error', 'rose');
+                const message = e?.message ? `Submission Error: ${e.message}` : 'Submission Error';
+                showStatus(message, 'rose');
                 submitBtn.disabled = false;
                 submitBtn.querySelector('span').textContent = originalText;
                 return;
