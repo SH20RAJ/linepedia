@@ -11,6 +11,10 @@ Linespedia is a high-performance, production-ready programmatic SEO website buil
   - **JSON-LD Structured Data**: Automated FAQPage, CreativeWork, and Breadcrumb schema.
   - **Dynamic Sitemap & RSS**: Fully automated generation via Astro Integration.
   - **Internal Linking Engine**: "Poem of the Day" and "Trending Now" sections for maximum crawl depth.
+- **PWA-Ready Experience**:
+  - Installable app shell via `manifest.webmanifest` with shortcuts and maskable icon support.
+  - Offline fallback page and caching strategy through a production service worker.
+  - iOS and Android metadata (`apple-touch-icon`, web app capable tags, theme color) pre-wired in base layout.
 - **Client-Side Magic**: Interactive Copy, Like, and Native Web Share functionality.
 
 ## 🛠️ Tech Stack
@@ -56,6 +60,21 @@ node scripts/fetch-poems.js
 ```bash
 bun run build
 ```
+
+### 5. Generate PWA Icons
+If you update `public/favicon.svg`, regenerate install icons:
+```bash
+bun run generate:pwa-icons
+```
+
+### 6. Verify PWA Locally
+```bash
+bun run dev
+```
+Then open DevTools > Application and verify:
+- Manifest is loaded from `/manifest.webmanifest`
+- Service Worker is active at `/sw.js`
+- Offline page is available at `/offline.html`
 
 ## 📈 SEO Strategy
 

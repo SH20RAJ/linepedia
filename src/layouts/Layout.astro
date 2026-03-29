@@ -28,6 +28,8 @@ const fullTitle = `${title} | ${siteName}`;
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="manifest" href="/manifest.webmanifest" />
+		<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
 		<link rel="sitemap" href="/sitemap.xml" />
 		<meta name="generator" content={Astro.generator} />
 
@@ -70,6 +72,12 @@ const fullTitle = `${title} | ${siteName}`;
 		<!-- Verification Tags -->
 		<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
 		<meta name="theme-color" content="#4f46e5" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+		<meta name="apple-mobile-web-app-title" content="Linespedia" />
+		<meta name="application-name" content="Linespedia" />
+		<meta name="msapplication-TileColor" content="#4f46e5" />
 
 		<!-- Performance Optimization -->
 		<link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
@@ -125,5 +133,48 @@ const fullTitle = `${title} | ${siteName}`;
 	<body class="min-h-screen flex flex-col">
 		<slot />
 		<Newsletter />
+		<script is:inline>
+			(() => {
+				if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+					return;
+				}
+
+				window.addEventListener('load', async () => {
+					try {
+						const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+						registration.update().catch(() => undefined);
+					} catch (error) {
+						console.error('Service worker registration failed:', error);
+					}
+				});
+			})();
+		</script>
+		<script is:inline>
+			(() => {
+				let deferredPrompt = null;
+
+				window.addEventListener('beforeinstallprompt', (event) => {
+					event.preventDefault();
+					deferredPrompt = event;
+					window.dispatchEvent(new CustomEvent('pwa:install-available'));
+				});
+
+				window.addEventListener('appinstalled', () => {
+					deferredPrompt = null;
+					window.dispatchEvent(new CustomEvent('pwa:installed'));
+				});
+
+				window.triggerPWAInstall = async () => {
+					if (!deferredPrompt) {
+						return { supported: false, outcome: 'unavailable' };
+					}
+
+					deferredPrompt.prompt();
+					const choice = await deferredPrompt.userChoice;
+					deferredPrompt = null;
+					return { supported: true, outcome: choice?.outcome || 'dismissed' };
+				};
+			})();
+		</script>
 	</body>
 </html>

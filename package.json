@@ -10,6 +10,7 @@
 		"build": "astro build",
 		"preview": "bun run build && astro preview",
 		"astro": "astro",
+		"generate:pwa-icons": "node scripts/generate-pwa-icons.js",
 		"generate-types": "wrangler types",
 		"deploy": "bun run build && wrangler deploy",
 		"cf-typegen": "wrangler types"
