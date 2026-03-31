@@ -1,0 +1,166 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+
+const hooks = [
+  { title: "Motorcycle Slipper", vid: "Motorcycle-Slipper.mp4", link: "https://www.instagram.com/reel/C8w0AXGS4EK/?igsh=YXg5bDY1eDF6MmFj" },
+  { title: "Little Laces", vid: "Little-Laces.mp4", link: "https://www.instagram.com/reel/C-QQlkXuFlR/?igsh=MWdkZnk2bHhiMGFzMg%3D%3D" },
+  { title: "Windmill Ball", vid: "Windmill-Ball.mp4", link: "https://www.instagram.com/reel/C8PetAyA0-X/?igsh=MWVnNGY3ZzJhNXlmbA%3D%3D" },
+  { title: "Baseball Catcher", vid: "Baesball-Catcher.mov", link: "#" },
+  { title: "Driving Cow", vid: "Driving-Cow.mp4", link: "https://www.instagram.com/reel/C-5brEmuEGR/?igsh=b2RyY2FiODZldmVt" },
+  { title: "Pass Shovel", vid: "Pass-Shovel.mp4", link: "https://www.instagram.com/reel/C89Mw2cOnVF/?igsh=Y3NseHFiNDNqbG5m" },
+  { title: "Turn & Look", vid: "Turn-Look.mp4", link: "https://www.instagram.com/reel/C6escBcPnhq/?igsh=MWR2bjR6Z2lmZjBoZA%3D%3D" },
+  { title: "Bull Stomp", vid: "Bull-Stomp.mp4", link: "https://www.instagram.com/reel/C_YYmqbO_YT/?igsh=MXh0NzNleng4Z3AybQ%3D%3D" },
+  { title: "Knife Fall", vid: "Knife-Fall.mp4", link: "https://www.instagram.com/reel/C-kGpQ1RBi3/?igsh=MTNoeDlqM241MzRk" },
+  { title: "Sand Soccer", vid: "Soccer-Kick.mp4", link: "https://www.instagram.com/reel/C_IqMWyxnKk/?igsh=MXZhbHN6em80OWczag%3D%3D" },
+  { title: "Mini Sledgehammer", vid: "Mini-Sledgehammer.mp4", link: "https://www.instagram.com/reel/C9FeHr9O6n4/?igsh=NXRudzY5aWVhdGth" },
+  { title: "Football Toss", vid: "Football-Toss.mp4", link: "https://www.instagram.com/reel/C-kEOF8gI43/?igsh=OWVnejk0aWh3emYz" },
+  { title: "BMX Stairs", vid: "BMX-Stairs.mp4", link: "https://www.instagram.com/reel/C6ZIrEAO0Hn/?igsh=MWZnZjA0b3VocnR1bw%3D%3D" },
+  { title: "Basketball Roof", vid: "Basketball-Roof.mp4", link: "https://www.instagram.com/reel/C4nK0o5LwNd/?igsh=MW1ldTZuZWw2MTJyMg%3D%3D" },
+  { title: "Freezer Bomb", vid: "Freezer-Bomb.mp4", link: "https://www.instagram.com/reel/C8aUOwFStWn/?igsh=MTUwOXRvMHljanpmaQ%3D%3D" },
+  { title: "Dirt Bike Fall", vid: "Dirt-Bike-Fall.mp4", link: "https://www.instagram.com/reel/C7O2ws-xAjh/?igsh=bzVlNjN2OTF6Mjdr" },
+  { title: "Giant Axe", vid: "Giant-Ax-Chop.mp4", link: "https://www.instagram.com/reel/C-Cy-sBy6r3/?igsh=cjZkNTJ0eTRjc2Rv" },
+  { title: "Car Cornerback", vid: "Car-Cornerback-.mov", link: "https://www.instagram.com/reel/C82Sa_vv6OG/?igsh=MWprNXJpYXd0YXlqag%3D%3D" },
+  { title: "Jump Into Water", vid: "Little-Person-Jump-in-Water.mp4", link: "https://www.instagram.com/reel/C8es_5XOtem/?igsh=ZTk3c2Rxd3o1d2cz" },
+  { title: "Dirt Bike Flip", vid: "Dirt-Bike-Flip.mp4", link: "https://www.instagram.com/reel/C9KkOwgpMmM/?igsh=c3h0djBoZjJiZGJm" },
+  { title: "Cat Toss", vid: "Cat-Toss.mp4", link: "https://www.tiktok.com/@viralhookssss/video/7400533515621649695" },
+  { title: "Jump Cone", vid: "Jump-Cone.mp4", link: "https://www.tiktok.com/@viralhookssss/video/7401222369362152735" },
+  { title: "Golf Spin", vid: "Golf-Spin.mp4", link: "https://www.tiktok.com/@viralhookssss/video/7380108014684015915" },
+  { title: "Ninja Girl", vid: "Ninja-Girl.mp4", link: "https://www.tiktok.com/@trendamoe/video/7392033706334080298" },
+  { title: "Skateboard Slam", vid: "Skateboard-Slam.mp4", link: "https://www.instagram.com/reel/C-2p3RxpJJp/?igsh=MWN4YzgyZnp2Nngzcw%3D%3D" },
+  { title: "Eagle Poo", vid: "Eagle-Poo.mp4", link: "https://www.tiktok.com/@viralhookssss/video/7396844156263484703" },
+  { title: "Soccer Juggle", vid: "Soccer-Juggle.mp4", link: "https://www.instagram.com/reel/C-G37LOJZUT/?igsh=MXgyZXoxeG15cHY2bA%3D%3D" },
+  { title: "Ninja Kick", vid: "Ninja-Kick.mp4", link: "https://www.instagram.com/reel/C7fExS9p4n1/?igsh=dms0eXUxOXZ5d3Bo" },
+  { title: "Small Boat", vid: "Small-Boat.mp4", link: "https://www.instagram.com/anouar_off/reel/C-a46_kISTI/?igsh=eDEzZDNqZXFjbnZx" },
+  { title: "Spin Kick", vid: "Spin-Kick.mp4", link: "https://www.instagram.com/reel/C7wXMQoRaHz/?igsh=aDA1b3E0MXVmOGx4" },
+  { title: "Cow Roll", vid: "Cow-Roll.mp4", link: "https://www.instagram.com/reel/C_BALzipzbd/?igsh=MWY1NWN0aWc0em1pMQ==" },
+  { title: "Small Hula Hoop", vid: "Small-Hula-Hoop.mp4", link: "https://www.instagram.com/reel/C-LRE4HI1-u/?igsh=MTltcm9jaHFwcXQ5cQ==" },
+  { title: "Basketball Smash", vid: "Basketball-Smash.mp4", link: "https://www.instagram.com/reel/C-yXG42J403/?igsh=MTlseWw2bHM0aGg2" },
+  { title: "Motorcycle Flip", vid: "Motorcycle-Flip.mp4", link: "https://www.instagram.com/reel/C-24_DtxBau/?igsh=MWxucGw1Z2tmYWhncQ==" },
+  { title: "Small Rope", vid: "Small-Rope.mp4", link: "https://www.instagram.com/reel/C9OUNVLsWuy/?igsh=cjF5cDZsNnFvbW55" },
+  { title: "Rope Swing", vid: "Rope-Swing-Fail.mp4", link: "https://x.com/barstoolsports/status/1824196223475290314" },
+  { title: "Kickboxer KO", vid: "Kick-Boxer-KO.mp4", link: "https://www.instagram.com/reel/C7W_Xu9Jzdr/?igsh=MXIzeTF2OTQwNHJrcQ==" },
+  { title: "Soccer Surprise", vid: "Soccer-Surprise.mp4", link: "https://www.tiktok.com/@kurayn_kleng/video/7394817732463561991" },
+  { title: "Slip in Mud", vid: "Slip-in-Mud.mp4", link: "https://www.instagram.com/reel/C8XMJ3AgY-o/?igsh=MXVpcThtczJ1a2ltcg==" },
+  { title: "Baseball Foul", vid: "Baseball-Foul-Tip.mp4", link: "https://www.instagram.com/reel/C8uN6cNo34H/?igsh=MWluZTl5dzZxdzVrYQ==" },
+  { title: "Flying Drop Phone", vid: "Flying-Drop-Phone.mp4", link: "https://www.instagram.com/reel/C-K12uBJOw3/?igsh=NjFrcTIybWZrcTVv" },
+  { title: "Scooter Fail", vid: "Scooter-Fall-on-Stairs.mp4", link: "https://www.instagram.com/reel/C8ZjUftpt70/?igsh=aG1zcmxrNmU2YzF2" },
+  { title: "Scooter Ramp", vid: "Scooter-Ramp.mp4", link: "https://www.instagram.com/reel/C8rj9kFpFX2/?igsh=Y2U5d3RsZWZja3p6" },
+  { title: "Impressive Dive", vid: "0716.mov", link: "https://www.instagram.com/p/C-JprcZMWCv/" },
+  { title: "Pole Vault Slide", vid: "Pole-Vault-Slide-Backwards.mp4", link: "https://www.instagram.com/reel/C9ulcGJpGSS/?igsh=MWs1OXVjejI3eDAydw==" },
+  { title: "Ice Coffee Shake", vid: "Ice-Coffee-Video-Hook.mp4", link: "https://www.instagram.com/reel/C7V_MkWseaY/?igsh=MTliN2o3NjhqdjdkYg==" },
+  { title: "Spiderman Entrance", vid: "Spiderman-Entrance-Transitional-Hook.mp4", link: "https://www.tiktok.com/@viralhookssss/video/7394656091784760606" },
+  { title: "Kick Bottle", vid: "New-Kick-Bottle.mp4", link: "https://www.instagram.com/reel/C9L6YRDAxks/?igsh=Y2k2NG8xbzBnMGs5" },
+  { title: "Tire Exploding", vid: "Tire-Exploding-.mov", link: "https://www.tiktok.com/@megaroofing/video/7377115501190843691" },
+  { title: "Bowling Fail", vid: "Bowling-Fail-.mov", link: "https://www.tiktok.com/@mjfitness.au/video/7388150753036094737" },
+  { title: "Electrocuted Bird", vid: "Electrocuted-Bird-.mov", link: "https://www.tiktok.com/@viralhookssss/video/7381635987912314154" },
+  { title: "Little Javelin Throw", vid: "Small-Person-Javalin-Throw-Hook.mp4", link: "https://www.instagram.com/reel/C95nyiWvU_C/?igsh=ZHg2aTYxNndjbGcy" },
+  { title: "Will Smith Telescope", vid: "Will-Smith-Telescope-.mov", link: "#" }
+];
+
+const breadcrumbs = [
+  { name: "Home", href: "/" },
+  { name: "Transitional Hooks", href: "/transitionalhooks/" },
+];
+---
+
+<Layout
+  title="100+ Viral Transitional Hooks for Social Media | Linespedia"
+  description="Master social media retention with our curated library of 100+ viral video hooks. Premium transitions, visual hooks, and editing inspiration for Instagram, TikTok, and YouTube."
+>
+  <Navbar />
+  <main class="min-h-screen bg-cream">
+    <div class="poetic-gradient py-24 border-b border-indigo-50">
+      <div class="container mx-auto px-4 max-w-4xl text-center">
+        <Breadcrumb items={breadcrumbs} />
+        <h1 class="text-5xl md:text-8xl font-serif font-black text-primary mb-8 tracking-tight leading-tight">
+          Viral <span class="text-accent underline decoration-indigo-200 underline-offset-8">Hooks</span> Engine
+        </h1>
+        <p class="text-xl md:text-2xl text-primary/60 max-w-2xl mx-auto mb-12 font-sans italic">
+          High-performance transitional hooks to keep your audience glued to the screen. 100% curated for creator excellence.
+        </p>
+      </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-24 max-w-7xl">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8">
+        {hooks.map((hook) => (
+          <div class="group relative bg-white rounded-3xl overflow-hidden shadow-2xl shadow-indigo-900/5 hover:shadow-primary/20 transition-all duration-700 hover:-translate-y-2 border border-indigo-50">
+            {/* Video Container in Portrait 9:16 */}
+            <div class="aspect-[9/16] bg-slate-950 relative overflow-hidden">
+              <video 
+                class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-700 scale-105 group-hover:scale-100" 
+                preload="none" 
+                loop 
+                muted 
+                playsinline
+                onmouseover="this.play()"
+                onmouseout="this.pause(); this.currentTime = 0;"
+              >
+                <source src={`https://transitionalhooks.com/wp-content/uploads/${hook.vid.includes('2024/') ? hook.vid : '2024/09/' + hook.vid}`} type="video/mp4" />
+              </video>
+              
+              {/* Premium Overlay */}
+              <div class="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/90 via-black/40 to-transparent translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                <span class="text-white/60 text-[10px] font-black uppercase tracking-[0.2em] mb-2 block">Premium Hook</span>
+                <h3 class="text-white font-serif font-bold text-xl mb-6">{hook.title}</h3>
+                <a 
+                  href={hook.link} 
+                  target="_blank" 
+                  class="inline-flex items-center space-x-2 text-accent font-black text-xs uppercase tracking-widest group/btn"
+                >
+                  <span class="border-b-2 border-accent/30 group-hover/btn:border-accent transition-all">View Inspiration</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="group-hover/btn:translate-x-1 transition-transform"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </a>
+              </div>
+
+              {/* Play Icon Placeholder */}
+              <div class="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:opacity-0 transition-opacity duration-300">
+                 <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-2xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white" class="ml-1"><path d="M5 3l14 9-14 9V3z"/></svg>
+                 </div>
+              </div>
+            </div>
+            
+            {/* Title for Small screens where hover might not trigger fully/clearly */}
+            <div class="p-4 md:hidden">
+              <h3 class="text-primary font-serif font-black text-sm">{hook.title}</h3>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      <div class="mt-32 p-12 bg-indigo-900 rounded-[3rem] text-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--color-accent)_0%,_transparent_70%)]"></div>
+        <div class="relative z-10">
+          <h2 class="text-3xl md:text-5xl font-serif font-black text-white mb-6">Need More Retention?</h2>
+          <p class="text-indigo-200 mb-10 max-w-xl mx-auto">We are continuously syncing new hooks via our programmatic content engine. Stay tuned for updates.</p>
+          <a href="/blog/" class="bg-accent text-white px-12 py-5 rounded-full font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-2xl shadow-accent/20">Read the Full Guide</a>
+        </div>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style is:global>
+  body {
+    background-color: var(--color-cream);
+  }
+  /* Custom scrollbar for premium feel */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-indigo-100);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-accent);
+  }
+</style>
