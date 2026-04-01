@@ -60,3 +60,9 @@ find articles on internet , scrap them on keywords , rewrite it and publish them
 ---
 
 create /api to sell api to others 
+
+
+https://in.pinterest.com/ideas/video-hooks-for-reels/935543293909/
+
+
+https://transitionalhooks.com/social-media-video-hook-library/

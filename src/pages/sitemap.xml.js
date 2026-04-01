@@ -18,7 +18,7 @@ export async function GET(context) {
   const allPoetrySitemaps = [];
   for (const lang of LANGUAGES) {
     for (let shard = 1; shard <= SHARDS_PER_LANG; shard += 1) {
-      const langParam = lang === 'en' ? '' : `&lang=${lang}`;
+      const langParam = lang === 'en' ? '' : `&amp;lang=${lang}`;
       allPoetrySitemaps.push(`sitemap-allpoetry.xml?shard=${shard}${langParam}`);
     }
   }
