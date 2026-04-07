@@ -32,6 +32,8 @@ import {
   hasPoster,
 } from "../lib/cdn";
 
+import PoemActions from "../components/PoemActions.astro";
+
 // export const prerender = true;
 
 export async function getStaticPaths() {
@@ -506,11 +508,17 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
                     </button>
                   </div>
 
-                  <AIPanel
-                    content={data.content}
-                    title={data.title}
-                    writer={writer?.name || data.writer}
-                  />
+                   <AIPanel
+                     content={data.content}
+                     title={data.title}
+                     writer={writer?.name || data.writer}
+                   />
+
+                    <PoemActions
+                      content={data.content}
+                      writer={writer?.slug || data.writer}
+                      writerName={writer?.name || data.writer}
+                    />
 
                   <div class="mt-12 bg-indigo-50/40 backdrop-blur-md rounded-[2.5rem] p-8 md:p-12 border border-indigo-100/30 relative">
                     <div

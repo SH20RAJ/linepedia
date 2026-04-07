@@ -70,28 +70,31 @@ const alternateLanguageUrls = supportedLanguages.map((code) => {
 	<main>
 		<Hero />
 
-		{/* Poem of the Day — Fresh Content Signal */}
-		{poemOfTheDay && (
-			<section class="container mx-auto px-4 -mt-12 relative z-20">
-				<div class="bg-primary text-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl overflow-hidden relative group">
-					<div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform"><Quote size={120} /></div>
-					<div class="max-w-3xl">
-						<span class="inline-block px-4 py-1 bg-white/10 rounded-full text-xs font-bold uppercase tracking-widest mb-6 border border-white/10">Poem of the Day</span>
-						<blockquote class="text-2xl md:text-4xl font-serif italic mb-8 leading-relaxed">
-							"{poemOfTheDay.content.slice(0, 150)}..."
-						</blockquote>
-						<div class="flex items-center justify-between">
-							<a href={`/line/${poemOfTheDay.slug}/`} class="flex items-center space-x-3 group/author">
-								<div class="w-10 h-10 rounded-full bg-white/20 border border-white/20 overflow-hidden">
-									<img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${poemOfTheDay.writer}`} alt={poemOfTheDay.writer} />
-								</div>
-								<span class="font-bold border-b border-transparent group-hover/author:border-white transition-all underline-offset-4">{writersData.find((w: any) => w.slug === poemOfTheDay.writer)?.name || poemOfTheDay.writer}</span>
-							</a>
-							<a href={`/line/${poemOfTheDay.slug}/`} class="px-6 py-3 bg-white text-primary rounded-full font-bold text-sm hover:bg-accent hover:text-white transition-all shadow-lg">Read Full Poem &rarr;</a>
-						</div>
-					</div>
-				</div>
-			</section>
+ 		{/* Poem of the Day — Fresh Content Signal */}
+ 		{poemOfTheDay && (
+ 			<section class="container mx-auto px-4 -mt-12 relative z-20">
+ 				<div class="bg-primary text-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl overflow-hidden relative group">
+ 					<div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform"><Quote size={120} /></div>
+ 					<div class="max-w-3xl">
+ 						<span class="inline-block px-4 py-1 bg-white/10 rounded-full text-xs font-bold uppercase tracking-widest mb-6 border border-white/10">Poem of the Day</span>
+ 						<blockquote class="text-2xl md:text-4xl font-serif italic mb-8 leading-relaxed">
+ 							"{poemOfTheDay.content.slice(0, 150)}..."
+ 						</blockquote>
+ 						<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+ 							<a href={`/line/${poemOfTheDay.slug}/`} class="flex items-center space-x-3 group/author">
+ 								<div class="w-10 h-10 rounded-full bg-white/20 border border-white/20 overflow-hidden">
+ 									<img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${poemOfTheDay.writer}`} alt={poemOfTheDay.writer} />
+ 								</div>
+ 								<span class="font-bold border-b border-transparent group-hover/author:border-white transition-all underline-offset-4">{writersData.find((w: any) => w.slug === poemOfTheDay.writer)?.name || poemOfTheDay.writer}</span>
+ 							</a>
+ 							<div class="flex items-center gap-3">
+ 								<a href={`/line/${poemOfTheDay.slug}/`} class="px-6 py-3 bg-white text-primary rounded-full font-bold text-sm hover:bg-accent hover:text-white transition-all shadow-lg">Read Full Poem &rarr;</a>
+ 								<a href="/poem-of-the-day/" class="px-6 py-3 bg-white/20 border border-white/20 text-white rounded-full font-bold text-sm hover:bg-white hover:text-primary transition-all">Visit Page</a>
+ 							</div>
+ 						</div>
+ 					</div>
+ 				</div>
+ 			</section>
 		)}
 
 		{/* Trending Categories */}
