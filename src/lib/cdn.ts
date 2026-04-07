@@ -74,7 +74,7 @@ export const getPoemIdBySlug = async (slug: string): Promise<string | null> => {
     const res = await fetch(`${CDN_BASE}/metadata/v1/slug-map.json`);
     if (!res.ok) return null;
     const slugMap = (await res.json()) as Record<string, string>;
-    return slugMap[slug] || null;
+    return slugMap[slug.toLowerCase()] || null;
   } catch (e) {
     return null;
   }

@@ -83,15 +83,19 @@ async function getPageData(pathSlug: string | undefined) {
   try {
     if (!pathSlug) return null;
 
+    // Normalize slug to lowercase for case-insensitive matching
+    const originalSlug = pathSlug;
+    const normalizedSlug = pathSlug.toLowerCase();
+
     const writers = await getAllWriters();
     const categories = await getAllCategories();
     const collections = await getAllCollections();
 
     // 1. Line Page
-    if (pathSlug.startsWith("line/")) {
+    if (normalizedSlug.startsWith("line/")) {
       // AllPoetry special route: line/ap/writer-slug/poem-slug
-      if (pathSlug.startsWith("line/ap/")) {
-        const parts = pathSlug
+      if (normalizedSlug.startsWith("line/ap/")) {
+        const parts = normalizedSlug
           .replace("line/ap/", "")
           .split("/")
           .filter(Boolean);
@@ -121,7 +125,7 @@ async function getPageData(pathSlug: string | undefined) {
         }
       }
 
-      let lineSlug = pathSlug.replace("line/", "");
+      let lineSlug = normalizedSlug.replace("line/", "");
 
       // Remove trailing slash for lookup if any
       if (lineSlug.endsWith("/")) lineSlug = lineSlug.slice(0, -1);
@@ -140,13 +144,14 @@ async function getPageData(pathSlug: string | undefined) {
       if (id) {
         const data = await getPoem(id);
         if (data) {
-          const writerSlug =
-            typeof data.writer === "string" ? slugify(data.writer) : "";
+           const writerSlug =
+             typeof data.writer === "string" ? slugify(data.writer) : "";
 
-          // Permanent Redirect if the slug is not canonical
-          if (data.slug !== lineSlug) {
-            return { redirect: `/line/${data.slug}/` };
-          }
+           // Permanent Redirect if the slug is not canonical
+           // Compare original lineSlug (from URL) with data.slug (canonical)
+           if (data.slug !== lineSlug) {
+             return { redirect: `/line/${data.slug}/` };
+           }
 
           const related = await getRelatedPoems(
             writerSlug,
@@ -164,45 +169,45 @@ async function getPageData(pathSlug: string | undefined) {
       }
     }
 
-    // 2. Writer Page
-    const writer = writers.find((w: any) => w.slug === pathSlug);
-    if (writer) {
-      const writerPoems = await getWriterPoems(writer.slug);
-      return {
-        type: "writer",
-        data: writer,
-        poems: writerPoems,
-        allWriters: writers,
-      };
-    }
+     // 2. Writer Page
+     const writer = writers.find((w: any) => w.slug === normalizedSlug);
+     if (writer) {
+       const writerPoems = await getWriterPoems(writer.slug);
+       return {
+         type: "writer",
+         data: writer,
+         poems: writerPoems,
+         allWriters: writers,
+       };
+     }
 
-    // 3. Category Page
-    const category = categories.find((c: any) => c.slug === pathSlug);
-    if (category) {
-      const categoryPoems = await getCategoryPoems(category.slug);
-      return {
-        type: "category",
-        data: category,
-        poems: categoryPoems,
-        allWriters: writers,
-      };
-    }
+     // 3. Category Page
+     const category = categories.find((c: any) => c.slug === normalizedSlug);
+     if (category) {
+       const categoryPoems = await getCategoryPoems(category.slug);
+       return {
+         type: "category",
+         data: category,
+         poems: categoryPoems,
+         allWriters: writers,
+       };
+     }
 
-    // 4. Collection Page
-    const collection = collections.find((c: any) => c.slug === pathSlug);
-    if (collection) {
-      const collectionPoems = await getCategoryPoems(collection.slug);
-      return {
-        type: "collection",
-        data: collection,
-        poems: collectionPoems,
-        allWriters: writers,
-      };
-    }
+     // 4. Collection Page
+     const collection = collections.find((c: any) => c.slug === normalizedSlug);
+     if (collection) {
+       const collectionPoems = await getCategoryPoems(collection.slug);
+       return {
+         type: "collection",
+         data: collection,
+         poems: collectionPoems,
+         allWriters: writers,
+       };
+     }
 
-    // 5. AllPoetry Poet Page
-    if (pathSlug.startsWith("poet/")) {
-      const writerSlug = pathSlug.replace("poet/", "").replace(/\/$/, "");
+     // 5. AllPoetry Poet Page
+     if (normalizedSlug.startsWith("poet/")) {
+       const writerSlug = normalizedSlug.replace("poet/", "").replace(/\/$/, "");
       const { getPoetryWriterPoems, getAllPoetryWriters } =
         await import("../lib/cdn");
       const poetryWriters = await getAllPoetryWriters();
