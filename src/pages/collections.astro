@@ -5,23 +5,48 @@ import Footer from '../components/Footer.astro';
 import { getAllCollections } from '../lib/cdn';
 
 const collectionsData = await getAllCollections();
+
+// Language detection
+const supportedLanguages = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
+const requestedLang = Astro.url.searchParams.get("lang") || "en";
+const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
+const siteOrigin = Astro.site?.toString()?.replace(/\/$/, "") || Astro.url.origin;
+
+const alternateLanguageUrls = supportedLanguages.map((code) => {
+  const href = new URL("/collections/", siteOrigin);
+  if (code !== "en") href.searchParams.set("lang", code);
+  return { code, href: href.toString() };
+});
+
+// Create structured data for collections as CollectionPage list? We'll just use WebPage.
 ---
 
-<Layout title="Collections" description="Hand-picked collections of the best shayari and quotes.">
-	<Navbar />
+<Layout 
+  title="Collections" 
+  description="Hand-picked collections of the best shayari and quotes."
+  lang={lang}
+  keywords="curated collections, shayari collections, quote collections, thematic poetry sets"
+>
+  {alternateLanguageUrls.map(({ code, href }) => (
+    <link slot="head" rel="alternate" hreflang={code} href={href} />
+  ))}
+  <link slot="head" rel="alternate" hreflang="x-default" href={siteOrigin + "/collections/"} />
+  <meta slot="head" name="lang-trigger" content={lang} />
+
+  <Navbar />
 	<main class="min-h-screen py-20 px-4">
 		<div class="container mx-auto">
 			<h1 class="text-5xl font-serif font-black text-primary mb-12">Collections</h1>
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 				{collectionsData.map(col => (
-					<a href={`/${col.slug}`} class="group relative aspect-[16/9] rounded-[3rem] overflow-hidden shadow-xl">
-						<div class="absolute inset-0 bg-primary/40 group-hover:bg-primary/20 transition-all z-10" />
-						<img src="https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=800&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" />
-						<div class="absolute inset-0 flex flex-col justify-end p-12 z-20">
-							<h2 class="text-4xl font-serif font-black text-white mb-2">{col.name}</h2>
-							<p class="text-white/80 text-lg max-w-md">{col.description}</p>
-						</div>
-					</a>
+<a href={`/${col.slug}`} class="group relative aspect-[16/9] rounded-[3rem] overflow-hidden shadow-xl">
+  <div class="absolute inset-0 bg-primary/40 group-hover:bg-primary/20 transition-all z-10" />
+  <img src="https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=800&auto=format&fit=crop" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" />
+  <div class="absolute inset-0 flex flex-col justify-end p-12 z-20">
+    <h2 class="text-4xl font-serif font-black text-white mb-2">{col.name}</h2>
+    <p class="text-white/80 text-lg max-w-md">{col.description}</p>
+  </div>
+</a>
 				))}
 			</div>
 		</div>

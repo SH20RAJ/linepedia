@@ -18,10 +18,33 @@ const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
 const totalPages = Math.ceil(poemsData.length / pageSize);
 
 const featuredPoems = poemsData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+// Language detection
+const supportedLanguages = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
+const requestedLang = Astro.url.searchParams.get("lang") || "en";
+const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
+const siteOrigin = Astro.site?.toString()?.replace(/\/$/, "") || Astro.url.origin;
+
+const alternateLanguageUrls = supportedLanguages.map((code) => {
+  const href = new URL("/explore/", siteOrigin);
+  if (code !== "en") href.searchParams.set("lang", code);
+  return { code, href: href.toString() };
+});
 ---
 
-<Layout title="Explore Poetry — Linespedia" description="Discover the world's best poetry collection. Filter by mood, writer, or theme.">
-	<Navbar />
+<Layout 
+  title="Explore Poetry — Linespedia" 
+  description="Discover the world's best poetry collection. Filter by mood, writer, or theme."
+  lang={lang}
+  keywords="poetry exploration, find poems, search shayari, browse quotes, poetic discovery"
+>
+  {alternateLanguageUrls.map(({ code, href }) => (
+    <link slot="head" rel="alternate" hreflang={code} href={href} />
+  ))}
+  <link slot="head" rel="alternate" hreflang="x-default" href={siteOrigin + "/explore/"} />
+  <meta slot="head" name="lang-trigger" content={lang} />
+
+  <Navbar />
 	
 	<main class="min-h-screen poetic-gradient py-20">
 		<div class="container mx-auto px-4">

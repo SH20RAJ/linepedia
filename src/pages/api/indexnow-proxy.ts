@@ -11,7 +11,9 @@ function getClientIp(request: Request): string {
     request.headers.get('cf-connecting-ip') ||
     request.headers.get('x-forwarded-for') ||
     'unknown'
-  ).split(',')[0].trim();
+  )
+    .split(',')[0]
+    .trim();
 }
 
 function isRateLimited(ip: string): boolean {
@@ -35,9 +37,7 @@ function validateAndNormalizeUrls(rawUrls: unknown): string[] {
     throw new Error('urlList must be an array.');
   }
 
-  const normalized = rawUrls
-    .map((item) => String(item || '').trim())
-    .filter(Boolean);
+  const normalized = rawUrls.map((item) => String(item || '').trim()).filter(Boolean);
 
   if (normalized.length === 0) {
     throw new Error('urlList is empty.');
@@ -71,13 +71,16 @@ function validateAndNormalizeUrls(rawUrls: unknown): string[] {
 export async function POST({ request }: { request: Request }) {
   const ip = getClientIp(request);
   if (isRateLimited(ip)) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Rate limit exceeded. Please wait a minute and try again.'
-    }), {
-      status: 429,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Rate limit exceeded. Please wait a minute and try again.',
+      }),
+      {
+        status: 429,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 
   try {
@@ -99,29 +102,38 @@ export async function POST({ request }: { request: Request }) {
     });
 
     if (!response.ok) {
-      return new Response(JSON.stringify({
-        success: false,
-        error: `IndexNow returned ${response.status}`,
-      }), {
-        status: response.status,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: `IndexNow returned ${response.status}`,
+        }),
+        {
+          status: response.status,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
 
-    return new Response(JSON.stringify({
-      success: true,
-      submitted: urlList.length,
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        submitted: urlList.length,
+      }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   } catch (error: any) {
-    return new Response(JSON.stringify({
-      success: false,
-      error: error?.message || 'Unexpected error while submitting to IndexNow.',
-    }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: error?.message || 'Unexpected error while submitting to IndexNow.',
+      }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   }
 }

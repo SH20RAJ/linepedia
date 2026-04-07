@@ -5,10 +5,33 @@ import Footer from '../components/Footer.astro';
 import { getAllCategories } from '../lib/cdn';
 
 const categoriesData = await getAllCategories();
+
+// Language detection
+const supportedLanguages = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
+const requestedLang = Astro.url.searchParams.get("lang") || "en";
+const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
+const siteOrigin = Astro.site?.toString()?.replace(/\/$/, "") || Astro.url.origin;
+
+const alternateLanguageUrls = supportedLanguages.map((code) => {
+  const href = new URL("/categories/", siteOrigin);
+  if (code !== "en") href.searchParams.set("lang", code);
+  return { code, href: href.toString() };
+});
 ---
 
-<Layout title="Categories" description="Explore poetry and shayari by mood, theme, and category.">
-	<Navbar />
+<Layout 
+  title="Categories" 
+  description="Explore poetry and shayari by mood, theme, and category."
+  lang={lang}
+  keywords="poetry categories, shayari themes, poem genres, mood based poetry, thematic collections"
+>
+  {alternateLanguageUrls.map(({ code, href }) => (
+    <link slot="head" rel="alternate" hreflang={code} href={href} />
+  ))}
+  <link slot="head" rel="alternate" hreflang="x-default" href={siteOrigin + "/categories/"} />
+  <meta slot="head" name="lang-trigger" content={lang} />
+
+  <Navbar />
 	<main class="min-h-screen py-20 px-4">
 		<div class="container mx-auto">
 			<h1 class="text-5xl font-serif font-black text-primary mb-12">Categories</h1>

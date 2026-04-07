@@ -26,12 +26,32 @@ const breadcrumbs = [
   { name: "Home", href: "/" },
   { name: "Blog", href: "/blog/" },
 ];
+
+// Language detection
+const supportedLanguages = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
+const requestedLang = Astro.url.searchParams.get("lang") || "en";
+const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
+const siteOrigin = Astro.site?.toString()?.replace(/\/$/, "") || Astro.url.origin;
+
+const alternateLanguageUrls = supportedLanguages.map((code) => {
+  const href = new URL("/blog/", siteOrigin);
+  if (code !== "en") href.searchParams.set("lang", code);
+  return { code, href: href.toString() };
+});
 ---
 
 <Layout
   title="Poetry & Shayari Blog | Linespedia"
   description="Explore the Linespedia blog for insights into the world of poetry, shayari trends, and writing guides."
+  lang={lang}
+  keywords="poetry blog, shayari articles, writing guides, poetic trends, literary insights"
 >
+  {alternateLanguageUrls.map(({ code, href }) => (
+    <link slot="head" rel="alternate" hreflang={code} href={href} />
+  ))}
+  <link slot="head" rel="alternate" hreflang="x-default" href={siteOrigin + "/blog/"} />
+  <meta slot="head" name="lang-trigger" content={lang} />
+
   <Navbar />
   <main class="min-h-screen">
     <div class="poetic-gradient py-24 border-b border-indigo-50">

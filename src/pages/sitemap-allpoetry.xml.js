@@ -33,13 +33,13 @@ export async function GET({ url }) {
   const shard = Number.isFinite(shardParam) && shardParam > 0 ? shardParam : 1;
   const requestedLang = String(url.searchParams.get('lang') || 'en').toLowerCase();
   const lang = SUPPORTED_LANGUAGES.includes(requestedLang) ? requestedLang : 'en';
-  
+
   let allMetadata = [];
   try {
     const res = await fetch(`${CDN_BASE}/automation/all-poems-metadata.json`);
     if (res.ok) allMetadata = await res.json();
   } catch (e) {
-    console.error("Sitemap Fetch Error:", e);
+    console.error('Sitemap Fetch Error:', e);
   }
 
   if (!Array.isArray(allMetadata)) {
@@ -52,24 +52,24 @@ export async function GET({ url }) {
   const limitedMetadata = allMetadata.slice(start, end);
 
   const entries = limitedMetadata
-    .map(poem => {
-    const poetSlug = toPoetSlug(poem);
-    const poemSlug = String(poem?.slug || '').trim();
-    if (!poetSlug || !poemSlug) return '';
+    .map((poem) => {
+      const poetSlug = toPoetSlug(poem);
+      const poemSlug = String(poem?.slug || '').trim();
+      if (!poetSlug || !poemSlug) return '';
 
-    const poemUrl = `https://linespedia.com/line/ap/${poetSlug}/${poemSlug}/`;
-    const langUrl = lang === 'en' ? poemUrl : `${poemUrl}?lang=${lang}`;
-    
-    return `
+      const poemUrl = `https://linespedia.com/line/ap/${poetSlug}/${poemSlug}/`;
+      const langUrl = lang === 'en' ? poemUrl : `${poemUrl}?lang=${lang}`;
+
+      return `
   <url>
     <loc>${langUrl}</loc>
     <lastmod>${toPoemLastmod(poem)}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>`;
-  })
-  .filter(Boolean)
-  .join('');
+    })
+    .filter(Boolean)
+    .join('');
 
   // Also include poet URLs in shard 1 for English
   let poetEntries = '';
@@ -87,13 +87,17 @@ export async function GET({ url }) {
       }
     }
 
-    poetEntries = Array.from(poetLastmod.entries()).map(([slug, lastmod]) => `
+    poetEntries = Array.from(poetLastmod.entries())
+      .map(
+        ([slug, lastmod]) => `
   <url>
     <loc>https://linespedia.com/poet/${slug}/</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-  </url>`).join('');
+  </url>`
+      )
+      .join('');
   }
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -105,7 +109,7 @@ export async function GET({ url }) {
   return new Response(sitemap, {
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600'
-    }
+      'Cache-Control': 'public, max-age=3600',
+    },
   });
 }

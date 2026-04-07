@@ -344,6 +344,12 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
   description={getDescription()}
   type={type === "line" ? "article" : "website"}
   canonicalURL={canonicalUrl.toString()}
+  lang={lang}
+  publishedTime={type === "line" ? data?.createdAt : undefined}
+  author={type === "line" && writer ? new URL(`/${writer.slug}/`, siteOrigin).toString() : undefined}
+  section={type === "line" && data?.category?.[0] ? data.category[0] : undefined}
+  tags={type === "line" ? data?.category || [] : undefined}
+  keywords={type === "line" && data?.category && writer ? `${data.category.join(", ")}, ${writer.name}` : undefined}
 >
   {
     alternateLanguageUrls.map(({ code, href }) => (
@@ -369,35 +375,53 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
         }))}
       />
     )
-  }
+  	}
+  
+  	{type !== "line" && data && (
+  		<StructuredData
+  			type={type as any}
+  			title={data.name}
+  			description={(data as any).bio || (data as any).description || (data as any).seoIntro || ''}
+  			url={canonicalUrl.toString()}
+  			language={lang}
+  			breadcrumbs={breadcrumbs.map((b: any) => ({ name: b.name, url: b.href }))}
+  		/>
+  	)}
+  
+  	<Navbar />
 
-  <Navbar />
-
-  <main class="min-h-screen poetic-gradient">
-    {/* ========== LINE PAGE ========== */}
-    {
-      type === "line" && (
-        <div class="container mx-auto px-4 py-12 md:py-32 max-w-7xl animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <Breadcrumb items={breadcrumbs} />
+	<main class="min-h-screen poetic-gradient">
+    	{/* ========== LINE PAGE ========== */}
+    	{
+      		type === "line" && (
+        		<div class="container mx-auto px-4 py-12 md:py-32 max-w-7xl animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          			<Breadcrumb items={breadcrumbs} />
 
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mt-8">
             {/* Main Content Column */}
             <div class="lg:col-span-8 space-y-12">
-              <article class="bg-white/70 backdrop-blur-2xl border border-white/40 rounded-[4rem] p-10 md:p-16 shadow-2xl relative overflow-hidden group">
-                <div class="absolute top-0 right-0 p-12 opacity-[0.03] text-primary group-hover:scale-110 transition-transform duration-700">
-                  <Quote size={120} />
-                </div>
+               <article class="bg-white/70 backdrop-blur-2xl border border-white/40 rounded-[4rem] p-10 md:p-16 shadow-2xl relative overflow-hidden group">
+                 <div class="absolute top-0 right-0 p-12 opacity-[0.03] text-primary group-hover:scale-110 transition-transform duration-700">
+                   <Quote size={120} />
+                 </div>
 
-                <div class="relative z-10">
-                  <h1 class="text-xs font-bold uppercase tracking-[0.4em] text-primary/30 mb-8 md:mb-12 text-center">
-                    Poetic Insight
-                  </h1>
+                 <div class="relative z-10">
+                   <header class="text-center mb-12">
+                     <h1 class="text-3xl md:text-5xl font-serif font-black text-primary leading-tight mb-4">
+                       {data.title}
+                     </h1>
+                     {writer && (
+                       <p class="text-sm font-bold uppercase tracking-[0.2em] text-primary/40">
+                         By <a href={`/${writer.slug}/`} class="hover:text-accent transition-colors">{writer.name}</a>
+                       </p>
+                     )}
+                   </header>
 
-                  <blockquote class="text-2xl md:text-4xl font-serif font-black text-primary leading-tight md:leading-snug mb-16 selection:bg-accent/20 max-w-4xl mx-auto text-center">
-                    <p class="whitespace-pre-line drop-shadow-sm italic">
-                      {data.content}
-                    </p>
-                  </blockquote>
+                   <blockquote class="text-2xl md:text-4xl font-serif font-black text-primary leading-tight md:leading-snug mb-16 selection:bg-accent/20 max-w-4xl mx-auto text-center">
+                     <p class="whitespace-pre-line drop-shadow-sm italic">
+                       {data.content}
+                     </p>
+                   </blockquote>
 
                   <div class="flex flex-wrap justify-center gap-4 mb-16">
                     <button
@@ -567,6 +591,8 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
                     <img
                       src={posterUrl}
                       alt={`${data.title} Poster`}
+                      width="1080"
+                      height="1080"
                       class="w-full object-contain"
                       loading="lazy"
                     />

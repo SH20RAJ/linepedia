@@ -1,11 +1,11 @@
 ---
-title: "Transitional Hooks for Social Media: 100+ Viral Video Hooks to Download"
-description: "Discover 100+ Viral Video Hooks for Social Media. A comprehensive guide with curated selections, meaning, and how to use them effectively."
+title: 'Transitional Hooks for Social Media: 100+ Viral Video Hooks to Download'
+description: 'Discover 100+ Viral Video Hooks for Social Media. A comprehensive guide with curated selections, meaning, and how to use them effectively.'
 pubDate: 2026-03-31
-heroImage: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop"
-category: "social_media_tips"
-tags: ["social media", "video hooks", "viral content", "video editing"]
-author: "Linespedia Editorial"
+heroImage: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop'
+category: 'social_media_tips'
+tags: ['social media', 'video hooks', 'viral content', 'video editing']
+author: 'Linespedia Editorial'
 ---
 
 <div class="list-style-icon">

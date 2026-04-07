@@ -104,9 +104,16 @@ export async function getSeoCombos(): Promise<SeoCombo[]> {
   return combos;
 }
 
-export async function findSeoCombo(categorySlug: string, writerSlug: string): Promise<SeoCombo | null> {
+export async function findSeoCombo(
+  categorySlug: string,
+  writerSlug: string
+): Promise<SeoCombo | null> {
   const combos = await getSeoCombos();
-  return combos.find((combo) => combo.categorySlug === categorySlug && combo.writerSlug === writerSlug) || null;
+  return (
+    combos.find(
+      (combo) => combo.categorySlug === categorySlug && combo.writerSlug === writerSlug
+    ) || null
+  );
 }
 
 function firstLine(content: string): string {
@@ -131,9 +138,7 @@ export function pickIntentPoems(poems: any[], intent: SeoIntent): any[] {
   }
 
   if (intent === 'whatsapp-status') {
-    return poems
-      .filter((poem) => firstLine(poem.content).length <= 120)
-      .slice(0, 60);
+    return poems.filter((poem) => firstLine(poem.content).length <= 120).slice(0, 60);
   }
 
   if (intent === 'deep-quotes') {
@@ -143,9 +148,7 @@ export function pickIntentPoems(poems: any[], intent: SeoIntent): any[] {
   }
 
   if (intent === 'heart-touching-lines') {
-    return poems
-      .filter((poem) => firstLine(poem.content).length >= 45)
-      .slice(0, 60);
+    return poems.filter((poem) => firstLine(poem.content).length >= 45).slice(0, 60);
   }
 
   if (intent === 'romantic-captions') {

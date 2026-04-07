@@ -9,11 +9,7 @@ function withTrailingSlash(url) {
 export async function GET(context) {
   const site = withTrailingSlash(context.site?.toString() || 'https://linespedia.com');
 
-  const baseSitemaps = [
-    'sitemap-poems.xml',
-    'sitemap-seo.xml',
-    'sitemap-stories.xml',
-  ];
+  const baseSitemaps = ['sitemap-poems.xml', 'sitemap-seo.xml', 'sitemap-stories.xml'];
 
   const allPoetrySitemaps = [];
   for (const lang of LANGUAGES) {
@@ -33,7 +29,7 @@ export async function GET(context) {
   <sitemap>
     <loc>${site}${path}</loc>
     <lastmod>${INDEX_LASTMOD}</lastmod>
-  </sitemap>`,
+  </sitemap>`
     )
     .join('')}
 </sitemapindex>`;

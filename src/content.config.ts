@@ -6,9 +6,11 @@ const writers = defineCollection({
     name: z.string(),
     photo: z.string(),
     bio: z.string(),
-    stats: z.object({
-      poems: z.number(),
-    }).optional(),
+    stats: z
+      .object({
+        poems: z.number(),
+      })
+      .optional(),
   }),
 });
 
@@ -31,7 +33,7 @@ const collectionsData = defineCollection({
 });
 
 const blog = defineCollection({
-  loader: glob({ pattern: '**/[^_]*.md', base: "./src/content/blog" }),
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/blog' }),
   schema: z.object({
     title: z.string(),
     description: z.string(),

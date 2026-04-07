@@ -32,16 +32,39 @@ const poemOfTheDay = poemsData[seed % poemsData.length] || poemsData[0];
 
 // Trending Lines (last 6)
 const trendingLines = poemsData.slice(-6).reverse();
+
+// Language detection for hreflang and meta
+const supportedLanguages = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
+const requestedLang = Astro.url.searchParams.get("lang") || "en";
+const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
+const siteOrigin = Astro.site?.toString()?.replace(/\/$/, "") || Astro.url.origin;
+
+const alternateLanguageUrls = supportedLanguages.map((code) => {
+  const href = new URL("/", siteOrigin);
+  if (code !== "en") href.searchParams.set("lang", code);
+  return { code, href: href.toString() };
+});
 ---
 
-<Layout title="Best Shayari, Poems & Quotes Collection" description="Linespedia — The largest collection of curated poetry, shayari, and quotes. Browse by mood, writer, or theme. Copy paste ready for Instagram, WhatsApp & more.">
-	<StructuredData
-		type="category"
-		title="Linespedia — Best Shayari, Poems & Quotes"
-		description="The largest collection of curated poetry, shayari, and quotes."
-		url="/"
-		breadcrumbs={[]}
-	/>
+<Layout 
+  title="Best Shayari, Poems & Quotes Collection" 
+  description="Linespedia — The largest collection of curated poetry, shayari, and quotes. Browse by mood, writer, or theme. Copy paste ready for Instagram, WhatsApp & more."
+  lang={lang}
+  keywords="poetry, shayari, quotes, love shayari, sad shayari, motivational quotes, hindi shayari, urdu poetry, english poems, inspirational lines"
+>
+  {alternateLanguageUrls.map(({ code, href }) => (
+    <link slot="head" rel="alternate" hreflang={code} href={href} />
+  ))}
+  <link slot="head" rel="alternate" hreflang="x-default" href={siteOrigin + "/"} />
+  <meta slot="head" name="lang-trigger" content={lang} />
+  
+  <StructuredData
+    type="category"
+    title="Linespedia — Best Shayari, Poems & Quotes"
+    description="The largest collection of curated poetry, shayari, and quotes."
+    url="/"
+    breadcrumbs={[]}
+  />
 	<Navbar />
 
 	<main>

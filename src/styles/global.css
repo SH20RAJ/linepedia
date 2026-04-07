@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
 
@@ -8,10 +8,10 @@
   --color-accent: #f59e0b;
   --color-cream: #fafaf9;
   --color-lavender: #f3f4ff;
-  
-  --font-serif: "Playfair Display", serif;
-  --font-sans: "Inter", sans-serif;
-  
+
+  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'Inter', sans-serif;
+
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
 }
@@ -36,18 +36,34 @@
 
 /* Scroll & Entrance Animations */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideInFromBottom {
-  from { transform: translateY(2rem); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(2rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes slideInFromTop {
-  from { transform: translateY(-1rem); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(-1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .animate-in {
@@ -55,15 +71,31 @@
   animation-fill-mode: both;
 }
 
-.fade-in { animation-name: fadeIn; }
-.slide-in-from-bottom-8 { animation-name: slideInFromBottom; }
-.slide-in-from-top-4 { animation-name: slideInFromTop; }
+.fade-in {
+  animation-name: fadeIn;
+}
+.slide-in-from-bottom-8 {
+  animation-name: slideInFromBottom;
+}
+.slide-in-from-top-4 {
+  animation-name: slideInFromTop;
+}
 
-.duration-1000 { animation-duration: 1s; }
-.delay-200 { animation-delay: 0.2s; }
-.delay-400 { animation-delay: 0.4s; }
-.delay-600 { animation-delay: 0.6s; }
-.delay-800 { animation-delay: 0.8s; }
+.duration-1000 {
+  animation-duration: 1s;
+}
+.delay-200 {
+  animation-delay: 0.2s;
+}
+.delay-400 {
+  animation-delay: 0.4s;
+}
+.delay-600 {
+  animation-delay: 0.6s;
+}
+.delay-800 {
+  animation-delay: 0.8s;
+}
 
 /* Poetic Text Utilities */
 .poetic-text {
