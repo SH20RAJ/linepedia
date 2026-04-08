@@ -24,6 +24,7 @@ const pages = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPag
     {currentPage > 1 && (
         <a 
             href={`${baseUrl}?page=${currentPage - 1}`} 
+            rel="prev"
             class="p-3 bg-white border border-slate-200 rounded-2xl text-slate-400 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm hover:shadow-md"
             aria-label="Previous Page"
         >
@@ -63,6 +64,7 @@ const pages = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPag
     {currentPage < totalPages && (
         <a 
             href={`${baseUrl}?page=${currentPage + 1}`} 
+            rel="next"
             class="p-3 bg-white border border-slate-200 rounded-2xl text-slate-400 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm hover:shadow-md"
             aria-label="Next Page"
         >

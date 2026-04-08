@@ -12,9 +12,7 @@ export default defineConfig({
     mode: 'advanced',
     nodejsCompat: true,
   }),
-  integrations: [
-    sitemap(),
-    mdx()
-  ],
-  prefetch: true
+  integrations: [sitemap(), mdx()],
+  middleware: './src/middleware.ts',
+  prefetch: true,
 });
