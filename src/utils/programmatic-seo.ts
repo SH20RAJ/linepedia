@@ -1,119 +1,64 @@
-import { getAllCategories, getAllWriters, getCategoryPoems } from '../lib/cdn';
+import { getAllCategories, getCategoryPoems } from '../lib/cdn';
 
-export type SeoIntent =
-  | 'best-lines'
-  | 'short-lines'
-  | 'instagram-captions'
-  | 'whatsapp-status'
-  | 'deep-quotes'
-  | 'heart-touching-lines'
-  | 'romantic-captions'
-  | 'one-line-status'
-  | 'long-poetry'
-  | 'classic-verses';
+export type SeoModifier =
+  | 'short'
+  | 'deep'
+  | 'attitude'
+  | '2-line'
+  | 'aesthetic'
+  | 'romantic'
+  | 'sad';
+
+export type SeoPlatform =
+  | 'for-instagram'
+  | 'for-whatsapp'
+  | 'copy-paste'
+  | 'in-hindi'
+  | 'for-her'
+  | 'for-him';
 
 export interface SeoCombo {
   categorySlug: string;
   categoryName: string;
-  writerSlug: string;
-  writerName: string;
+  modifier: SeoModifier;
+  platform?: SeoPlatform;
   poemCount: number;
 }
 
-const INTENTS: SeoIntent[] = [
-  'best-lines',
-  'short-lines',
-  'instagram-captions',
-  'whatsapp-status',
-  'deep-quotes',
-  'heart-touching-lines',
-  'romantic-captions',
-  'one-line-status',
-  'long-poetry',
-  'classic-verses',
+const MODIFIERS: SeoModifier[] = [
+  'short', 'deep', 'attitude', '2-line', 'aesthetic', 'romantic', 'sad'
+];
+
+const PLATFORMS: SeoPlatform[] = [
+  'for-instagram', 'for-whatsapp', 'copy-paste', 'in-hindi', 'for-her', 'for-him'
 ];
 
 let comboCache: SeoCombo[] | null = null;
 
-function titleCaseSlug(slug: string): string {
-  return slug
-    .split('-')
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ');
+export function getSeoModifiers(): SeoModifier[] {
+  return MODIFIERS;
 }
 
-export function isSeoIntent(intent: string): intent is SeoIntent {
-  return INTENTS.includes(intent as SeoIntent);
+export function getSeoPlatforms(): SeoPlatform[] {
+  return PLATFORMS;
 }
 
-export function getSeoIntents(): SeoIntent[] {
-  return INTENTS;
+export function isSeoModifier(modifier: string): modifier is SeoModifier {
+  return MODIFIERS.includes(modifier as SeoModifier);
 }
 
-export function getIntentLabel(intent: SeoIntent): string {
-  if (intent === 'best-lines') return 'Best Lines';
-  if (intent === 'short-lines') return 'Short Lines';
-  if (intent === 'instagram-captions') return 'Instagram Captions';
-  if (intent === 'whatsapp-status') return 'WhatsApp Status';
-  if (intent === 'deep-quotes') return 'Deep Quotes';
-  if (intent === 'heart-touching-lines') return 'Heart Touching Lines';
-  if (intent === 'romantic-captions') return 'Romantic Captions';
-  if (intent === 'one-line-status') return 'One Line Status';
-  if (intent === 'long-poetry') return 'Long Poetry';
-  return 'Classic Verses';
+export function isSeoPlatform(platform: string): platform is SeoPlatform {
+  return PLATFORMS.includes(platform as SeoPlatform);
 }
 
-export async function getSeoCombos(): Promise<SeoCombo[]> {
-  if (comboCache) return comboCache;
-
-  const [categories, writers] = await Promise.all([getAllCategories(), getAllWriters()]);
-  const writerNameBySlug = new Map<string, string>();
-
-  for (const writer of writers as any[]) {
-    writerNameBySlug.set(writer.slug, writer.name);
-  }
-
-  const combos: SeoCombo[] = [];
-
-  for (const category of categories as any[]) {
-    const poems = await getCategoryPoems(category.slug);
-    const writerCounts = new Map<string, number>();
-
-    for (const poem of poems as any[]) {
-      const writerSlug = String(poem.writer || '').trim();
-      if (!writerSlug) continue;
-      writerCounts.set(writerSlug, (writerCounts.get(writerSlug) || 0) + 1);
-    }
-
-    for (const [writerSlug, count] of writerCounts.entries()) {
-      if (count < 2) continue;
-
-      combos.push({
-        categorySlug: category.slug,
-        categoryName: category.name,
-        writerSlug,
-        writerName: writerNameBySlug.get(writerSlug) || titleCaseSlug(writerSlug),
-        poemCount: count,
-      });
-    }
-  }
-
-  combos.sort((a, b) => b.poemCount - a.poemCount || a.categorySlug.localeCompare(b.categorySlug));
-  comboCache = combos;
-  return combos;
+export function getModifierLabel(modifier: SeoModifier): string {
+  return modifier.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
-export async function findSeoCombo(
-  categorySlug: string,
-  writerSlug: string
-): Promise<SeoCombo | null> {
-  const combos = await getSeoCombos();
-  return (
-    combos.find(
-      (combo) => combo.categorySlug === categorySlug && combo.writerSlug === writerSlug
-    ) || null
-  );
+export function getPlatformLabel(platform: SeoPlatform): string {
+  if (platform === 'in-hindi') return 'in Hindi';
+  if (platform === 'copy-paste') return '(Copy & Paste)';
+  return platform.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
 function firstLine(content: string): string {
@@ -121,75 +66,113 @@ function firstLine(content: string): string {
   return line.trim();
 }
 
-export function pickIntentPoems(poems: any[], intent: SeoIntent): any[] {
-  if (intent === 'short-lines') {
-    return [...poems]
-      .sort((a, b) => firstLine(a.content).length - firstLine(b.content).length)
-      .slice(0, 60);
+// Predict whether a poem fits a modifier/platform heuristically
+export function pickIntentPoems(poems: any[], modifier: SeoModifier, platform?: SeoPlatform): any[] {
+  let filtered = [...poems];
+  
+  if (modifier === 'short') {
+    filtered = filtered.filter(p => firstLine(p.content).length < 50);
+  } else if (modifier === '2-line') {
+    filtered = filtered.filter(p => String(p.content).split('\n').filter(Boolean).length === 2);
+  } else if (modifier === 'deep') {
+    filtered = filtered.filter(p => firstLine(p.content).length > 60);
+  } else if (modifier === 'attitude') {
+     // rudimentary heuristic for attitude
+     filtered = filtered.filter(p => !p.content.toLowerCase().includes('love') && p.content.length < 100);
+  } else if (modifier === 'aesthetic') {
+     filtered = filtered.filter(p => p.content.length < 80);
+  } else if (modifier === 'romantic' || modifier === 'sad') {
+      // Just slice top
+      filtered = filtered.slice(0, 80);
   }
 
-  if (intent === 'instagram-captions') {
-    return poems
-      .filter((poem) => {
-        const len = firstLine(poem.content).length;
-        return len >= 25 && len <= 140;
-      })
-      .slice(0, 60);
+  // Fallback to avoid empty pages if heuristic overfilters
+  if (filtered.length < 5) {
+     filtered = [...poems].slice(0, 40);
   }
 
-  if (intent === 'whatsapp-status') {
-    return poems.filter((poem) => firstLine(poem.content).length <= 120).slice(0, 60);
+  // Platform filtering (just a thin slice)
+  if (platform === 'for-instagram') {
+    filtered = filtered.filter(p => p.content.length < 120);
   }
 
-  if (intent === 'deep-quotes') {
-    const longer = poems.filter((poem) => firstLine(poem.content).length >= 80);
-    if (longer.length > 0) return longer.slice(0, 60);
-    return poems.slice(0, 60);
+  // Fallback again
+  if (filtered.length < 5) {
+     filtered = [...poems].slice(0, 40);
   }
 
-  if (intent === 'heart-touching-lines') {
-    return poems.filter((poem) => firstLine(poem.content).length >= 45).slice(0, 60);
+  return filtered.slice(0, 60);
+}
+
+export async function getSeoCombos(): Promise<SeoCombo[]> {
+  if (comboCache) return comboCache;
+
+  const categories = await getAllCategories();
+  const combos: SeoCombo[] = [];
+
+  for (const category of categories as any[]) {
+    const poems = await getCategoryPoems(category.slug);
+    
+    // We only create combinations if the category has enough base poems
+    if (poems.length < 15) continue;
+
+    for (const modifier of MODIFIERS) {
+      const filteredForModifier = pickIntentPoems(poems, modifier);
+      if (filteredForModifier.length >= 5) {
+        combos.push({
+          categorySlug: category.slug,
+          categoryName: category.name,
+          modifier,
+          poemCount: filteredForModifier.length
+        });
+
+        // Also add platform combinations randomly or fully
+        for (const platform of PLATFORMS) {
+            const filteredForPlatform = pickIntentPoems(poems, modifier, platform);
+            if (filteredForPlatform.length >= 5) {
+               combos.push({
+                  categorySlug: category.slug,
+                  categoryName: category.name,
+                  modifier,
+                  platform,
+                  poemCount: filteredForPlatform.length
+               });
+            }
+        }
+      }
+    }
   }
 
-  if (intent === 'romantic-captions') {
-    return poems
-      .filter((poem) => {
-        const len = firstLine(poem.content).length;
-        return len >= 35 && len <= 160;
-      })
-      .slice(0, 60);
-  }
+  comboCache = combos;
+  return combos;
+}
 
-  if (intent === 'one-line-status') {
-    return poems
-      .filter((poem) => {
-        const line = firstLine(poem.content);
-        return line.length <= 90 && !line.includes('  ');
-      })
-      .slice(0, 60);
-  }
-
-  if (intent === 'long-poetry') {
-    const longer = poems.filter((poem) => firstLine(poem.content).length >= 140);
-    if (longer.length > 0) return longer.slice(0, 60);
-    return poems.slice(0, 60);
-  }
-
-  if (intent === 'classic-verses') {
-    return [...poems].sort((a, b) => String(a.slug).localeCompare(String(b.slug))).slice(0, 80);
-  }
-
-  return poems.slice(0, 80);
+export async function findSeoCombo(
+  categorySlug: string,
+  modifierSlug: string,
+  platformSlug?: string
+): Promise<SeoCombo | null> {
+  const combos = await getSeoCombos();
+  return (
+    combos.find(
+      (combo) => 
+         combo.categorySlug === categorySlug && 
+         combo.modifier === modifierSlug && 
+         (platformSlug ? combo.platform === platformSlug : !combo.platform)
+    ) || null
+  );
 }
 
 export async function getSeoUrls(site: string): Promise<string[]> {
   const combos = await getSeoCombos();
   const base = site.endsWith('/') ? site : `${site}/`;
-  const urls: string[] = [`${base}seo/`];
+  const urls: string[] = [];
 
   for (const combo of combos) {
-    for (const intent of INTENTS) {
-      urls.push(`${base}seo/${combo.categorySlug}/${combo.writerSlug}/${intent}/`);
+    if (combo.platform) {
+       urls.push(`${base}${combo.categorySlug}/${combo.modifier}/${combo.platform}/`);
+    } else {
+       urls.push(`${base}${combo.categorySlug}/${combo.modifier}/`);
     }
   }
 

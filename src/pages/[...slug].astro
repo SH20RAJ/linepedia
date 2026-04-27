@@ -73,6 +73,17 @@ export async function getStaticPaths() {
     paths.push({ params: { slug: c.slug } });
   });
 
+  // 5. Programmatic SEO Paths
+  const { getSeoCombos } = await import("../utils/programmatic-seo");
+  const seoCombos = await getSeoCombos();
+  seoCombos.forEach((combo) => {
+    if (combo.platform) {
+       paths.push({ params: { slug: `${combo.categorySlug}/${combo.modifier}/${combo.platform}` } });
+    } else {
+       paths.push({ params: { slug: `${combo.categorySlug}/${combo.modifier}` } });
+    }
+  });
+
   return paths;
 }
 
@@ -231,6 +242,29 @@ async function getPageData(pathSlug: string | undefined) {
       }
     }
 
+     // 6. Programmatic SEO Page
+     const parts = normalizedSlug.split("/");
+     if (parts.length === 2 || parts.length === 3) {
+       const categorySlug = parts[0];
+       const modifierSlug = parts[1];
+       const platformSlug = parts.length === 3 ? parts[2] : undefined;
+
+       const { findSeoCombo, pickIntentPoems } = await import("../utils/programmatic-seo");
+       const seoCombo = await findSeoCombo(categorySlug, modifierSlug, platformSlug);
+
+       if (seoCombo) {
+         const categoryPoems = await getCategoryPoems(categorySlug);
+         const selectedPoems = pickIntentPoems(categoryPoems, seoCombo.modifier as any, seoCombo.platform as any);
+         
+         return {
+           type: "programmatic-seo",
+           data: seoCombo,
+           poems: selectedPoems,
+           allWriters: writers,
+         };
+       }
+     }
+
     return null;
   } catch (e: any) {
     throw e;
@@ -321,6 +355,11 @@ if (type === "line" && data) {
 } else if (type === "collection" && data) {
   breadcrumbs.push({ name: "Collections", href: "/collections/" });
   breadcrumbs.push({ name: data.name, href: `/${data.slug}/` });
+} else if (type === "programmatic-seo" && data) {
+  breadcrumbs.push({ name: "Categories", href: "/categories/" });
+  breadcrumbs.push({ name: data.categoryName, href: `/${data.categorySlug}/` });
+  const label = data.platform ? `${data.modifier} ${data.platform.replace(/-/g, ' ')}` : data.modifier;
+  breadcrumbs.push({ name: label, href: Astro.url.pathname });
 }
 
 function getCTRTitle() {
@@ -332,6 +371,11 @@ function getCTRTitle() {
     return `Best ${data.name} Lines — Copy Paste ${new Date().getFullYear()}`;
   if (type === "collection")
     return `${data.name} — Top Lines for Instagram & WhatsApp`;
+  if (type === "programmatic-seo") {
+    const modifierName = data.modifier.charAt(0).toUpperCase() + data.modifier.slice(1);
+    const platformName = data.platform ? data.platform.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) : '';
+    return `${modifierName} ${data.categoryName} ${platformName}`.trim();
+  }
   return data.name || "Poetry";
 }
 
@@ -340,6 +384,9 @@ function getDescription() {
   if (type === "line")
     return `${data.content?.slice(0, 140)}... Read meaning and context from ${writer?.name || "the poet"}.`;
   if (type === "writer") return data.bio;
+  if (type === "programmatic-seo") {
+      return `Explore ${totalLines}+ curated ${data.modifier} ${data.categoryName.toLowerCase()} perfect for ${data.platform ? data.platform.replace(/-/g, ' ') : 'sharing'}.`;
+  }
   return data.seoIntro || data.description;
 }
 
@@ -798,7 +845,77 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
       /* ========== WRITER / CATEGORY / COLLECTION PAGES (unchanged functionally, but improved spacing) ========== */
     }
     {
-      type !== "line" && (
+      type === "programmatic-seo" && (
+        <div class="py-24">
+          <div class="container mx-auto px-4 text-center max-w-4xl">
+            <Breadcrumb items={breadcrumbs} />
+            <h1 class="text-4xl md:text-6xl font-serif font-black text-primary mb-6 mt-4 leading-tight">
+              {getCTRTitle()}
+            </h1>
+            <p class="text-lg md:text-xl text-primary/60 leading-relaxed max-w-3xl mx-auto">
+              {getDescription()}
+            </p>
+            <div class="mt-8 text-sm text-primary/40 font-bold uppercase tracking-widest">
+              {totalLines} Lines Found {totalPages > 1 && `(Page ${pageNum} of ${totalPages})`}
+            </div>
+          </div>
+
+          <div class="container mx-auto px-4 mt-20">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-24">
+              {paginatedPoems.map((poem: any) => (
+                <PoemCard
+                  id={poem.id}
+                  slug={
+                    poem.id?.startsWith("ap-")
+                      ? `ap/${poem.writerSlug || currentWriterSlug}/${poem.slug}`
+                      : poem.slug
+                  }
+                  content={poem.content}
+                  writer={
+                    poem.id?.startsWith("ap-")
+                      ? `poet/${poem.writerSlug || data.slug}`
+                      : poem.writer
+                  }
+                  writerName={poem.writerName || poem.writer?.replace(/-/g, " ")}
+                />
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div class="mt-12 flex items-center justify-center gap-4">
+                {pagination.hasPrev ? (
+                  <a href={pagination.prevUrl} class="p-4 bg-white border border-indigo-100 rounded-2xl text-primary hover:bg-indigo-50 transition-all shadow-sm">
+                    <ChevronLeft size={24} />
+                  </a>
+                ) : (
+                  <div class="p-4 bg-indigo-50/50 border border-indigo-50 rounded-2xl text-primary/20 cursor-not-allowed">
+                    <ChevronLeft size={24} />
+                  </div>
+                )}
+                
+                <div class="px-8 py-4 bg-white border border-indigo-100 rounded-2xl font-serif font-black text-primary shadow-sm">
+                  Page {pagination.currentPage} <span class="text-primary/20 mx-2">/</span> {pagination.totalPages}
+                </div>
+
+                {pagination.hasNext ? (
+                  <a href={pagination.nextUrl} class="p-4 bg-white border border-indigo-100 rounded-2xl text-primary hover:bg-indigo-50 transition-all shadow-sm">
+                    <ChevronRight size={24} />
+                  </a>
+                ) : (
+                  <div class="p-4 bg-indigo-50/50 border border-indigo-50 rounded-2xl text-primary/20 cursor-not-allowed">
+                    <ChevronRight size={24} />
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )
+    }
+
+    {
+      type !== "line" && type !== "programmatic-seo" && (
         <div class={type === "writer" ? "pt-24 pb-40" : "py-24"}>
           <div class="container mx-auto px-4 text-center max-w-4xl">
             <Breadcrumb items={breadcrumbs} />
