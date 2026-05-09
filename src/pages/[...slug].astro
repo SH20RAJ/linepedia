@@ -216,7 +216,8 @@ async function getPageData(pathSlug: string | undefined) {
      // 4. Collection Page
      const collection = collections.find((c: any) => c.slug === normalizedSlug);
      if (collection) {
-       const collectionPoems = await getCategoryPoems(collection.slug);
+       const collectionCategorySlug = (collection as any).categorySlug || (collection as any).category || collection.slug;
+       const collectionPoems = await getCategoryPoems(collectionCategorySlug);
        if (collectionPoems.length === 0) return null;
        return {
          type: "collection",
@@ -318,7 +319,7 @@ function getCategorySlug(catName: string) {
 }
 
 const breadcrumbs: any[] = [];
-const supportedLanguages = [...SUPPORTED_LANGUAGES];
+const supportedLanguages: string[] = [...SUPPORTED_LANGUAGES];
 const requestedLang = (Astro.url.searchParams.get("lang") || "en").toLowerCase();
 const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
 const isTranslationParamPage = shouldNoindexForLanguageParam(Astro.url.searchParams);
@@ -327,13 +328,51 @@ const pageNum = Number.isFinite(rawPageNum) && rawPageNum > 0 ? rawPageNum : 1;
 const pageSize = 60;
 const shouldIncludePageParam = type !== "line" && pageNum > 1;
 const siteOrigin = Astro.site?.toString()?.replace(/\/$/, "") || Astro.url.origin;
-const pageUrl = new URL(Astro.url.toString());
-const { canonical: canonicalUrl, robots: robotsMeta } = generatePageMetadata({
-  url: pageUrl,
+const pageMeta = generatePageMetadata({
+  pageType:
+    type === "line"
+      ? "line"
+      : type === "writer"
+        ? "author"
+        : type === "category"
+          ? "category"
+          : type === "collection"
+            ? "collection"
+            : type === "programmatic-seo"
+              ? "programmatic"
+              : "archive",
+  data: {
+    ...data,
+    writerName: writer?.name,
+    authorName: writer?.name,
+    modifierLabel: data?.modifier ? String(data.modifier).replace(/-/g, " ") : undefined,
+    platformLabel: data?.platform ? String(data.platform).replace(/-/g, " ") : undefined,
+  },
   siteOrigin,
-  pageType: type || 'page',
-  totalItems: totalLines,
-  pageNum,
+  pathname: Astro.url.pathname,
+  lang,
+  translationsServerSide: false,
+  isTranslationParamPage,
+  pageNumber: pageNum,
+  itemCount: type === "line" ? 1 : poems.length || (pageData as any)?.itemCount || 0,
+  minimumItems: type === "line" ? 1 : 1,
+  maxIndexablePage: type === "archive" ? 20 : Number.POSITIVE_INFINITY,
+  fallbackTitle:
+    type === "line"
+      ? data?.title || "Line"
+      : type === "writer"
+        ? data?.name || "Writer"
+        : type === "category"
+          ? data?.name || "Category"
+          : type === "collection"
+            ? data?.name || "Collection"
+            : type === "programmatic-seo"
+              ? `${String(data?.modifier || '').replace(/-/g, ' ')} ${String(data?.categoryName || data?.name || 'Lines')}`.trim()
+              : "Linespedia",
+  fallbackDescription:
+    type === "line"
+      ? "Read a curated poetic line on Linespedia."
+      : "Browse curated poetry on Linespedia.",
 });
 
 const xDefaultUrl = new URL(Astro.url.pathname, siteOrigin);
@@ -346,8 +385,7 @@ const alternateLanguageUrls = supportedLanguages.map((code) => {
   return { code, href: href.toString() };
 });
 
-const totalLines = poems.length;
-const totalPages = Math.ceil(totalLines / pageSize);
+const totalPages = Math.ceil(poems.length / pageSize);
 const paginatedPoems = type !== "line" ? poems.slice((pageNum - 1) * pageSize, pageNum * pageSize) : poems;
 
 const pagination = {
@@ -378,53 +416,6 @@ if (type === "line" && data) {
   const label = data.platform ? `${data.modifier} ${data.platform.replace(/-/g, ' ')}` : data.modifier;
   breadcrumbs.push({ name: label, href: Astro.url.pathname });
 }
-
-const pageMeta = generatePageMetadata({
-  pageType:
-    type === "line"
-      ? "line"
-      : type === "writer"
-        ? "author"
-        : type === "category"
-          ? "category"
-          : type === "collection"
-            ? "collection"
-            : type === "programmatic-seo"
-              ? "programmatic"
-              : "archive",
-  data: {
-    ...data,
-    writerName: writer?.name,
-    authorName: writer?.name,
-    modifierLabel: data?.modifier ? String(data.modifier).replace(/-/g, " ") : undefined,
-    platformLabel: data?.platform ? String(data.platform).replace(/-/g, " ") : undefined,
-  },
-  siteOrigin,
-  pathname: Astro.url.pathname,
-  lang,
-  translationsServerSide: false,
-  isTranslationParamPage,
-  pageNumber: pageNum,
-  itemCount: type === "line" ? 1 : totalLines || (pageData as any)?.itemCount || 0,
-  minimumItems: type === "line" ? 1 : 1,
-  maxIndexablePage: type === "archive" ? 20 : Number.POSITIVE_INFINITY,
-  fallbackTitle:
-    type === "line"
-      ? data?.title || "Line"
-      : type === "writer"
-        ? data?.name || "Writer"
-        : type === "category"
-          ? data?.name || "Category"
-          : type === "collection"
-            ? data?.name || "Collection"
-            : type === "programmatic-seo"
-              ? `${String(data?.modifier || '').replace(/-/g, ' ')} ${String(data?.categoryName || data?.name || 'Lines')}`.trim()
-              : "Linespedia",
-  fallbackDescription:
-    type === "line"
-      ? "Read a curated poetic line on Linespedia."
-      : "Browse curated poetry on Linespedia.",
-});
 
 const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
 ---
@@ -915,7 +906,7 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
               {pageMeta.description}
             </p>
             <div class="mt-8 text-sm text-primary/40 font-bold uppercase tracking-widest">
-              {totalLines} Lines Found {totalPages > 1 && `(Page ${pageNum} of ${totalPages})`}
+              {poems.length} Lines Found {totalPages > 1 && `(Page ${pageNum} of ${totalPages})`}
             </div>
           </div>
 
@@ -993,7 +984,7 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
               {pageMeta.description}
             </p>
             <div class="mt-8 text-sm text-primary/40 font-bold uppercase tracking-widest">
-              {totalLines} Lines Found {totalPages > 1 && `(Page ${pageNum} of ${totalPages})`}
+              {poems.length} Lines Found {totalPages > 1 && `(Page ${pageNum} of ${totalPages})`}
             </div>
           </div>
 
@@ -1064,9 +1055,8 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
 
 <script>
   const copyBtn = document.getElementById("copy-btn");
-  canonicalURL={canonicalUrl}
-  lang={lang}
-  robots={robotsMeta}
+  const whatsappBtn = document.getElementById("whatsapp-btn");
+  const pinBtn = document.getElementById("pin-btn");
 
   const poemContent = document.querySelector("blockquote p")?.textContent || "";
   const currentUrl = window.location.href;

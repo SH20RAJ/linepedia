@@ -8,7 +8,7 @@ import { buildCanonicalUrl, generatePageMetadata, getNormalizedLang, getSiteOrig
 const writersData = await getAllWriters();
 
 // Language detection
-const supportedLanguages = [...SUPPORTED_LANGUAGES];
+const supportedLanguages: string[] = [...SUPPORTED_LANGUAGES];
 const requestedLang = Astro.url.searchParams.get("lang") || "en";
 const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
 const siteOrigin = getSiteOrigin(Astro.site, Astro.url.origin);
@@ -59,7 +59,7 @@ const writersMeta = generatePageMetadata({
   <a href={`/${writer.slug}/`} class="flex flex-col items-center group">
     <img src={writer.photo} alt={writer.name} class="w-32 h-32 rounded-[2rem] object-cover shadow-lg card-hover mb-6" />
     <h2 class="text-xl font-bold text-primary group-hover:text-accent transition-colors">{writer.name}</h2>
-    <span class="text-sm font-medium text-primary/40 uppercase tracking-widest">{writer.stats.poems} Poems</span>
+    <span class="text-sm font-medium text-primary/40 uppercase tracking-widest">{writer.stats?.poems ?? 0} Poems</span>
   </a>
 ))}
 			</div>

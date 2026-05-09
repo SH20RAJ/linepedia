@@ -11,7 +11,6 @@ interface Props {
 	ogTitle?: string;
 	ogDescription?: string;
 	ogUrl?: string;
-	canonicalURL?: string;
 	robotsMeta?: string;
 	prevURL?: string;
 	nextURL?: string;
@@ -22,6 +21,7 @@ interface Props {
 	section?: string;
 	tags?: string[];
 	keywords?: string;
+	twitterCard?: 'summary' | 'summary_large_image';
 }
 
 const {

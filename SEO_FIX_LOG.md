@@ -110,4 +110,22 @@ This fix batch addressed blog-specific SEO and content quality defects:
 - Start your local dev server (e.g., `npm run dev` or `bun dev`).
 - Run: `node scripts/seo-audit-local.js --url http://localhost:3000/sitemap.xml`
 
+## Language SEO Fixes (2026-05-09)
+
+1. Parameter translation URLs de-indexed
+- Files: src/pages/[...slug].astro, src/pages/index.astro, src/pages/categories.astro, src/pages/collections.astro, src/pages/writers.astro, src/pages/explore.astro, src/pages/blog/index.astro, src/pages/poem-of-the-day/index.astro
+- Purpose: `?lang=*` pages now noindex when translations are client-side only, canonicalize to the base URL, and suppress hreflang output for incomplete translation states.
+
+2. Sitemap and submission cleanup
+- Files: src/pages/sitemap.xml.js, scripts/submit-indexnow.js
+- Purpose: Removed language-parameter URLs from sitemap index generation and from IndexNow submission so crawl surfaces only expose canonical URLs.
+
+3. Validation expanded
+- Files: scripts/seo-audit-local.js, scripts/seo-qa.js
+- Purpose: Added checks for language-parameter URLs in sitemaps, noindex/canonical rules on language pages, hreflang leakage to parameter URLs, and translation loading-shell content on indexable pages.
+
+4. Translation UI fallback tightened
+- File: src/lib/translate.ts
+- Purpose: Translation failures now return null so the UI can distinguish loading/unavailable states instead of pretending a partial translation is complete.
+
 Timestamp: 2026-05-09

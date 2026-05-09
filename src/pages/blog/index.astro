@@ -29,7 +29,7 @@ const breadcrumbs = [
 ];
 
 // Language detection
-const supportedLanguages = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
+const supportedLanguages: string[] = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
 const requestedLang = Astro.url.searchParams.get("lang") || "en";
 const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
 const siteOrigin = getSiteOrigin(Astro.site, Astro.url.origin);

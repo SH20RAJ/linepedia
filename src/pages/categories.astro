@@ -8,7 +8,7 @@ import { buildCanonicalUrl, generatePageMetadata, getNormalizedLang, getSiteOrig
 const categoriesData = await getAllCategories();
 
 // Language detection
-const supportedLanguages = [...SUPPORTED_LANGUAGES];
+const supportedLanguages: string[] = [...SUPPORTED_LANGUAGES];
 const requestedLang = Astro.url.searchParams.get("lang") || "en";
 const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
 const siteOrigin = getSiteOrigin(Astro.site, Astro.url.origin);

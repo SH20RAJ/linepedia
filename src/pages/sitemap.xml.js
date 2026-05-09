@@ -1,4 +1,3 @@
-const LANGUAGES = ['en', 'es', 'fr', 'de', 'hi', 'ar', 'zh', 'ja', 'ru', 'pt', 'it'];
 const SHARDS_PER_LANG = 5;
 const INDEX_LASTMOD = new Date().toISOString().split('T')[0];
 

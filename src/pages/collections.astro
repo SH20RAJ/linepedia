@@ -8,9 +8,9 @@ import { buildCanonicalUrl, generatePageMetadata, getNormalizedLang, getSiteOrig
 const collectionsData = await getAllCollections();
 
 // Language detection
-const supportedLanguages = [...SUPPORTED_LANGUAGES];
+const supportedLanguages: string[] = [...SUPPORTED_LANGUAGES];
 const requestedLang = Astro.url.searchParams.get("lang") || "en";
-const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
+const lang = supportedLanguages.includes(requestedLang as string) ? requestedLang : "en";
 const siteOrigin = getSiteOrigin(Astro.site, Astro.url.origin);
 const canonicalURL = buildCanonicalUrl('/collections/', siteOrigin);
 const shouldNoindex = getNormalizedLang(requestedLang) !== 'en';

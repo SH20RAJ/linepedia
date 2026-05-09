@@ -4,7 +4,7 @@ import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
 import PoemCard from '../../components/PoemCard.astro';
 import { Calendar, ArrowRight } from 'lucide-astro';
-import { getFeaturedPoems, getAllWriters } from '../../lib/cdn';
+import { getFeaturedPoems, getAllWriters, getWriterPoems } from '../../lib/cdn';
 import { buildCanonicalUrl, getNormalizedLang, getSiteOrigin, shouldNoindexForLanguageParam } from '../../lib/seo';
 
 const allPoems = await getFeaturedPoems();
@@ -22,7 +22,7 @@ const writer = writers.find((w: any) =>
 ) || { name: poemOfTheDay.writer, slug: slugify(poemOfTheDay.writer), photo: null };
 
 // Language detection
-const supportedLanguages = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
+const supportedLanguages: string[] = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
 const requestedLang = Astro.url.searchParams.get("lang") || "en";
 const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
 const siteOrigin = getSiteOrigin(Astro.site, Astro.url.origin);

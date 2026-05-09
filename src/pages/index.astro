@@ -37,7 +37,7 @@ const trendingLines = poemsData.slice(-6).reverse();
 // Language detection for hreflang and meta
 const supportedLanguages = [...SUPPORTED_LANGUAGES];
 const requestedLang = Astro.url.searchParams.get("lang") || "en";
-const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
+const lang = (supportedLanguages.includes(requestedLang as any) ? requestedLang : "en") as typeof SUPPORTED_LANGUAGES[number];
 const siteOrigin = getSiteOrigin(Astro.site, Astro.url.origin);
 const isTranslationParamPage = shouldNoindexForLanguageParam(Astro.url.searchParams);
 const homeMeta = generatePageMetadata({

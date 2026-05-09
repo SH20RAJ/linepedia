@@ -55,6 +55,11 @@ function extractCanonical(html) {
   return m ? m[1].trim() : '';
 }
 
+function extractHreflangHrefs(html) {
+  const matches = [...html.matchAll(/<link[^>]*rel=["']alternate["'][^>]*hreflang=["'][^"']+["'][^>]*href=["']([^"']+)["'][^>]*>/gi)];
+  return matches.map((match) => match[1].trim());
+}
+
 function extractH1(html) {
   const m = /<h1[^>]*>([\s\S]*?)<\/?h1>/i.exec(html);
   return m ? m[1].replace(/<[^>]+>/g, '').trim() : '';
@@ -74,12 +79,25 @@ async function inspectPage(url) {
   const canonical = extractCanonical(html);
   const h1 = extractH1(html);
   const bodyLen = html.replace(/<[^>]+>/g, '').trim().length;
+  const hreflangHrefs = extractHreflangHrefs(html);
+  const isLangParamPage = new URL(url).searchParams.has('lang');
+  const hasLoadingTranslation = /Loading translation|Translating\.{3}|Translation is loading/i.test(html);
 
   if (!title) out.errors.push('Missing <title>');
   if (!desc) out.warnings.push('Missing meta description');
   if (!canonical) out.errors.push('Missing canonical link');
   if (canonical && canonical.includes('?')) out.errors.push('Canonical contains query params');
   if (robots && /noindex/i.test(robots)) out.errors.push('Page is `noindex`');
+  if (isLangParamPage) {
+    if (!robots || !/noindex/i.test(robots)) out.errors.push('Language parameter page is indexable');
+    if (!canonical || canonical.includes('?lang=')) out.errors.push('Language parameter page canonical is not normalized');
+  }
+  if (hreflangHrefs.some((href) => /[?&]lang=/i.test(href))) {
+    out.errors.push('hreflang points to parameter-based translation URL');
+  }
+  if (!isLangParamPage && !/noindex/i.test(robots || '') && hasLoadingTranslation) {
+    out.errors.push('Indexable page exposes translation loading shell');
+  }
   if (!h1) out.warnings.push('Missing H1');
   if (bodyLen < 200) out.warnings.push(`Body too short (${bodyLen} chars)`);
 
@@ -126,10 +144,17 @@ async function main() {
   console.log(`Discovered ${pages.length} pages from sitemap(s)`);
 
   // Detect any URLs in sitemap that contain query params
-  const paramUrls = pages.filter((u) => /[?&]/.test(u));
+  const paramUrls = pages.filter((u) => /[?&]lang=/i.test(u));
   if (paramUrls.length) {
-    console.warn(`Found ${paramUrls.length} URLs in sitemap with query parameters (recommend removing):`);
+    console.warn(`Found ${paramUrls.length} language-parameter URLs in sitemap (must be removed):`);
     paramUrls.slice(0, 10).forEach((u) => console.warn(' -', u));
+    results.push({
+      url: SITEMAP_URL,
+      ok: false,
+      status: 200,
+      errors: ['Sitemap contains language-parameter URLs'],
+      warnings: [],
+    });
   }
 
   // Inspect pages with concurrency
