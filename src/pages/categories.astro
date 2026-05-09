@@ -3,38 +3,57 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import { getAllCategories } from '../lib/cdn';
+import { buildCanonicalUrl, generatePageMetadata, getNormalizedLang, getSiteOrigin, SUPPORTED_LANGUAGES, shouldNoindexForLanguageParam } from '../lib/seo';
 
 const categoriesData = await getAllCategories();
 
 // Language detection
-const supportedLanguages = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
+const supportedLanguages = [...SUPPORTED_LANGUAGES];
 const requestedLang = Astro.url.searchParams.get("lang") || "en";
 const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
-const siteOrigin = Astro.site?.toString()?.replace(/\/$/, "") || Astro.url.origin;
+const siteOrigin = getSiteOrigin(Astro.site, Astro.url.origin);
+const canonicalURL = buildCanonicalUrl('/categories/', siteOrigin);
+const shouldNoindex = getNormalizedLang(requestedLang) !== 'en';
+const isTranslationParamPage = shouldNoindexForLanguageParam(Astro.url.searchParams);
+const robots = shouldNoindex
+	? 'noindex,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1'
+	: 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1';
 
-const alternateLanguageUrls = supportedLanguages.map((code) => {
-  const href = new URL("/categories/", siteOrigin);
-  if (code !== "en") href.searchParams.set("lang", code);
-  return { code, href: href.toString() };
+const categoriesMeta = generatePageMetadata({
+	pageType: 'archive',
+	data: {
+		name: 'Categories',
+		description: 'Explore poetry and shayari by mood, theme, and category.',
+	},
+	siteOrigin,
+	pathname: '/categories/',
+	lang,
+	itemCount: categoriesData.length,
+	fallbackTitle: 'Categories',
+	fallbackDescription: 'Explore poetry and shayari by mood, theme, and category.',
 });
+
 ---
 
 <Layout 
-  title="Categories" 
-  description="Explore poetry and shayari by mood, theme, and category."
+	title={categoriesMeta.title}
+	description={categoriesMeta.description}
   lang={lang}
+	canonicalURL={categoriesMeta.canonicalURL}
+	robots={categoriesMeta.robots}
+	ogTitle={categoriesMeta.ogTitle}
+	ogDescription={categoriesMeta.ogDescription}
+	ogUrl={categoriesMeta.ogUrl}
+	twitterCard={categoriesMeta.twitterCard}
   keywords="poetry categories, shayari themes, poem genres, mood based poetry, thematic collections"
 >
-  {alternateLanguageUrls.map(({ code, href }) => (
-    <link slot="head" rel="alternate" hreflang={code} href={href} />
-  ))}
-  <link slot="head" rel="alternate" hreflang="x-default" href={siteOrigin + "/categories/"} />
-  <meta slot="head" name="lang-trigger" content={lang} />
+  {!isTranslationParamPage && <meta slot="head" name="lang-trigger" content={lang} />}
 
   <Navbar />
 	<main class="min-h-screen py-20 px-4">
 		<div class="container mx-auto">
 			<h1 class="text-5xl font-serif font-black text-primary mb-12">Categories</h1>
+			<p class="max-w-3xl text-primary/60 mb-12 leading-relaxed">Browse thematic category pages built from real archive entries. Each category groups lines by mood, style, or recurring topic.</p>
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 				{categoriesData.map(cat => (
 					<a href={`/${cat.slug}`} class="group p-8 bg-white border border-indigo-50 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all">

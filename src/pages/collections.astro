@@ -3,40 +3,58 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import { getAllCollections } from '../lib/cdn';
+import { buildCanonicalUrl, generatePageMetadata, getNormalizedLang, getSiteOrigin, SUPPORTED_LANGUAGES, shouldNoindexForLanguageParam } from '../lib/seo';
 
 const collectionsData = await getAllCollections();
 
 // Language detection
-const supportedLanguages = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
+const supportedLanguages = [...SUPPORTED_LANGUAGES];
 const requestedLang = Astro.url.searchParams.get("lang") || "en";
 const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
-const siteOrigin = Astro.site?.toString()?.replace(/\/$/, "") || Astro.url.origin;
-
-const alternateLanguageUrls = supportedLanguages.map((code) => {
-  const href = new URL("/collections/", siteOrigin);
-  if (code !== "en") href.searchParams.set("lang", code);
-  return { code, href: href.toString() };
-});
+const siteOrigin = getSiteOrigin(Astro.site, Astro.url.origin);
+const canonicalURL = buildCanonicalUrl('/collections/', siteOrigin);
+const shouldNoindex = getNormalizedLang(requestedLang) !== 'en';
+const isTranslationParamPage = shouldNoindexForLanguageParam(Astro.url.searchParams);
+const robots = shouldNoindex
+  ? 'noindex,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1'
+  : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1';
 
 // Create structured data for collections as CollectionPage list? We'll just use WebPage.
+const collectionsMeta = generatePageMetadata({
+	pageType: 'archive',
+	data: {
+		name: 'Collections',
+		description: 'Hand-picked collections of the best shayari and quotes.',
+	},
+	siteOrigin,
+	pathname: '/collections/',
+	lang,
+	itemCount: collectionsData.length,
+	fallbackTitle: 'Collections',
+	fallbackDescription: 'Hand-picked collections of the best shayari and quotes.',
+});
+
 ---
 
 <Layout 
-  title="Collections" 
-  description="Hand-picked collections of the best shayari and quotes."
+  title={collectionsMeta.title}
+  description={collectionsMeta.description}
   lang={lang}
+  canonicalURL={collectionsMeta.canonicalURL}
+  robots={collectionsMeta.robots}
+  ogTitle={collectionsMeta.ogTitle}
+  ogDescription={collectionsMeta.ogDescription}
+  ogUrl={collectionsMeta.ogUrl}
+  twitterCard={collectionsMeta.twitterCard}
   keywords="curated collections, shayari collections, quote collections, thematic poetry sets"
 >
-  {alternateLanguageUrls.map(({ code, href }) => (
-    <link slot="head" rel="alternate" hreflang={code} href={href} />
-  ))}
-  <link slot="head" rel="alternate" hreflang="x-default" href={siteOrigin + "/collections/"} />
-  <meta slot="head" name="lang-trigger" content={lang} />
+  {!isTranslationParamPage && <meta slot="head" name="lang-trigger" content={lang} />}
 
   <Navbar />
 	<main class="min-h-screen py-20 px-4">
 		<div class="container mx-auto">
 			<h1 class="text-5xl font-serif font-black text-primary mb-12">Collections</h1>
+      <p class="max-w-3xl text-primary/60 mb-12 leading-relaxed">These collection pages group actual archive entries into useful themes and reading paths. They are designed to surface real lines, not filler text.</p>
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 				{collectionsData.map(col => (
 <a href={`/${col.slug}`} class="group relative aspect-[16/9] rounded-[3rem] overflow-hidden shadow-xl">

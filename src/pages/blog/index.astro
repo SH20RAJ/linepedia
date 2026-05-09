@@ -4,6 +4,7 @@ import Navbar from "../../components/Navbar.astro";
 import Footer from "../../components/Footer.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import Pagination from "../../components/Pagination.astro";
+import { buildCanonicalUrl, getNormalizedLang, getSiteOrigin, shouldNoindexForLanguageParam } from '../../lib/seo';
 import { getCollection } from "astro:content";
 
 const allPosts = (await getCollection("blog")).sort(
@@ -31,26 +32,24 @@ const breadcrumbs = [
 const supportedLanguages = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
 const requestedLang = Astro.url.searchParams.get("lang") || "en";
 const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
-const siteOrigin = Astro.site?.toString()?.replace(/\/$/, "") || Astro.url.origin;
-
-const alternateLanguageUrls = supportedLanguages.map((code) => {
-  const href = new URL("/blog/", siteOrigin);
-  if (code !== "en") href.searchParams.set("lang", code);
-  return { code, href: href.toString() };
-});
+const siteOrigin = getSiteOrigin(Astro.site, Astro.url.origin);
+const canonicalURL = buildCanonicalUrl('/blog/', siteOrigin);
+const shouldNoindex = getNormalizedLang(requestedLang) !== 'en' || Boolean(search) || currentPage > 1;
+const isTranslationParamPage = shouldNoindexForLanguageParam(Astro.url.searchParams);
+const robots = shouldNoindex
+  ? 'noindex,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1'
+  : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1';
 ---
 
 <Layout
   title="Poetry & Shayari Blog | Linespedia"
   description="Explore the Linespedia blog for insights into the world of poetry, shayari trends, and writing guides."
   lang={lang}
+  canonicalURL={canonicalURL}
+  robots={robots}
   keywords="poetry blog, shayari articles, writing guides, poetic trends, literary insights"
 >
-  {alternateLanguageUrls.map(({ code, href }) => (
-    <link slot="head" rel="alternate" hreflang={code} href={href} />
-  ))}
-  <link slot="head" rel="alternate" hreflang="x-default" href={siteOrigin + "/blog/"} />
-  <meta slot="head" name="lang-trigger" content={lang} />
+  {!isTranslationParamPage && <meta slot="head" name="lang-trigger" content={lang} />}
 
   <Navbar />
   <main class="min-h-screen">

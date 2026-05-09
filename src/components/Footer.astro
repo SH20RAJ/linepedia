@@ -46,6 +46,34 @@ const year = new Date().getFullYear();
       </ul>
     </div>
 
+    <div>
+      <h3 class="text-white font-bold mb-4 uppercase tracking-widest text-xs">
+        Information
+      </h3>
+      <ul class="space-y-2 text-sm">
+        <li>
+          <a href="/about/" class="hover:text-accent transition-colors"
+            >About</a>
+        </li>
+        <li>
+          <a href="/contact/" class="hover:text-accent transition-colors"
+            >Contact</a>
+        </li>
+        <li>
+          <a href="/copyright/" class="hover:text-accent transition-colors"
+            >Copyright & Report</a>
+        </li>
+        <li>
+          <a href="/privacy/" class="hover:text-accent transition-colors"
+            >Privacy Policy</a>
+        </li>
+        <li>
+          <a href="/terms/" class="hover:text-accent transition-colors"
+            >Terms of Service</a>
+        </li>
+      </ul>
+    </div>
+
     <!-- <div>
       <h3 class="text-white font-bold mb-4 uppercase tracking-widest text-xs">
         Community
@@ -83,7 +111,10 @@ const year = new Date().getFullYear();
         <img src={`https://api.visitorbadge.io/api/visitors?path=${encodeURIComponent(Astro.url.href)}&countColor=%23263759`} alt="Visitor Badge" class="h-6" />
       </a>
     </div>
-    <div class="flex space-x-6 mt-4 md:mt-0">
+    <div class="flex space-x-6 mt-4 md:mt-0 flex-wrap justify-center md:justify-end gap-4">
+      <a href="/about/" class="hover:text-white transition-colors">About</a>
+      <a href="/contact/" class="hover:text-white transition-colors">Contact</a>
+      <a href="/copyright/" class="hover:text-white transition-colors">Copyright & Report</a>
       <a href="/privacy/" class="hover:text-white transition-colors">Privacy Policy</a>
       <a href="/terms/" class="hover:text-white transition-colors">Terms of Service</a>
       <a href="/sitemap.xml" class="hover:text-white transition-colors">Sitemap</a>

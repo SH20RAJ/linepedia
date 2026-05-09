@@ -6,6 +6,8 @@ import PoemCard from "../components/PoemCard.astro";
 import StructuredData from "../components/StructuredData.astro";
 import Breadcrumb from "../components/Breadcrumb.astro";
 import AIPanel from "../components/AIPanel.astro";
+import RightsNotice from "../components/RightsNotice.astro";
+import { generatePageMetadata, SUPPORTED_LANGUAGES, shouldNoindexForLanguageParam } from "../lib/seo";
 import {
   Share2,
   Copy,
@@ -119,7 +121,7 @@ async function getPageData(pathSlug: string | undefined) {
           await import("../lib/cdn");
         const data = await getAllPoetryPoem(writerSlug, poemSlug);
 
-        if (data) {
+        if (data && String(data.content || '').trim()) {
           const authorPoems = await getPoetryWriterPoems(writerSlug);
           return {
             type: "line",
@@ -128,12 +130,12 @@ async function getPageData(pathSlug: string | undefined) {
               name: data.writer,
               slug: `poet/${writerSlug}`,
               photo: `https://api.dicebear.com/7.x/avataaars/svg?seed=${writerSlug}`,
-              bio: `Explore the profound poetry and moving lines of ${data.writer}. A featured work from our extended library.`,
             },
             allWriters: writers,
             poems: authorPoems
               .filter((p: any) => p.slug !== poemSlug)
               .slice(0, 6),
+            itemCount: 1,
           };
         }
       }
@@ -156,7 +158,7 @@ async function getPageData(pathSlug: string | undefined) {
 
       if (id) {
         const data = await getPoem(id);
-        if (data) {
+        if (data && String(data.content || '').trim()) {
            const writerSlug =
              typeof data.writer === "string" ? slugify(data.writer) : "";
 
@@ -177,6 +179,7 @@ async function getPageData(pathSlug: string | undefined) {
             writer: writers.find((w: any) => w.slug === writerSlug),
             allWriters: writers,
             poems: related.filter((p) => p.slug !== data.slug),
+            itemCount: 1,
           };
         }
       }
@@ -186,11 +189,13 @@ async function getPageData(pathSlug: string | undefined) {
      const writer = writers.find((w: any) => w.slug === normalizedSlug);
      if (writer) {
        const writerPoems = await getWriterPoems(writer.slug);
+       if (writerPoems.length === 0) return null;
        return {
          type: "writer",
          data: writer,
          poems: writerPoems,
          allWriters: writers,
+         itemCount: writerPoems.length,
        };
      }
 
@@ -198,11 +203,13 @@ async function getPageData(pathSlug: string | undefined) {
      const category = categories.find((c: any) => c.slug === normalizedSlug);
      if (category) {
        const categoryPoems = await getCategoryPoems(category.slug);
+       if (categoryPoems.length === 0) return null;
        return {
          type: "category",
          data: category,
          poems: categoryPoems,
          allWriters: writers,
+         itemCount: categoryPoems.length,
        };
      }
 
@@ -210,11 +217,13 @@ async function getPageData(pathSlug: string | undefined) {
      const collection = collections.find((c: any) => c.slug === normalizedSlug);
      if (collection) {
        const collectionPoems = await getCategoryPoems(collection.slug);
+       if (collectionPoems.length === 0) return null;
        return {
          type: "collection",
          data: collection,
          poems: collectionPoems,
          allWriters: writers,
+         itemCount: collectionPoems.length,
        };
      }
 
@@ -228,16 +237,17 @@ async function getPageData(pathSlug: string | undefined) {
 
       if (poet) {
         const poems = await getPoetryWriterPoems(writerSlug);
+        if (poems.length === 0) return null;
         return {
           type: "writer",
           data: {
             name: poet.name,
             slug: writerSlug,
             photo: `https://api.dicebear.com/7.x/avataaars/svg?seed=${writerSlug}`,
-            bio: `Explore the profound poetry and moving lines of ${poet.name}. This collection features a curated selection of their work from our extended library.`,
           },
           poems: poems,
           allWriters: writers,
+          itemCount: poems.length,
         };
       }
     }
@@ -255,12 +265,14 @@ async function getPageData(pathSlug: string | undefined) {
        if (seoCombo) {
          const categoryPoems = await getCategoryPoems(categorySlug);
          const selectedPoems = pickIntentPoems(categoryPoems, seoCombo.modifier as any, seoCombo.platform as any);
+         if (selectedPoems.length === 0) return null;
          
          return {
            type: "programmatic-seo",
            data: seoCombo,
            poems: selectedPoems,
            allWriters: writers,
+           itemCount: selectedPoems.length,
          };
        }
      }
@@ -306,26 +318,31 @@ function getCategorySlug(catName: string) {
 }
 
 const breadcrumbs: any[] = [];
-const supportedLanguages = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
+const supportedLanguages = [...SUPPORTED_LANGUAGES];
 const requestedLang = (Astro.url.searchParams.get("lang") || "en").toLowerCase();
 const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
+const isTranslationParamPage = shouldNoindexForLanguageParam(Astro.url.searchParams);
 const rawPageNum = Number.parseInt(Astro.url.searchParams.get("page") || "1", 10);
 const pageNum = Number.isFinite(rawPageNum) && rawPageNum > 0 ? rawPageNum : 1;
 const pageSize = 60;
 const shouldIncludePageParam = type !== "line" && pageNum > 1;
 const siteOrigin = Astro.site?.toString()?.replace(/\/$/, "") || Astro.url.origin;
-
-const canonicalUrl = new URL(Astro.url.pathname, siteOrigin);
-if (shouldIncludePageParam) canonicalUrl.searchParams.set("page", String(pageNum));
-if (lang !== "en") canonicalUrl.searchParams.set("lang", lang);
+const pageUrl = new URL(Astro.url.toString());
+const { canonical: canonicalUrl, robots: robotsMeta } = generatePageMetadata({
+  url: pageUrl,
+  siteOrigin,
+  pageType: type || 'page',
+  totalItems: totalLines,
+  pageNum,
+});
 
 const xDefaultUrl = new URL(Astro.url.pathname, siteOrigin);
-if (shouldIncludePageParam) xDefaultUrl.searchParams.set("page", String(pageNum));
+if (shouldIncludePageParam) xDefaultUrl.searchParams.set('page', String(pageNum));
 
 const alternateLanguageUrls = supportedLanguages.map((code) => {
   const href = new URL(Astro.url.pathname, siteOrigin);
-  if (shouldIncludePageParam) href.searchParams.set("page", String(pageNum));
-  if (code !== "en") href.searchParams.set("lang", code);
+  if (shouldIncludePageParam) href.searchParams.set('page', String(pageNum));
+  if (code !== 'en') href.searchParams.set('lang', code);
   return { code, href: href.toString() };
 });
 
@@ -362,64 +379,88 @@ if (type === "line" && data) {
   breadcrumbs.push({ name: label, href: Astro.url.pathname });
 }
 
-function getCTRTitle() {
-  if (!data) return "Poetry | Linespedia";
-  if (type === "line") return `${data.title} — Poetry Lines | Linespedia`;
-  if (type === "writer")
-    return `${data.name} Poetry — Best Lines & Shayari Collection`;
-  if (type === "category")
-    return `Best ${data.name} Lines — Copy Paste ${new Date().getFullYear()}`;
-  if (type === "collection")
-    return `${data.name} — Top Lines for Instagram & WhatsApp`;
-  if (type === "programmatic-seo") {
-    const modifierName = data.modifier.charAt(0).toUpperCase() + data.modifier.slice(1);
-    const platformName = data.platform ? data.platform.replace(/-/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) : '';
-    return `${modifierName} ${data.categoryName} ${platformName}`.trim();
-  }
-  return data.name || "Poetry";
-}
-
-function getDescription() {
-  if (!data) return "Explore the best lines on Linespedia.";
-  if (type === "line")
-    return `${data.content?.slice(0, 140)}... Read meaning and context from ${writer?.name || "the poet"}.`;
-  if (type === "writer") return data.bio;
-  if (type === "programmatic-seo") {
-      return `Explore ${totalLines}+ curated ${data.modifier} ${data.categoryName.toLowerCase()} perfect for ${data.platform ? data.platform.replace(/-/g, ' ') : 'sharing'}.`;
-  }
-  return data.seoIntro || data.description;
-}
+const pageMeta = generatePageMetadata({
+  pageType:
+    type === "line"
+      ? "line"
+      : type === "writer"
+        ? "author"
+        : type === "category"
+          ? "category"
+          : type === "collection"
+            ? "collection"
+            : type === "programmatic-seo"
+              ? "programmatic"
+              : "archive",
+  data: {
+    ...data,
+    writerName: writer?.name,
+    authorName: writer?.name,
+    modifierLabel: data?.modifier ? String(data.modifier).replace(/-/g, " ") : undefined,
+    platformLabel: data?.platform ? String(data.platform).replace(/-/g, " ") : undefined,
+  },
+  siteOrigin,
+  pathname: Astro.url.pathname,
+  lang,
+  translationsServerSide: false,
+  isTranslationParamPage,
+  pageNumber: pageNum,
+  itemCount: type === "line" ? 1 : totalLines || (pageData as any)?.itemCount || 0,
+  minimumItems: type === "line" ? 1 : 1,
+  maxIndexablePage: type === "archive" ? 20 : Number.POSITIVE_INFINITY,
+  fallbackTitle:
+    type === "line"
+      ? data?.title || "Line"
+      : type === "writer"
+        ? data?.name || "Writer"
+        : type === "category"
+          ? data?.name || "Category"
+          : type === "collection"
+            ? data?.name || "Collection"
+            : type === "programmatic-seo"
+              ? `${String(data?.modifier || '').replace(/-/g, ' ')} ${String(data?.categoryName || data?.name || 'Lines')}`.trim()
+              : "Linespedia",
+  fallbackDescription:
+    type === "line"
+      ? "Read a curated poetic line on Linespedia."
+      : "Browse curated poetry on Linespedia.",
+});
 
 const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
 ---
 
 <Layout
-  title={getCTRTitle()}
-  description={getDescription()}
+  title={pageMeta.title}
+  description={pageMeta.description}
   type={type === "line" ? "article" : "website"}
-  canonicalURL={canonicalUrl.toString()}
+  canonicalURL={pageMeta.canonicalURL}
   lang={lang}
   publishedTime={type === "line" ? data?.createdAt : undefined}
   author={type === "line" && writer ? new URL(`/${writer.slug}/`, siteOrigin).toString() : undefined}
   section={type === "line" && data?.category?.[0] ? data.category[0] : undefined}
   tags={type === "line" ? data?.category || [] : undefined}
   keywords={type === "line" && data?.category && writer ? `${data.category.join(", ")}, ${writer.name}` : undefined}
+  robots={pageMeta.robots}
+  ogTitle={pageMeta.ogTitle}
+  ogDescription={pageMeta.ogDescription}
+  ogUrl={pageMeta.ogUrl}
+  twitterCard={pageMeta.twitterCard}
 >
   {
-    alternateLanguageUrls.map(({ code, href }) => (
+    !isTranslationParamPage && alternateLanguageUrls.map(({ code, href }) => (
       <link slot="head" rel="alternate" hreflang={code} href={href} />
     ))
   }
-  <link slot="head" rel="alternate" hreflang="x-default" href={xDefaultUrl.toString()} />
-  <meta slot="head" name="lang-trigger" content={lang} />
+  {!isTranslationParamPage && <link slot="head" rel="alternate" hreflang="x-default" href={xDefaultUrl.toString()} />}
+  {!isTranslationParamPage && <meta slot="head" name="lang-trigger" content={lang} />}
 
   {
     type === "line" && (
       <StructuredData
         type="line"
-        title={getCTRTitle()}
-        description={getDescription()}
-        url={canonicalUrl.toString()}
+        title={pageMeta.title}
+        description={pageMeta.description}
+        url={pageMeta.canonicalURL}
         language={lang}
         authorName={writer?.name}
         datePublished={data.createdAt}
@@ -435,8 +476,8 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
   		<StructuredData
   			type={type as any}
   			title={data.name}
-  			description={(data as any).bio || (data as any).description || (data as any).seoIntro || ''}
-  			url={canonicalUrl.toString()}
+        description={pageMeta.description}
+        url={pageMeta.canonicalURL}
   			language={lang}
   			breadcrumbs={breadcrumbs.map((b: any) => ({ name: b.name, url: b.href }))}
   		/>
@@ -462,13 +503,24 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
                  <div class="relative z-10">
                    <header class="text-center mb-12">
                      <h1 class="text-3xl md:text-5xl font-serif font-black text-primary leading-tight mb-4">
-                       {data.title}
+                       {pageMeta.h1}
                      </h1>
                      {writer && (
                        <p class="text-sm font-bold uppercase tracking-[0.2em] text-primary/40">
                          By <a href={`/${writer.slug}/`} class="hover:text-accent transition-colors">{writer.name}</a>
                        </p>
                      )}
+                      <div class="mt-4 flex flex-wrap items-center justify-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-primary/35">
+                        {data?.category?.length > 0 && (
+                          <span>Topics: {data.category.slice(0, 3).join(', ')}</span>
+                        )}
+                        {data?.meta?.source && <span>Source: {data.meta.source}</span>}
+                        {data?.meta?.url && (
+                          <a href={data.meta.url} class="hover:text-accent transition-colors">
+                            Original source
+                          </a>
+                        )}
+                      </div>
                    </header>
 
                    <blockquote class="text-2xl md:text-4xl font-serif font-black text-primary leading-tight md:leading-snug mb-16 selection:bg-accent/20 max-w-4xl mx-auto text-center">
@@ -583,7 +635,7 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
                     </div>
                     <h2 class="font-bold text-xs uppercase tracking-[0.3em] text-primary/40 mb-8 flex items-center space-x-3">
                       <BookOpen size={18} />
-                      <span>Meaning & Context</span>
+                      <span>About this line</span>
                     </h2>
                     <div
                       id="translated-content"
@@ -600,6 +652,13 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
                   </div>
                 </div>
               </article>
+
+              {/* Rights Notice */}
+              <RightsNotice
+                authorName={writer?.name}
+                isPublicDomain={true}
+                attributionText={`"${data.content?.split("\n")[0]?.slice(0, 50)}..." by ${writer?.name || "Unknown Author"}`}
+              />
 
               {/* Tags / Categories */}
               <div class="bg-white/30 backdrop-blur-xl rounded-[2.5rem] p-8 md:p-10 border border-white/40">
@@ -684,7 +743,7 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
                       </div>
                     </div>
                     <p class="text-white/70 text-sm leading-relaxed mb-6 line-clamp-3">
-                      {writer.bio}
+                      {writer.bio || `${writer.name} has ${poems.length} related line${poems.length === 1 ? '' : 's'} in this archive.`}
                     </p>
                     <a
                       href={`/${writer.slug}/`}
@@ -698,10 +757,10 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
 
               {/* Related Content Sidebar */}
               <div class="bg-white rounded-[3.5rem] p-8 border border-indigo-50 shadow-xl">
-                <h3 class="text-lg font-serif font-black text-primary mb-6 flex items-center gap-3">
+                <h2 class="text-lg font-serif font-black text-primary mb-6 flex items-center gap-3">
                   <Sparkles class="text-accent" size={20} />
-                  <span>More Like This</span>
-                </h3>
+                  <span>More from this author</span>
+                </h2>
                 <div class="space-y-6">
                   {poems.slice(0, 5).map((poem: any) => (
                     <a
@@ -749,10 +808,10 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
           {/* Related Lines */}
           {poems.length > 0 && (
             <div class="mt-24">
-              <h3 class="text-2xl font-serif font-black text-primary mb-10 flex items-center space-x-4">
+              <h2 class="text-2xl font-serif font-black text-primary mb-10 flex items-center space-x-4">
                 <Sparkles class="text-accent" size={24} />
-                <span>Related Poetic Lines</span>
-              </h3>
+                <span>Related lines</span>
+              </h2>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {poems.map((poem: any) => (
                   <PoemCard
@@ -799,7 +858,7 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
                   About {writer.name}
                 </h3>
                 <p class="text-primary/60 leading-relaxed mb-6">
-                  {writer.bio?.slice(0, 180)}...
+                  {writer.bio || `${writer.name} has ${poems.length} related line${poems.length === 1 ? '' : 's'} in this archive.`}
                 </p>
                 <span class="inline-flex items-center space-x-3 text-accent font-bold uppercase tracking-widest text-sm">
                   <span>Full Bibliography</span>
@@ -850,10 +909,10 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
           <div class="container mx-auto px-4 text-center max-w-4xl">
             <Breadcrumb items={breadcrumbs} />
             <h1 class="text-4xl md:text-6xl font-serif font-black text-primary mb-6 mt-4 leading-tight">
-              {getCTRTitle()}
+              {pageMeta.h1}
             </h1>
             <p class="text-lg md:text-xl text-primary/60 leading-relaxed max-w-3xl mx-auto">
-              {getDescription()}
+              {pageMeta.description}
             </p>
             <div class="mt-8 text-sm text-primary/40 font-bold uppercase tracking-widest">
               {totalLines} Lines Found {totalPages > 1 && `(Page ${pageNum} of ${totalPages})`}
@@ -928,10 +987,10 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
               />
             )}
             <h1 class="text-4xl md:text-7xl font-serif font-black text-primary mb-6 mt-4">
-              {data.name}
+              {pageMeta.h1}
             </h1>
             <p class="text-lg md:text-xl text-primary/60 leading-relaxed max-w-3xl mx-auto">
-              {data.bio || data.seoIntro || data.description}
+              {pageMeta.description}
             </p>
             <div class="mt-8 text-sm text-primary/40 font-bold uppercase tracking-widest">
               {totalLines} Lines Found {totalPages > 1 && `(Page ${pageNum} of ${totalPages})`}
@@ -1005,8 +1064,9 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
 
 <script>
   const copyBtn = document.getElementById("copy-btn");
-  const whatsappBtn = document.getElementById("whatsapp-btn");
-  const pinBtn = document.getElementById("pin-btn");
+  canonicalURL={canonicalUrl}
+  lang={lang}
+  robots={robotsMeta}
 
   const poemContent = document.querySelector("blockquote p")?.textContent || "";
   const currentUrl = window.location.href;

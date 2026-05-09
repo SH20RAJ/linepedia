@@ -5,6 +5,7 @@ import Footer from '../../components/Footer.astro';
 import PoemCard from '../../components/PoemCard.astro';
 import { Calendar, ArrowRight } from 'lucide-astro';
 import { getFeaturedPoems, getAllWriters } from '../../lib/cdn';
+import { buildCanonicalUrl, getNormalizedLang, getSiteOrigin, shouldNoindexForLanguageParam } from '../../lib/seo';
 
 const allPoems = await getFeaturedPoems();
 const writers = await getAllWriters();
@@ -24,13 +25,13 @@ const writer = writers.find((w: any) =>
 const supportedLanguages = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
 const requestedLang = Astro.url.searchParams.get("lang") || "en";
 const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
-const siteOrigin = Astro.site?.toString()?.replace(/\/$/, "") || Astro.url.origin;
-
-const alternateLanguageUrls = supportedLanguages.map((code) => {
-  const href = new URL("/poem-of-the-day/", siteOrigin);
-  if (code !== "en") href.searchParams.set("lang", code);
-  return { code, href: href.toString() };
-});
+const siteOrigin = getSiteOrigin(Astro.site, Astro.url.origin);
+const canonicalURL = buildCanonicalUrl('/poem-of-the-day/', siteOrigin);
+const shouldNoindex = getNormalizedLang(requestedLang) !== 'en';
+const isTranslationParamPage = shouldNoindexForLanguageParam(Astro.url.searchParams);
+const robots = shouldNoindex
+  ? 'noindex,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1'
+  : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1';
 
 function slugify(text: string): string {
   return text
@@ -49,6 +50,8 @@ const ogImage = new URL(`/api/og/${poemOfTheDay.slug}`, siteOrigin);
   title="Poem of the Day — Linespedia"
   description={`Today's featured poem: "${poemOfTheDay.content.substring(0, 100)}..." by ${writer.name}`}
   lang={lang}
+  canonicalURL={canonicalURL}
+  robots={robots}
   keywords="poem of the day, daily poetry, featured poem, today's poem, inspirational poetry"
   image={ogImage.toString()}
   type="article"
@@ -56,11 +59,7 @@ const ogImage = new URL(`/api/og/${poemOfTheDay.slug}`, siteOrigin);
   author={new URL(`/${writer.slug}/`, siteOrigin).toString()}
   tags={['Featured', 'Poem of the Day', writer.name]}
 >
-  {alternateLanguageUrls.map(({ code, href }) => (
-    <link slot="head" rel="alternate" hreflang={code} href={href} />
-  ))}
-  <link slot="head" rel="alternate" hreflang="x-default" href={siteOrigin + "/poem-of-the-day/"} />
-  <meta slot="head" name="lang-trigger" content={lang} />
+  {!isTranslationParamPage && <meta slot="head" name="lang-trigger" content={lang} />}
 
   <Navbar />
 

@@ -3,38 +3,57 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import { getAllWriters } from '../lib/cdn';
+import { buildCanonicalUrl, generatePageMetadata, getNormalizedLang, getSiteOrigin, SUPPORTED_LANGUAGES, shouldNoindexForLanguageParam } from '../lib/seo';
 
 const writersData = await getAllWriters();
 
 // Language detection
-const supportedLanguages = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
+const supportedLanguages = [...SUPPORTED_LANGUAGES];
 const requestedLang = Astro.url.searchParams.get("lang") || "en";
 const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
-const siteOrigin = Astro.site?.toString()?.replace(/\/$/, "") || Astro.url.origin;
+const siteOrigin = getSiteOrigin(Astro.site, Astro.url.origin);
+const canonicalURL = buildCanonicalUrl('/writers/', siteOrigin);
+const shouldNoindex = getNormalizedLang(requestedLang) !== 'en';
+const isTranslationParamPage = shouldNoindexForLanguageParam(Astro.url.searchParams);
+const robots = shouldNoindex
+  ? 'noindex,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1'
+  : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1';
 
-const alternateLanguageUrls = supportedLanguages.map((code) => {
-  const href = new URL("/writers/", siteOrigin);
-  if (code !== "en") href.searchParams.set("lang", code);
-  return { code, href: href.toString() };
+const writersMeta = generatePageMetadata({
+	pageType: 'archive',
+	data: {
+		name: 'Writers',
+		description: 'Browse our curated list of poetic masters and writers.',
+	},
+	siteOrigin,
+	pathname: '/writers/',
+	lang,
+	itemCount: writersData.length,
+	fallbackTitle: 'Writers',
+	fallbackDescription: 'Browse our curated list of poetic masters and writers.',
 });
+
 ---
 
 <Layout 
-  title="All Writers" 
-  description="Browse our curated list of poetic masters and writers."
+  title={writersMeta.title}
+  description={writersMeta.description}
   lang={lang}
+  canonicalURL={writersMeta.canonicalURL}
+  robots={writersMeta.robots}
+  ogTitle={writersMeta.ogTitle}
+  ogDescription={writersMeta.ogDescription}
+  ogUrl={writersMeta.ogUrl}
+  twitterCard={writersMeta.twitterCard}
   keywords="poets, writers, authors, poetry writers, famous poets, contemporary poets"
 >
-  {alternateLanguageUrls.map(({ code, href }) => (
-    <link slot="head" rel="alternate" hreflang={code} href={href} />
-  ))}
-  <link slot="head" rel="alternate" hreflang="x-default" href={siteOrigin + "/writers/"} />
-  <meta slot="head" name="lang-trigger" content={lang} />
+  {!isTranslationParamPage && <meta slot="head" name="lang-trigger" content={lang} />}
 
   <Navbar />
 	<main class="min-h-screen py-20 px-4">
 		<div class="container mx-auto">
 			<h1 class="text-5xl font-serif font-black text-primary mb-12">Our Poets</h1>
+      <p class="max-w-3xl text-primary/60 mb-12 leading-relaxed">These writer pages link to real published lines and poems where available. The list stays factual: no invented biographies, no filler, and no empty author pages.</p>
 			<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-12">
 {writersData.map(writer => (
   <a href={`/${writer.slug}/`} class="flex flex-col items-center group">

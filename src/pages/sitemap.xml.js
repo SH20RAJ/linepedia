@@ -9,14 +9,12 @@ function withTrailingSlash(url) {
 export async function GET(context) {
   const site = withTrailingSlash(context.site?.toString() || 'https://linespedia.com');
 
+  // Build sitemap index with segmented sitemaps. Only canonical English shards are included.
   const baseSitemaps = ['sitemap-poems.xml', 'sitemap-seo.xml', 'sitemap-stories.xml'];
 
   const allPoetrySitemaps = [];
-  for (const lang of LANGUAGES) {
-    for (let shard = 1; shard <= SHARDS_PER_LANG; shard += 1) {
-      const langParam = lang === 'en' ? '' : `&amp;lang=${lang}`;
-      allPoetrySitemaps.push(`sitemap-allpoetry.xml?shard=${shard}${langParam}`);
-    }
+  for (let shard = 1; shard <= SHARDS_PER_LANG; shard += 1) {
+    allPoetrySitemaps.push(`sitemap-allpoetry.xml?shard=${shard}`);
   }
 
   const sitemaps = [...baseSitemaps, ...allPoetrySitemaps];

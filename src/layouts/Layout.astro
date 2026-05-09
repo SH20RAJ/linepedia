@@ -7,6 +7,14 @@ interface Props {
 	description?: string;
 	image?: string;
 	canonicalURL?: string;
+	robots?: string;
+	ogTitle?: string;
+	ogDescription?: string;
+	ogUrl?: string;
+	canonicalURL?: string;
+	robotsMeta?: string;
+	prevURL?: string;
+	nextURL?: string;
 	type?: 'website' | 'article';
 	lang?: string;
 	publishedTime?: string;
@@ -21,6 +29,7 @@ const {
 	description = "Linespedia - Your source for the best shayari, poems, and inspiring lines.",
 	image = "/og-image.png", // Default OG image
 	canonicalURL = Astro.url.href,
+	robotsMeta = undefined,
 	type = 'website',
 	lang = 'en',
 	publishedTime,
@@ -28,10 +37,21 @@ const {
 	section,
 	tags = [],
 	keywords,
+	robots,
+	ogTitle,
+	ogDescription,
+	ogUrl,
+	twitterCard = 'summary_large_image',
+	prevURL,
+	nextURL,
 } = Astro.props;
 
 const siteName = "Linespedia";
 const fullTitle = `${title} | ${siteName}`;
+const resolvedOgTitle = ogTitle || fullTitle;
+const resolvedOgDescription = ogDescription || description;
+const resolvedOgUrl = ogUrl || canonicalURL;
+const robotsContent = robotsMeta || robots || 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1';
 
 // Language mapping for Open Graph locale format
 const localeMap: Record<string, string> = {
@@ -96,13 +116,15 @@ const alternateLocales = supportedLanguages
  		<meta name="description" content={description} />
  		{keywords && <meta name="keywords" content={keywords} />}
  		<link rel="canonical" href={canonicalURL} />
+		{prevURL && <link rel="prev" href={prevURL} />}
+		{nextURL && <link rel="next" href={nextURL} />}
 
   		<!-- Open Graph / Facebook -->
   		<meta property="og:type" content={type} />
-  		<meta property="og:url" content={canonicalURL} />
+	  	<meta property="og:url" content={resolvedOgUrl} />
   		<meta property="og:site_name" content={siteName} />
-  		<meta property="og:title" content={fullTitle} />
-  		<meta property="og:description" content={description} />
+	  	<meta property="og:title" content={resolvedOgTitle} />
+	  	<meta property="og:description" content={resolvedOgDescription} />
   		<meta property="og:image" content={new URL(image, Astro.url)} />
   		<meta property="og:locale" content={currentLocale} />
  		{alternateLocales.map((locale) => (
@@ -118,15 +140,15 @@ const alternateLocales = supportedLanguages
  			tags.map((tag) => <meta property="article:tag" content={tag} />)}
 
 		<!-- Twitter -->
-		<meta property="twitter:card" content="summary_large_image" />
+		<meta property="twitter:card" content={twitterCard} />
 		<meta property="twitter:url" content={canonicalURL} />
-		<meta property="twitter:title" content={fullTitle} />
-		<meta property="twitter:description" content={description} />
+		<meta property="twitter:title" content={resolvedOgTitle} />
+		<meta property="twitter:description" content={resolvedOgDescription} />
 		<meta property="twitter:image" content={new URL(image, Astro.url)} />
 		<meta name="twitter:site" content="@sh20raj" />
 
 		<!-- Verification Tags -->
-		<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+		<meta name="robots" content={robotsContent} />
 		<meta name="theme-color" content="#4f46e5" />
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />

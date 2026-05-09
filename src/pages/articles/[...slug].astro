@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
 import { Calendar, Tag, Share2, Copy, Bookmark, Sparkles, MessageSquare, Twitter, Clock } from 'lucide-astro';
 import { marked } from 'marked';
+import { buildCanonicalUrl, getSiteOrigin } from '../../lib/seo';
 
 // Enable SSR for this route
 export const prerender = false;
@@ -48,6 +49,8 @@ const htmlContent = marked.parse(contentOnly);
 const title = articleData.title;
 const description = `${articleData.title} - Explore curated quotes, deep insights, and life lessons in this comprehensive guide.`;
 const ogImage = articleData.image;
+const siteOrigin = getSiteOrigin(Astro.site, Astro.url.origin);
+const canonicalURL = buildCanonicalUrl(`/articles/${slug}/`, siteOrigin);
 
 // Schema.org Article
 const schema = {
@@ -64,7 +67,7 @@ const schema = {
 };
 ---
 
-<Layout title={title} description={description} image={ogImage}>
+<Layout title={title} description={description} image={ogImage} canonicalURL={canonicalURL}>
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
     <Navbar />
 

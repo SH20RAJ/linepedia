@@ -8,6 +8,7 @@ import StructuredData from '../components/StructuredData.astro';
 import { Quote } from 'lucide-astro';
 
 import { getAllWriters, getAllCollections, getAllCategories, getFeaturedPoems } from '../lib/cdn';
+import { buildCanonicalUrl, generatePageMetadata, getNormalizedLang, getSiteOrigin, SUPPORTED_LANGUAGES, shouldNoindexForLanguageParam } from '../lib/seo';
 import { getCollection } from 'astro:content';
 
 const allPosts = (await getCollection("blog")).sort(
@@ -34,28 +35,38 @@ const poemOfTheDay = poemsData[seed % poemsData.length] || poemsData[0];
 const trendingLines = poemsData.slice(-6).reverse();
 
 // Language detection for hreflang and meta
-const supportedLanguages = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
+const supportedLanguages = [...SUPPORTED_LANGUAGES];
 const requestedLang = Astro.url.searchParams.get("lang") || "en";
 const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
-const siteOrigin = Astro.site?.toString()?.replace(/\/$/, "") || Astro.url.origin;
-
-const alternateLanguageUrls = supportedLanguages.map((code) => {
-  const href = new URL("/", siteOrigin);
-  if (code !== "en") href.searchParams.set("lang", code);
-  return { code, href: href.toString() };
+const siteOrigin = getSiteOrigin(Astro.site, Astro.url.origin);
+const isTranslationParamPage = shouldNoindexForLanguageParam(Astro.url.searchParams);
+const homeMeta = generatePageMetadata({
+	pageType: 'home',
+	data: {
+		description: 'Linespedia is a curated archive of shayari, poems, and poetic lines for discovery.',
+	},
+	siteOrigin,
+	pathname: '/',
+	lang,
+	translationsServerSide: false,
+	isTranslationParamPage,
+	fallbackTitle: 'Linespedia',
+	fallbackDescription: 'Linespedia is a curated archive of shayari, poems, and poetic lines for discovery.',
 });
 ---
 
 <Layout 
-  title="Best Shayari, Poems & Quotes Collection" 
-  description="Linespedia — The largest collection of curated poetry, shayari, and quotes. Browse by mood, writer, or theme. Copy paste ready for Instagram, WhatsApp & more."
+  title={homeMeta.title} 
+  description={homeMeta.description}
   lang={lang}
-  keywords="poetry, shayari, quotes, love shayari, sad shayari, motivational quotes, hindi shayari, urdu poetry, english poems, inspirational lines"
+	canonicalURL={homeMeta.canonicalURL}
+	robots={homeMeta.robots}
+	ogTitle={homeMeta.ogTitle}
+	ogDescription={homeMeta.ogDescription}
+	ogUrl={homeMeta.ogUrl}
+	twitterCard={homeMeta.twitterCard}
+  keywords="poetry archive, shayari archive, quotes archive, poetry collections, writer pages"
 >
-  {alternateLanguageUrls.map(({ code, href }) => (
-    <link slot="head" rel="alternate" hreflang={code} href={href} />
-  ))}
-  <link slot="head" rel="alternate" hreflang="x-default" href={siteOrigin + "/"} />
   <meta slot="head" name="lang-trigger" content={lang} />
   
   <StructuredData

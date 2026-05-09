@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import cloudflare from '@astrojs/cloudflare';
+import remarkStripFirstH1 from './src/utils/remark-strip-first-h1.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -13,6 +14,9 @@ export default defineConfig({
     nodejsCompat: true,
   }),
   integrations: [sitemap(), mdx()],
+  markdown: {
+    remarkPlugins: [remarkStripFirstH1],
+  },
   middleware: './src/middleware.ts',
   prefetch: true,
 });

@@ -67,10 +67,15 @@ const contentSchema =
         "@id": url.startsWith("http") ? `${url}#poem` : `${siteUrl}${url}#poem`,
         name: title,
         description: description,
+        text: description,
         inLanguage: schemaLanguage,
         author: {
           "@type": "Person",
-          name: authorName || "Unknown",
+          name: authorName || "Unknown Author",
+        },
+        creator: {
+          "@type": "Person",
+          name: authorName || "Unknown Author",
         },
         genre: "Poetry",
         url: url.startsWith("http") ? url : `${siteUrl}${url}`,
@@ -83,6 +88,8 @@ const contentSchema =
             url: `${siteUrl}/favicon.svg`,
           },
         },
+        copyrightNotice: "This work is in the public domain.",
+        isAccessibleForFree: true,
         mainEntityOfPage: {
           "@type": "WebPage",
           "@id": url.startsWith("http") ? url : `${siteUrl}${url}`,

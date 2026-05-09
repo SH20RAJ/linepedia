@@ -210,7 +210,6 @@ export const getAllPoetryWriters = async () => {
       slug,
       name,
       photo: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff&size=128`,
-      bio: `Explore the profound poetry and moving lines of ${name}. This collection features a curated selection of their work from our extended library.`,
     }));
   } catch (e) {
     return [];

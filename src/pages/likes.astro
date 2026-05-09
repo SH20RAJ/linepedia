@@ -4,16 +4,21 @@ import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 import Breadcrumb from "../components/Breadcrumb.astro";
 import { Heart, Trash2, ArrowRight } from "lucide-astro";
+import { buildCanonicalUrl, getSiteOrigin } from '../lib/seo';
 
 const breadcrumbs = [
   { name: "Home", href: "/" },
   { name: "My Likes", href: "/likes/" },
 ];
+const siteOrigin = getSiteOrigin(Astro.site, Astro.url.origin);
+const canonicalURL = buildCanonicalUrl('/likes/', siteOrigin);
 ---
 
 <Layout
   title="My Liked Lines | Linespedia"
   description="Your curated collection of favorite poetic lines, shayari, and quotes on Linespedia."
+  canonicalURL={canonicalURL}
+  robots="noindex,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1"
 >
   <Navbar />
   <main class="min-h-screen">

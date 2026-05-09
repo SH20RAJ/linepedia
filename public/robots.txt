@@ -1,4 +1,6 @@
 User-agent: *
+# Allow primary site sections
+Allow: /$
 Allow: /line/
 Allow: /writers/
 Allow: /categories/
@@ -7,8 +9,12 @@ Allow: /explore/
 Allow: /seo/
 Allow: /panchtantra/
 
+# Disallow admin and tooling
 Disallow: /admin/
 Disallow: /scripts/
-Disallow: /_astro/
 
+# Cloudflare / framework internals - allow assets needed for rendering
+Allow: /_astro/
+
+# Sitemap reference (canonical index)
 Sitemap: https://linespedia.com/sitemap.xml

@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
 import { Search, Calendar, Tag, ChevronRight, Sparkles } from 'lucide-astro';
+import { buildCanonicalUrl, getSiteOrigin } from '../../lib/seo';
 
 // Enable SSR for this route
 export const prerender = false;
@@ -30,12 +31,18 @@ const ITEMS_PER_PAGE = 12;
 const page = parseInt(Astro.url.searchParams.get('page') || '1');
 const totalPages = Math.ceil(sortedArticles.length / ITEMS_PER_PAGE);
 const currentArticles = sortedArticles.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+const siteOrigin = getSiteOrigin(Astro.site, Astro.url.origin);
+const canonicalURL = buildCanonicalUrl('/articles/', siteOrigin);
+const shouldNoindex = page > 1;
+const robots = shouldNoindex
+    ? 'noindex,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1'
+    : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1';
 
 const siteTitle = "Insightful Articles & Quotes | Linespedia";
 const siteDescription = "Explore deep insights, life lessons, and curated quotes from our latest article collection.";
 ---
 
-<Layout title={siteTitle} description={siteDescription}>
+<Layout title={siteTitle} description={siteDescription} canonicalURL={canonicalURL} robots={robots}>
     <Navbar />
     
     <main class="min-h-screen bg-[#fdfcf7] pt-32 pb-24">

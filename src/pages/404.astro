@@ -3,11 +3,17 @@ import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 import { Ghost, Home, Search, Heart } from "lucide-astro";
+import { buildCanonicalUrl, getSiteOrigin } from '../lib/seo';
+
+const siteOrigin = getSiteOrigin(Astro.site, Astro.url.origin);
+const canonicalURL = buildCanonicalUrl('/404/', siteOrigin);
 ---
 
 <Layout
   title="404 - Lost in Translation | Linespedia"
   description="The page you're looking for has wandered off into the poetic void. Let's find your way back."
+  canonicalURL={canonicalURL}
+  robots="noindex,nofollow,max-snippet:-1,max-image-preview:large,max-video-preview:-1"
 >
   <Navbar />
   <main class="min-h-screen flex items-center justify-center poetic-gradient px-4 py-20">

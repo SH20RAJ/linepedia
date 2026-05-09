@@ -57,12 +57,15 @@ export async function GET({ url }) {
       const poemSlug = String(poem?.slug || '').trim();
       if (!poetSlug || !poemSlug) return '';
 
-      const poemUrl = `https://linespedia.com/line/ap/${poetSlug}/${poemSlug}/`;
-      const langUrl = lang === 'en' ? poemUrl : `${poemUrl}?lang=${lang}`;
+      // Exclude entries that are missing critical content
+      if (!poem.content || String(poem.content || '').trim().length < 20) return '';
 
+      const poemUrl = `https://linespedia.com/line/ap/${poetSlug}/${poemSlug}/`;
+
+      // Always include canonical (English) URLs in the sitemap; do not include ?lang params
       return `
   <url>
-    <loc>${langUrl}</loc>
+    <loc>${poemUrl}</loc>
     <lastmod>${toPoemLastmod(poem)}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>

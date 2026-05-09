@@ -15,6 +15,54 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+const allPosts = await getCollection("blog");
+
+const authorName = post.data.author || "Linespedia Editorial";
+const publishedISO = post.data.pubDate.toISOString();
+const updatedISO = post.data.updatedDate
+  ? post.data.updatedDate.toISOString()
+  : publishedISO;
+const canonicalURL = new URL(`/blog/${post.id}/`, Astro.site).toString();
+
+const relatedPosts = allPosts
+  .filter((item) => item.id !== post.id)
+  .map((item) => {
+    const currentTags = post.data.tags || [];
+    const itemTags = item.data.tags || [];
+    const sharedTags = itemTags.filter((tag) => currentTags.includes(tag));
+    const categoryMatch = item.data.category === post.data.category ? 1 : 0;
+
+    return {
+      post: item,
+      score: sharedTags.length * 2 + categoryMatch,
+    };
+  })
+  .filter((item) => item.score > 0)
+  .sort((a, b) => b.score - a.score)
+  .slice(0, 3)
+  .map((item) => item.post);
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: publishedISO,
+  dateModified: updatedISO,
+  author: {
+    "@type": "Organization",
+    name: authorName,
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Linespedia",
+    url: "https://linespedia.com",
+  },
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": canonicalURL,
+  },
+};
 
 const breadcrumbs = [
   { name: "Home", href: "/" },
@@ -28,8 +76,19 @@ export const prerender = true;
   title={post.data.title}
   description={post.data.description}
   image={post.data.heroImage}
+  canonicalURL={canonicalURL}
   type="article"
+  publishedTime={publishedISO}
+  author={authorName}
+  section={post.data.category}
+  tags={post.data.tags || []}
 >
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(articleSchema)}
+  />
+
   <Navbar />
   <main class="min-h-screen">
     <div class="relative h-[60vh] flex items-center justify-center overflow-hidden">
@@ -47,20 +106,55 @@ export const prerender = true;
             <div class="flex items-center justify-center space-x-6 text-white/90">
                 <div class="flex items-center space-x-2">
                     <span class="text-xs uppercase font-bold tracking-widest text-white/50">Author</span>
-                    <span class="font-bold">{post.data.author}</span>
+                    <span class="font-bold">{authorName}</span>
                 </div>
                 <div class="w-1 h-1 bg-white/30 rounded-full"></div>
                 <time class="font-bold">
                     {post.data.pubDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </time>
+                {post.data.updatedDate && (
+                    <>
+                        <div class="w-1 h-1 bg-white/30 rounded-full"></div>
+                        <time class="font-bold">
+                            Updated {post.data.updatedDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </time>
+                    </>
+                )}
             </div>
         </div>
     </div>
 
     <article class="container mx-auto px-4 py-20">
       <div class="max-w-3xl mx-auto prose prose-xl prose-indigo prose-headings:font-serif prose-headings:font-black text-primary/80">
+        <p class="lead text-xl text-primary/70 not-prose mb-10">{post.data.description}</p>
         <Content />
       </div>
+
+      <div class="max-w-3xl mx-auto mt-16 p-8 rounded-3xl bg-indigo-50/60 border border-indigo-100">
+        <h2 class="text-2xl font-serif font-black text-primary mb-4">Read Next on Linespedia</h2>
+        <p class="text-primary/70 mb-6">Explore related lines, collections, and editorial guides to continue your reading.</p>
+        <ul class="space-y-3 text-primary/90">
+          <li><a class="hover:text-accent font-semibold" href="/explore/">Browse trending lines and quotes</a></li>
+          <li><a class="hover:text-accent font-semibold" href="/collections/">Explore thematic line collections</a></li>
+          <li><a class="hover:text-accent font-semibold" href="/categories/">Find posts by category</a></li>
+          <li><a class="hover:text-accent font-semibold" href="/writers/">Read writer profiles and featured poets</a></li>
+          <li><a class="hover:text-accent font-semibold" href="/blog/">Visit the full blog archive</a></li>
+        </ul>
+      </div>
+
+      {relatedPosts.length > 0 && (
+        <section class="max-w-3xl mx-auto mt-14">
+          <h2 class="text-2xl font-serif font-black text-primary mb-5">Related Posts</h2>
+          <div class="grid gap-4">
+            {relatedPosts.map((relatedPost) => (
+              <a href={`/blog/${relatedPost.id}/`} class="block rounded-2xl border border-indigo-100 p-5 hover:border-accent transition-colors bg-white/80">
+                <h3 class="font-bold text-lg text-primary mb-1">{relatedPost.data.title}</h3>
+                <p class="text-primary/70 text-sm">{relatedPost.data.description}</p>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
     </article>
 
     {/* Shared Section */}

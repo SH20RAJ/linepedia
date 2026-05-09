@@ -5,6 +5,7 @@ import Footer from '../../components/Footer.astro';
 import PoemCard from '../../components/PoemCard.astro';
 import { Sparkles, ChevronLeft, ChevronRight, PenTool } from 'lucide-astro';
 import { getAllPoetryWriters } from '../../lib/cdn';
+import { generatePageMetadata, SUPPORTED_LANGUAGES } from '../../lib/seo';
 
 const pageSize = 120;
 const pageParam = Astro.params.page;
@@ -29,6 +30,10 @@ const sortedMetadata = [...metadata].reverse();
 const total = sortedMetadata.length;
 const lastPage = Math.ceil(total / pageSize);
 
+if (total === 0) {
+  return Astro.redirect('/404/', 302);
+}
+
 // Mock the "page" object to keep existing UI logic working
 const page = {
   currentPage,
@@ -49,11 +54,38 @@ const page = {
 
 const poetryWriters = await getAllPoetryWriters();
 const randomWriters = poetryWriters.sort(() => 0.5 - Math.random()).slice(0, 10);
+
+const siteOrigin = Astro.site?.toString()?.replace(/\/$/, '') || Astro.url.origin;
+const requestedLang = (Astro.url.searchParams.get('lang') || 'en').toLowerCase();
+const lang = (SUPPORTED_LANGUAGES as readonly string[]).includes(requestedLang) ? requestedLang : 'en';
+const archiveMeta = generatePageMetadata({
+  pageType: 'archive',
+  data: {
+    name: 'Extended Poetry Library',
+    description: 'Browse the extended poetry archive page by page.',
+  },
+  siteOrigin,
+  pathname: Astro.url.pathname,
+  lang,
+  pageNumber: currentPage,
+  itemCount: total,
+  fallbackTitle: 'Extended Poetry Library',
+  fallbackDescription: 'Browse the extended poetry archive page by page.',
+  maxIndexablePage: 25,
+});
 ---
 
 <Layout 
-  title={`Extended Poetry Library — Page ${page.currentPage} | Linespedia`}
-  description="Explore millions of poems from our extended library. Discover new poets, timeless lines, and soul-stirring verses from around the world."
+  title={archiveMeta.title}
+  description={archiveMeta.description}
+  canonicalURL={archiveMeta.canonicalURL}
+  robots={archiveMeta.robots}
+  ogTitle={archiveMeta.ogTitle}
+  ogDescription={archiveMeta.ogDescription}
+  ogUrl={archiveMeta.ogUrl}
+  twitterCard={archiveMeta.twitterCard}
+  prevURL={page.url.prev}
+  nextURL={page.url.next}
 >
   <Navbar />
   

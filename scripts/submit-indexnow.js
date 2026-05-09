@@ -80,10 +80,7 @@ function getConfig(overrides = {}) {
 
 function addLocalizedUrl(urls, routePath, config) {
     const normalizedPath = normalizePath(routePath);
-    for (const lang of config.languages) {
-        const langParam = lang === 'en' ? '' : `?lang=${lang}`;
-        urls.add(`${config.protocol}${config.host}${normalizedPath}${langParam}`);
-    }
+    urls.add(`${config.protocol}${config.host}${normalizedPath}`);
 }
 
 function collectCoreUrls(urls, config) {

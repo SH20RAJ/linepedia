@@ -1,0 +1,85 @@
+---
+interface Props {
+  authorName?: string;
+  sourceUrl?: string;
+  sourceName?: string;
+  isPublicDomain?: boolean;
+  copyrightNotice?: string;
+  attributionText?: string;
+  isUserSubmitted?: boolean;
+}
+
+const {
+  authorName,
+  sourceUrl,
+  sourceName,
+  isPublicDomain = false,
+  copyrightNotice,
+  attributionText,
+  isUserSubmitted = false,
+} = Astro.props;
+---
+
+{
+  (authorName || isPublicDomain || copyrightNotice || sourceName) && (
+    <div class="bg-gradient-to-r from-indigo-50 to-blue-50 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-indigo-100/50 not-prose space-y-4">
+      <h3 class="text-sm font-bold uppercase tracking-widest text-primary/70 flex items-center space-x-2">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v4h8v-4zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+        </svg>
+        <span>Attribution & Rights</span>
+      </h3>
+
+      <div class="space-y-3 text-sm text-primary/70">
+        {authorName && (
+          <p>
+            <strong class="text-primary/90">Author:</strong> {authorName}
+          </p>
+        )}
+
+        {isPublicDomain && (
+          <p class="flex items-start space-x-2">
+            <span class="text-accent font-bold mt-1">●</span>
+            <span><strong>Public Domain:</strong> This work is in the public domain and free to use.</span>
+          </p>
+        )}
+
+        {sourceName && !isPublicDomain && (
+          <p>
+            <strong class="text-primary/90">Source:</strong> {sourceUrl ? (
+              <a href={sourceUrl} target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">
+                {sourceName}
+              </a>
+            ) : (
+              <span>{sourceName}</span>
+            )}
+          </p>
+        )}
+
+        {copyrightNotice && (
+          <p class="text-xs bg-white/50 p-3 rounded border border-primary/10">
+            {copyrightNotice}
+          </p>
+        )}
+
+        {attributionText && (
+          <p class="text-xs italic text-primary/60">
+            {attributionText}
+          </p>
+        )}
+
+        {isUserSubmitted && (
+          <p class="flex items-start space-x-2">
+            <span class="text-blue-500 font-bold mt-1">●</span>
+            <span><strong>User Submitted:</strong> This content was submitted by a community member.</span>
+          </p>
+        )}
+
+        <p class="text-xs border-t border-primary/10 pt-3 text-primary/60">
+          For usage rights, copyright concerns, or to report an issue with this content, please visit our{' '}
+          <a href="/copyright/" class="text-accent hover:underline font-medium">Copyright & Report page</a>.
+        </p>
+      </div>
+    </div>
+  )
+}
