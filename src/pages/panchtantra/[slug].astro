@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
 import AIPanel from '../../components/AIPanel.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
+import StructuredData from '../../components/StructuredData.astro';
 import { BookOpen, Sparkles, GraduationCap, ChevronLeft, ChevronRight, Share2, Copy } from 'lucide-astro';
 import { getPanchatantraStories } from '../../lib/cdn';
 
@@ -35,6 +36,14 @@ const breadcrumbs = [
 
 <Layout title={title} description={description}>
     <Navbar />
+    
+    <StructuredData
+        type="story"
+        title={story.title}
+        description={description}
+        url={`/panchtantra/${slug}/`}
+        breadcrumbs={breadcrumbs.map(b => ({ name: b.name, url: b.href }))}
+    />
     
     <main class="min-h-screen bg-[#fdfaf6] pt-24 pb-20">
         <div class="container mx-auto px-4 max-w-4xl">

@@ -438,6 +438,16 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
   twitterCard={pageMeta.twitterCard}
 >
   {
+    /* Determine if the content is likely public domain */
+    (() => {
+      const isAllPoetry = data?.meta?.source === 'AllPoetry';
+      const classicPoets = ['Shakespeare', 'Dickinson', 'Blake', 'Keats', 'Shelley', 'Wordsworth', 'Frost', 'Yeats', 'Whitman', 'Poe'];
+      const isClassic = classicPoets.some(p => writer?.name?.includes(p));
+      data.isPublicDomain = isClassic && !isAllPoetry;
+      return null;
+    })()
+  }
+  {
     !isTranslationParamPage && alternateLanguageUrls.map(({ code, href }) => (
       <link slot="head" rel="alternate" hreflang={code} href={href} />
     ))
@@ -637,7 +647,7 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
                       </p>
                       <p>
                         {data.meaning ||
-                          `This powerful line by ${writer?.name || "the poet"} explores the delicate balance of emotion and expression. It serves as a testament to the enduring power of verse.`}
+                          `Explore the profound themes and evocative language in this selection. This line by ${writer?.name || "the poet"} captures a unique moment of poetic expression, offering a glimpse into the author's creative vision.`}
                       </p>
                     </div>
                   </div>
@@ -647,7 +657,9 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
               {/* Rights Notice */}
               <RightsNotice
                 authorName={writer?.name}
-                isPublicDomain={true}
+                isPublicDomain={data.isPublicDomain}
+                sourceName={data?.meta?.source}
+                sourceUrl={data?.meta?.url}
                 attributionText={`"${data.content?.split("\n")[0]?.slice(0, 50)}..." by ${writer?.name || "Unknown Author"}`}
               />
 
@@ -729,7 +741,7 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
                           {writer.name}
                         </h3>
                         <p class="text-white/50 text-xs font-bold uppercase tracking-widest">
-                          Poet & Author
+                          {/^\d+$/.test(writer.name) || data?.meta?.source === 'AllPoetry' ? 'Contributor' : 'Poet & Author'}
                         </p>
                       </div>
                     </div>

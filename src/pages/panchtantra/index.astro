@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
 import { Book, Sparkles, ChevronRight, GraduationCap } from 'lucide-astro';
 import { getPanchatantraStories } from '../../lib/cdn';
+import StructuredData from '../../components/StructuredData.astro';
 
 const title = "Panchatantra Stories for Kids — Moral & Wisdom Tales | Linespedia";
 const description = "Discover the timeless wisdom of Panchatantra stories. Short, engaging tales with morals for children and adults alike.";
@@ -15,6 +16,15 @@ const validStories = stories.filter((s: any) => s.content && s.title);
 
 <Layout title={title} description={description}>
     <Navbar />
+    
+    <StructuredData
+        type="collection"
+        title={title}
+        description={description}
+        url="/panchtantra/"
+        itemCount={validStories.length}
+        breadcrumbs={[]}
+    />
     
     <main class="min-h-screen pt-24 pb-20 bg-[#fdfaf6]">
         {/* Hero Section */}

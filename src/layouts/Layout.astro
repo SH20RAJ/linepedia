@@ -47,7 +47,7 @@ const {
 } = Astro.props;
 
 const siteName = "Linespedia";
-const fullTitle = `${title} | ${siteName}`;
+const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
 const resolvedOgTitle = ogTitle || fullTitle;
 const resolvedOgDescription = ogDescription || description;
 const resolvedOgUrl = ogUrl || canonicalURL;

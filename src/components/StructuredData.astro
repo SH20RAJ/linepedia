@@ -1,6 +1,6 @@
 ---
 interface Props {
-  type: "line" | "writer" | "category" | "collection";
+  type: "line" | "writer" | "category" | "collection" | "story";
   title: string;
   description: string;
   url: string;
@@ -105,20 +105,39 @@ const contentSchema =
           inLanguage: schemaLanguage,
           url: url.startsWith("http") ? url : `${siteUrl}${url}`,
         }
-      : {
-          "@context": "https://schema.org",
-          "@type": "CollectionPage",
-          "@id": url.startsWith("http") ? `${url}#collection` : `${siteUrl}${url}#collection`,
-          name: title,
-          description: description,
-          inLanguage: schemaLanguage,
-          url: url.startsWith("http") ? url : `${siteUrl}${url}`,
-          publisher: {
-            "@type": "Organization",
-            name: "Linespedia",
-            url: siteUrl,
-          },
-        };
+      : type === "story"
+        ? {
+            "@context": "https://schema.org",
+            "@type": "ShortStory",
+            "@id": url.startsWith("http") ? `${url}#story` : `${siteUrl}${url}#story`,
+            name: title,
+            description: description,
+            inLanguage: schemaLanguage,
+            url: url.startsWith("http") ? url : `${siteUrl}${url}`,
+            publisher: {
+              "@type": "Organization",
+              name: "Linespedia",
+              url: siteUrl,
+            },
+            isPartOf: {
+              "@type": "CreativeWorkSeries",
+              name: "Panchatantra Tales",
+            },
+          }
+        : {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "@id": url.startsWith("http") ? `${url}#collection` : `${siteUrl}${url}#collection`,
+            name: title,
+            description: description,
+            inLanguage: schemaLanguage,
+            url: url.startsWith("http") ? url : `${siteUrl}${url}`,
+            publisher: {
+              "@type": "Organization",
+              name: "Linespedia",
+              url: siteUrl,
+            },
+          };
 
 // FAQ Schema
 const faqSchema =

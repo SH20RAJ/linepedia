@@ -4,6 +4,16 @@ import collections from '../data/collections.json';
 import featuredPoemsData from '../data/featured-poems.json';
 import posterIndex from '../data/poster-index.json';
 
+// Performance optimization: Normalize text to fix UTF-8 encoding issues
+function normalizeText(text: string | null | undefined): string {
+  if (!text) return "";
+  return text
+    .normalize("NFC")
+    .replace(/\uFFFD/g, "")
+    .replace(/\r\n/g, "\n")
+    .trim();
+}
+
 // Define types for imported JSON data
 interface Writer {
   name: string;
@@ -60,7 +70,13 @@ export const getPoem = async (id: string): Promise<Poem | null> => {
   try {
     const res = await fetch(`${CDN_BASE}/poems/v1/${id}.json`);
     if (!res.ok) return null;
-    return (await res.json()) as Poem;
+    const data = (await res.json()) as Poem;
+    return {
+      ...data,
+      title: normalizeText(data.title),
+      content: normalizeText(data.content),
+      meaning: normalizeText(data.meaning),
+    };
   } catch (e) {
     console.error(`Failed to fetch poem ${id}`, e);
     return null;
@@ -89,7 +105,12 @@ export const getWriterPoems = async (writerSlug: string): Promise<Poem[]> => {
   try {
     const res = await fetch(`${CDN_BASE}/metadata/v1/writers/${writerSlug}.json`);
     if (!res.ok) return [];
-    return (await res.json()) as Poem[];
+    const poems = (await res.json()) as Poem[];
+    return poems.map((p) => ({
+      ...p,
+      title: normalizeText(p.title),
+      content: normalizeText(p.content),
+    }));
   } catch (e) {
     return [];
   }
@@ -99,7 +120,12 @@ export const getCategoryPoems = async (categorySlug: string): Promise<Poem[]> =>
   try {
     const res = await fetch(`${CDN_BASE}/metadata/v1/categories/${categorySlug}.json`);
     if (!res.ok) return [];
-    return (await res.json()) as Poem[];
+    const poems = (await res.json()) as Poem[];
+    return poems.map((p) => ({
+      ...p,
+      title: normalizeText(p.title),
+      content: normalizeText(p.content),
+    }));
   } catch (e) {
     return [];
   }
@@ -183,12 +209,12 @@ export const getAllPoetryPoem = async (
     return {
       id: `ap-${writerSlug}-${poemSlug}`,
       slug: poemSlug,
-      title: fm.title || 'Untitled',
+      title: normalizeText(fm.title || "Untitled"),
       writer: fm.writer || writerSlug,
-      content: content,
-      category: fm.category ? fm.category.split(',').map((c: string) => c.trim()) : ['Poetry'],
-      meaning: fm.meaning || '',
-      meta: { source: 'AllPoetry', url: fm.url },
+      content: normalizeText(content),
+      category: fm.category ? fm.category.split(",").map((c: string) => c.trim()) : ["Poetry"],
+      meaning: normalizeText(fm.meaning || ""),
+      meta: { source: "AllPoetry", url: fm.url },
     };
   } catch (e) {
     return null;

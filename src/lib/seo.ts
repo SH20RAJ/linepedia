@@ -245,20 +245,21 @@ export function generatePageMetadata(input: PageMetadataInput): PageMetadataOutp
 
 	switch (pageType) {
 		case 'line': {
-			title = authorName ? `${titleBase} by ${authorName} | ${SITE_NAME}` : `${titleBase} | ${SITE_NAME}`;
+			const base = authorName ? `${titleBase} by ${authorName}` : titleBase;
+			title = base.includes(SITE_NAME) ? base : `${base} | ${SITE_NAME}`;
 			h1 = titleBase;
 			description = buildLineDescription(data) || fallbackDescription;
 			break;
 		}
 		case 'author': {
-			title = `${titleBase} | ${SITE_NAME}`;
+			title = titleBase.includes(SITE_NAME) ? titleBase : `${titleBase} | ${SITE_NAME}`;
 			h1 = titleBase;
 			description = buildIndexDescription(data, pageType, itemCount);
 			break;
 		}
 		case 'category':
 		case 'collection': {
-			title = `${titleBase} | ${SITE_NAME}`;
+			title = titleBase.includes(SITE_NAME) ? titleBase : `${titleBase} | ${SITE_NAME}`;
 			h1 = titleBase;
 			description = buildIndexDescription(data, pageType, itemCount);
 			break;
@@ -267,13 +268,15 @@ export function generatePageMetadata(input: PageMetadataInput): PageMetadataOutp
 			const modifier = cleanText(data.modifierLabel || data.modifier || 'Curated');
 			const category = cleanText(data.categoryName || data.name || 'Lines');
 			const platform = cleanText(data.platformLabel || data.platform || 'sharing');
-			title = `${stripTrailingPunctuation(`${modifier} ${category} ${platform}`)} | ${SITE_NAME}`;
-			h1 = stripTrailingPunctuation(`${modifier} ${category} ${platform}`) || titleBase;
+			const base = stripTrailingPunctuation(`${modifier} ${category} ${platform}`);
+			title = base.includes(SITE_NAME) ? base : `${base} | ${SITE_NAME}`;
+			h1 = base || titleBase;
 			description = buildIndexDescription(data, pageType, itemCount);
 			break;
 		}
 		case 'archive': {
-			title = pageNumber > 1 ? `${titleBase} - Page ${pageNumber} | ${SITE_NAME}` : `${titleBase} | ${SITE_NAME}`;
+			const base = pageNumber > 1 ? `${titleBase} - Page ${pageNumber}` : titleBase;
+			title = base.includes(SITE_NAME) ? base : `${base} | ${SITE_NAME}`;
 			h1 = titleBase;
 			description = pageNumber > 1
 				? truncate(`${fallbackDescription} Page ${pageNumber} contains a unique slice of the archive.`, 160)
@@ -281,14 +284,14 @@ export function generatePageMetadata(input: PageMetadataInput): PageMetadataOutp
 			break;
 		}
 		case 'blog': {
-			title = `${titleBase} | ${SITE_NAME}`;
+			title = titleBase.includes(SITE_NAME) ? titleBase : `${titleBase} | ${SITE_NAME}`;
 			h1 = titleBase;
 			description = cleanText(data.description || fallbackDescription);
 			break;
 		}
 		case 'home':
 		default: {
-			title = `${titleBase} | ${SITE_NAME}`;
+			title = titleBase === SITE_NAME ? titleBase : `${titleBase} | ${SITE_NAME}`;
 			h1 = titleBase;
 			description = cleanText(data.description || fallbackDescription);
 		}
