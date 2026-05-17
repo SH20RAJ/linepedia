@@ -15,6 +15,14 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+
+// Extract headings for TOC
+const headings = post.body?.match(/^#{2,3} .+$/gm)?.map((h) => {
+  const level = h.startsWith('###') ? 3 : 2;
+  const text = h.replace(/^#{2,3} /, '');
+  const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  return { level, text, id };
+}) || [];
 const allPosts = await getCollection("blog");
 
 const authorName = post.data.author || "Linespedia Editorial";
@@ -91,7 +99,7 @@ export const prerender = true;
 
   <Navbar />
   <main class="min-h-screen">
-    <div class="relative h-[60vh] flex items-center justify-center overflow-hidden">
+    <div class="relative h-[40vh] md:h-[45vh] flex items-center justify-center overflow-hidden">
         <div class="absolute inset-0 bg-primary/40 z-10"></div>
         <img 
             src={post.data.heroImage} 
@@ -124,10 +132,24 @@ export const prerender = true;
         </div>
     </div>
 
-    <article class="container mx-auto px-4 py-20">
-      <div class="max-w-3xl mx-auto prose prose-xl prose-indigo prose-headings:font-serif prose-headings:font-black text-primary/80">
-        <p class="lead text-xl text-primary/70 not-prose mb-10">{post.data.description}</p>
-        <Content />
+    <article class="container mx-auto px-4 py-12">
+      <div class="max-w-3xl mx-auto">
+        {headings.length > 2 && (
+          <nav class="mb-10 p-6 bg-indigo-50/50 rounded-2xl border border-indigo-100">
+            <h2 class="text-sm font-bold uppercase tracking-widest text-primary/40 mb-4">Table of Contents</h2>
+            <ul class="space-y-2">
+              {headings.map((h) => (
+                <li class={h.level === 3 ? 'ml-4' : ''}>
+                  <a href={`#${h.id}`} class="text-sm text-primary/70 hover:text-accent transition-colors">{h.text}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+        <div class="prose prose-lg prose-indigo prose-headings:font-serif prose-headings:font-black prose-headings:scroll-mt-20 text-primary/80">
+          <p class="lead text-lg text-primary/70 not-prose mb-8">{post.data.description}</p>
+          <Content />
+        </div>
       </div>
 
       <div class="max-w-3xl mx-auto mt-16 p-8 rounded-3xl bg-indigo-50/60 border border-indigo-100">
