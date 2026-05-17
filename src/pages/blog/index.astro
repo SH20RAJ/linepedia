@@ -55,13 +55,13 @@ const robots = shouldNoindex
 
   <Navbar />
   <main class="min-h-screen">
-    <div class="poetic-gradient py-24 border-b border-indigo-50">
+    <div class="py-16 border-b border-indigo-50">
       <div class="container mx-auto px-4 max-w-4xl text-center">
         <Breadcrumb items={breadcrumbs} />
-        <h1 class="text-5xl md:text-7xl font-serif font-black text-primary mb-6">
+        <h1 class="text-3xl md:text-4xl font-serif font-black text-primary mb-4">
           The <span class="text-accent">Poetic</span> Journal
         </h1>
-        <p class="text-xl text-primary/60 max-w-2xl mx-auto mb-12">
+        <p class="text-base text-primary/60 max-w-2xl mx-auto mb-8">
           Insights, trends, and guides from the intersection of tradition and modern expression.
         </p>
 
@@ -83,7 +83,7 @@ const robots = shouldNoindex
       </div>
     </div>
 
-    <div class="container mx-auto px-4 py-20 max-w-6xl">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
       {filteredPosts.length === 0 ? (
         <div class="text-center py-20 bg-indigo-50/30 rounded-[3rem] border border-dashed border-indigo-100">
            <h3 class="text-2xl font-serif font-black text-primary/40">No articles found matching your search.</h3>
