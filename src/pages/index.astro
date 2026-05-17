@@ -11,9 +11,11 @@ import { getAllWriters, getAllCollections, getAllCategories, getFeaturedPoems } 
 import { buildCanonicalUrl, generatePageMetadata, getNormalizedLang, getSiteOrigin, SUPPORTED_LANGUAGES, shouldNoindexForLanguageParam } from '../lib/seo';
 import { getCollection } from 'astro:content';
 
-const allPosts = (await getCollection("blog")).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+const allPosts = (await getCollection("blog"))
+  .filter((post) => !post.data.noindex)
+  .sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  );
 const latestPosts = allPosts.slice(0, 3);
 
 const writersData = await getAllWriters();
@@ -43,15 +45,15 @@ const isTranslationParamPage = shouldNoindexForLanguageParam(Astro.url.searchPar
 const homeMeta = generatePageMetadata({
 	pageType: 'home',
 	data: {
-		description: 'Linespedia is a curated archive of shayari, poems, and poetic lines for discovery.',
+		description: 'Discover curated shayari, poems, quotes, captions, writer pages, meanings, and shareable poetic lines on Linespedia.',
 	},
 	siteOrigin,
 	pathname: '/',
 	lang,
 	translationsServerSide: false,
 	isTranslationParamPage,
-	fallbackTitle: 'Linespedia',
-	fallbackDescription: 'Linespedia is a curated archive of shayari, poems, and poetic lines for discovery.',
+	fallbackTitle: 'Linespedia — Shayari, Poems, Quotes & Poetic Lines',
+	fallbackDescription: 'Discover curated shayari, poems, quotes, captions, writer pages, meanings, and shareable poetic lines.',
 });
 ---
 
@@ -71,8 +73,8 @@ const homeMeta = generatePageMetadata({
   
   <StructuredData
     type="category"
-    title="Linespedia — Best Shayari, Poems & Quotes"
-    description="The largest collection of curated poetry, shayari, and quotes."
+    title="Linespedia — Shayari, Poems, Quotes & Poetic Lines"
+    description="Discover curated shayari, poems, quotes, captions, writer pages, meanings, and shareable poetic lines."
     url="/"
     breadcrumbs={[]}
   />
@@ -195,6 +197,34 @@ const homeMeta = generatePageMetadata({
 			</div>
 		</section>
 
+		{/* Why Linespedia? — Trust Section */}
+		<section class="container mx-auto px-4 py-16">
+			<h2 class="text-3xl font-serif font-black text-primary mb-12 text-center">Why Linespedia?</h2>
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+				<div class="text-center p-8 bg-white rounded-2xl border border-indigo-50 shadow-sm">
+					<div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+						<svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+					</div>
+					<h3 class="text-xl font-serif font-bold text-primary mb-3">Attributed &amp; Public Domain</h3>
+					<p class="text-primary/60 text-sm leading-relaxed">Every poem includes source attribution and author credit. Public domain works are clearly marked.</p>
+				</div>
+				<div class="text-center p-8 bg-white rounded-2xl border border-indigo-50 shadow-sm">
+					<div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+						<svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+					</div>
+					<h3 class="text-xl font-serif font-bold text-primary mb-3">Curated Meanings</h3>
+					<p class="text-primary/60 text-sm leading-relaxed">Each line comes with context and meaning, helping you understand and appreciate the poetry.</p>
+				</div>
+				<div class="text-center p-8 bg-white rounded-2xl border border-indigo-50 shadow-sm">
+					<div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+						<svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+					</div>
+					<h3 class="text-xl font-serif font-bold text-primary mb-3">Shareable Posters</h3>
+					<p class="text-primary/60 text-sm leading-relaxed">Download beautiful quote posters for Instagram, WhatsApp, and Pinterest.</p>
+				</div>
+			</div>
+		</section>
+
 		{/* Trending Now Sidebar/Section — Internal Linking Boost */}
 		<section class="bg-white py-16 border-y border-indigo-50">
 			<div class="container mx-auto px-4">
@@ -265,12 +295,86 @@ const homeMeta = generatePageMetadata({
 			</div>
 		</section>
 
+		{/* Quick Access — High-Intent Entry Points */}
+		<section class="bg-indigo-50/50 py-16 border-y border-indigo-50">
+			<div class="container mx-auto px-4 max-w-5xl">
+				<h2 class="text-2xl font-serif font-black text-primary text-center mb-10">Popular Collections</h2>
+				<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+					<a href="/sad-shayari/" class="group bg-white p-5 rounded-2xl border border-indigo-50 hover:border-accent hover:shadow-lg transition-all text-center">
+						<span class="text-2xl block mb-2">💔</span>
+						<span class="font-bold text-sm text-primary group-hover:text-accent transition-colors">Sad Shayari</span>
+					</a>
+					<a href="/love-poetry/" class="group bg-white p-5 rounded-2xl border border-indigo-50 hover:border-accent hover:shadow-lg transition-all text-center">
+						<span class="text-2xl block mb-2">❤️</span>
+						<span class="font-bold text-sm text-primary group-hover:text-accent transition-colors">Love Poetry</span>
+					</a>
+					<a href="/deep-lines/" class="group bg-white p-5 rounded-2xl border border-indigo-50 hover:border-accent hover:shadow-lg transition-all text-center">
+						<span class="text-2xl block mb-2">🌊</span>
+						<span class="font-bold text-sm text-primary group-hover:text-accent transition-colors">Deep Lines</span>
+					</a>
+					<a href="/nature-poetry/" class="group bg-white p-5 rounded-2xl border border-indigo-50 hover:border-accent hover:shadow-lg transition-all text-center">
+						<span class="text-2xl block mb-2">🌿</span>
+						<span class="font-bold text-sm text-primary group-hover:text-accent transition-colors">Nature Poetry</span>
+					</a>
+					<a href="/motivational-lines/" class="group bg-white p-5 rounded-2xl border border-indigo-50 hover:border-accent hover:shadow-lg transition-all text-center">
+						<span class="text-2xl block mb-2">🔥</span>
+						<span class="font-bold text-sm text-primary group-hover:text-accent transition-colors">Motivational</span>
+					</a>
+					<a href="/romantic-poetry/" class="group bg-white p-5 rounded-2xl border border-indigo-50 hover:border-accent hover:shadow-lg transition-all text-center">
+						<span class="text-2xl block mb-2">🌹</span>
+						<span class="font-bold text-sm text-primary group-hover:text-accent transition-colors">Romantic Poetry</span>
+					</a>
+					<a href="/spiritual-poetry/" class="group bg-white p-5 rounded-2xl border border-indigo-50 hover:border-accent hover:shadow-lg transition-all text-center">
+						<span class="text-2xl block mb-2">🕊️</span>
+						<span class="font-bold text-sm text-primary group-hover:text-accent transition-colors">Spiritual</span>
+					</a>
+					<a href="/urdu-poetry/" class="group bg-white p-5 rounded-2xl border border-indigo-50 hover:border-accent hover:shadow-lg transition-all text-center">
+						<span class="text-2xl block mb-2">✍️</span>
+						<span class="font-bold text-sm text-primary group-hover:text-accent transition-colors">Urdu Poetry</span>
+					</a>
+				</div>
+				<div class="text-center mt-8">
+					<a href="/categories/" class="inline-flex items-center text-accent font-bold text-sm hover:underline">
+						Browse all categories →
+					</a>
+				</div>
+			</div>
+		</section>
+
+		{/* Why Linespedia Trust Section */}
+		<section class="container mx-auto px-4 py-16 max-w-5xl">
+			<h2 class="text-2xl font-serif font-black text-primary text-center mb-10">Why Linespedia?</h2>
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+				<div class="text-center">
+					<div class="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+						<span class="text-2xl">📚</span>
+					</div>
+					<h3 class="font-bold text-primary mb-2">Public Domain & Attributed</h3>
+					<p class="text-primary/60 text-sm">We curate public domain poetry with proper attribution. Every poem includes its source and author.</p>
+				</div>
+				<div class="text-center">
+					<div class="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+						<span class="text-2xl">💡</span>
+					</div>
+					<h3 class="font-bold text-primary mb-2">Meanings & Context</h3>
+					<p class="text-primary/60 text-sm">Every line comes with its meaning and context, helping you understand and appreciate the poetry.</p>
+				</div>
+				<div class="text-center">
+					<div class="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+						<span class="text-2xl">🎨</span>
+					</div>
+					<h3 class="font-bold text-primary mb-2">Share & Download</h3>
+					<p class="text-primary/60 text-sm">Copy, share, or download beautiful quote posters for Instagram, WhatsApp, and social media.</p>
+				</div>
+			</div>
+		</section>
+
 		{/* SEO Content Block — ensures homepage is not thin */}
 		<section class="container mx-auto px-4 py-16 max-w-4xl">
 			<div class="prose prose-indigo max-w-none">
 				<h2 class="text-3xl font-serif font-black text-primary">About Linespedia</h2>
 				<p class="text-primary/70 leading-relaxed text-lg">
-					Linespedia is the internet's most comprehensive collection of poetry, shayari, quotes, and poetic lines. We curate content from legendary poets like Shakespeare, Emily Dickinson, Edgar Allan Poe, and many more. Whether you're looking for sad shayari to express your grief, love poetry to share with your partner, or deep lines for your Instagram captions — Linespedia has it all.
+					Linespedia is a curated archive of shayari, poems, quotes, and poetic lines. We collect and organize poetry from legendary poets like Shakespeare, Emily Dickinson, Edgar Allan Poe, Mirza Ghalib, and many more. Whether you're looking for sad shayari to express your grief, love poetry to share with your partner, or deep lines for your Instagram captions — Linespedia has it all.
 				</p>
 				<p class="text-primary/70 leading-relaxed">
 					Our collection spans multiple languages and moods. Every line is accompanied by its meaning and context, making it perfect for students, poetry enthusiasts, and social media users. Browse by writer, category, mood, or use our curated collections designed for specific platforms like Instagram, WhatsApp, and Facebook.

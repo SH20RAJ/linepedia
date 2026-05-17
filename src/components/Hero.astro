@@ -16,14 +16,14 @@ import { Search } from 'lucide-astro';
       <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60">Curated poetry archive</span>
     </div>
 
-    <h1 class="text-5xl md:text-8xl lg:text-9xl font-serif font-black text-primary mb-8 leading-[0.9] tracking-tight animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
-      Linespedia archives
+    <h1 class="text-4xl md:text-7xl lg:text-8xl font-serif font-black text-primary mb-8 leading-[0.9] tracking-tight animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+      Find beautiful shayari,
       <br />
-      shayari, poems, and lines
+      poems, quotes &amp; captions
     </h1>
 
-    <p class="text-primary/60 text-lg md:text-2xl mb-16 max-w-3xl mx-auto leading-relaxed font-light animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-400">
-      Browse a structured archive of individual lines, writer pages, and themed collections built from real poetry data.
+    <p class="text-primary/60 text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed font-light animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-400">
+      Discover curated poetic lines with meanings, writer profiles, and shareable posters.
     </p>
 
     {/* Hero Search - Premium Glassmorphism */}
@@ -44,13 +44,34 @@ import { Search } from 'lucide-astro';
     </div>
 
     {/* Trending Tags - Premium Pills */}
-    <div class="mt-12 flex flex-wrap justify-center gap-3 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-800">
+    <div class="mt-8 flex flex-wrap justify-center gap-3 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-800">
       {['sad-shayari', 'jaun-elia', 'deep-captions', '2-line-love'].map((tag, i) => (
-        <a 
-          href={`/${tag}/`} 
+        <a
+          href={`/${tag}/`}
           class="px-6 py-3 bg-white/40 backdrop-blur-md border border-indigo-100/30 rounded-full hover:bg-white hover:border-accent/20 hover:scale-110 active:scale-95 transition-all text-primary/60 hover:text-accent font-bold text-sm"
         >
           #{tag.replace(/-/g, ' ')}
+        </a>
+      ))}
+    </div>
+
+    {/* High-Intent Entry Points */}
+    <div class="mt-8 flex flex-wrap justify-center gap-2 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-1000">
+      {[
+        { name: 'Sad Shayari', href: '/sad-shayari/' },
+        { name: 'Love Shayari', href: '/love-poetry/' },
+        { name: 'Deep Lines', href: '/deep-lines/' },
+        { name: 'Urdu Poetry', href: '/categories/' },
+        { name: 'Instagram Captions', href: '/explore/' },
+        { name: 'WhatsApp Status', href: '/explore/' },
+        { name: 'Famous Poets', href: '/writers/' },
+        { name: 'Quote Posters', href: '/posters/' },
+      ].map((item) => (
+        <a
+          href={item.href}
+          class="px-4 py-2 text-xs font-bold text-primary/50 hover:text-accent bg-white/30 hover:bg-white/60 border border-transparent hover:border-indigo-100/50 rounded-full transition-all"
+        >
+          {item.name}
         </a>
       ))}
     </div>

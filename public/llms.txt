@@ -1,0 +1,50 @@
+# Linespedia - AI-Friendly Content Index
+# https://linespedia.com
+
+> Linespedia is a curated archive of shayari, poems, quotes, and poetic lines with meanings, translations, and attribution.
+
+## Site Structure
+
+- `/` - Homepage with featured poems, writers, categories, and collections
+- `/line/{slug}/` - Individual poem/line pages with content, meaning, author, and related lines
+- `/line/ap/{writer}/{poem}/` - AllPoetry-sourced poem pages
+- `/{writer-slug}/` - Writer/poet profile pages with bibliography
+- `/{category-slug}/` - Category pages (e.g., /sad-shayari/, /love-poetry/, /deep-lines/)
+- `/{collection-slug}/` - Curated collection pages
+- `/blog/` - Poetry guides, literary analysis, and educational articles
+- `/explore/` - Browse and search all content
+- `/categories/` - All categories index
+- `/writers/` - All writers index
+- `/collections/` - All collections index
+- `/api/` - REST API for accessing poetry content programmatically
+- `/posters/` - Downloadable quote poster gallery
+- `/sponsor/` - Sponsorship and advertising information
+- `/about/` - About Linespedia
+- `/contact/` - Contact information
+- `/privacy/` - Privacy policy
+- `/terms/` - Terms of service
+- `/copyright/` - Copyright and attribution policy
+- `/submit/` - Submit your own lines/poems
+
+## Content Types
+
+1. **Poems/Lines**: Individual poetic lines with full text, meaning/context, author attribution, source, categories, and related lines
+2. **Writer Profiles**: Poet/author pages with biography, bibliography, and related content
+3. **Categories**: Thematic groupings (sad shayari, love poetry, nature poetry, deep lines, etc.)
+4. **Collections**: Curated selections for specific moods, occasions, or platforms
+5. **Blog Articles**: Educational content about poetry, literary analysis, writing guides
+
+## Data Sources
+
+- Public domain poetry (Shakespeare, Dickinson, Whitman, Poe, etc.)
+- Curated content with proper attribution
+- User-submitted content (moderated)
+
+## API Access
+
+REST API available at `/api/v1/` with endpoints for random poems, search, categories, and writers. Documentation at `/api/docs/`.
+
+## Contact
+
+- Website: https://linespedia.com
+- GitHub: https://github.com/SH20RAJ/linepedia

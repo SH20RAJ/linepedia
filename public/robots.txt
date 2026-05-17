@@ -8,13 +8,41 @@ Allow: /collections/
 Allow: /explore/
 Allow: /seo/
 Allow: /panchtantra/
+Allow: /blog/
+Allow: /api/
+Allow: /posters/
+Allow: /sponsor/
+Allow: /about/
+Allow: /contact/
+Allow: /privacy/
+Allow: /terms/
+Allow: /copyright/
+Allow: /submit/
 
-# Disallow admin and tooling
+# Disallow admin, internal, and search/tracking pages
 Disallow: /admin/
 Disallow: /scripts/
+Disallow: /likes/
 
-# Cloudflare / framework internals - allow assets needed for rendering
+# Allow render-critical assets
 Allow: /_astro/
+Allow: /favicon.svg
+Allow: /favicon.ico
+Allow: /manifest.webmanifest
+Allow: /icons/
+Allow: /images/
+Allow: /posters/
+
+# Block infinite crawl traps from query-param pages
+Disallow: /*?q=
+Disallow: /*?search=
+Disallow: /*?query=
+Disallow: /*?sort=
+Disallow: /*?filter=
+Disallow: /*?tag=
+Disallow: /*?utm_
+Disallow: /*?gclid=
+Disallow: /*?fbclid=
 
 # Sitemap reference (canonical index)
-Sitemap: https://linespedia.com/sitemap.xml
+Sitemap: https://linespedia.com/sitemap-index.xml

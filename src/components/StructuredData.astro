@@ -1,12 +1,14 @@
 ---
 interface Props {
-  type: "line" | "writer" | "category" | "collection" | "story";
+  type: "line" | "writer" | "category" | "collection" | "story" | "blog";
   title: string;
   description: string;
   url: string;
   language?: string;
   authorName?: string;
   datePublished?: string;
+  dateModified?: string;
+  image?: string;
   breadcrumbs?: { name: string; url: string }[];
   faqs?: { q: string; a: string }[];
 }
@@ -19,27 +21,55 @@ const {
   language,
   authorName,
   datePublished,
+  dateModified,
+  image,
   breadcrumbs = [],
   faqs = [],
 } = Astro.props;
-const siteUrl = Astro.site?.toString() || "https://linespedia.com";
+const siteUrl = Astro.site?.toString()?.replace(/\/$/, '') || "https://linespedia.com";
 const inferredLanguage = String(Astro.url.searchParams.get("lang") || "en").toLowerCase();
 const schemaLanguage = language || inferredLanguage;
 
-// WebSite schema with SearchAction (sitewide)
-const websiteSchema = {
+// Organization schema (sitewide)
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": `${siteUrl}#organization`,
+  name: "Linespedia",
+  url: siteUrl,
+  logo: {
+    "@type": "ImageObject",
+    url: `${siteUrl}/favicon.svg`,
+    width: 512,
+    height: 512,
+  },
+  description: "A curated archive of shayari, poems, quotes, and poetic lines.",
+  sameAs: [
+    "https://github.com/SH20RAJ/linepedia",
+  ],
+};
+
+// WebSite schema with SearchAction (sitewide, only on homepage)
+const isHomepage = Astro.url.pathname === '/' || Astro.url.pathname === '';
+const websiteSchema = isHomepage ? {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "@id": `${siteUrl}#website`,
   name: "Linespedia",
   url: siteUrl,
   inLanguage: schemaLanguage,
+  publisher: {
+    "@id": `${siteUrl}#organization`,
+  },
   potentialAction: {
     "@type": "SearchAction",
-    target: `${siteUrl}/explore?q={search_term_string}`,
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${siteUrl}/explore/?q={search_term_string}`,
+    },
     "query-input": "required name=search_term_string",
   },
-};
+} : null;
 
 // Breadcrumb schema
 const breadcrumbSchema =
@@ -53,18 +83,20 @@ const breadcrumbSchema =
           name: crumb.name,
           item: crumb.url.startsWith("http")
             ? crumb.url
-            : `${siteUrl}${crumb.url}`,
+            : `${siteUrl}${crumb.url.startsWith('/') ? '' : '/'}${crumb.url}`,
         })),
       }
     : null;
 
-// CreativeWork / Article schema
+// Content schema based on type
+const resolvedUrl = url.startsWith("http") ? url : `${siteUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+
 const contentSchema =
   type === "line"
     ? {
         "@context": "https://schema.org",
         "@type": "Poem",
-        "@id": url.startsWith("http") ? `${url}#poem` : `${siteUrl}${url}#poem`,
+        "@id": `${resolvedUrl}#poem`,
         name: title,
         description: description,
         text: description,
@@ -78,66 +110,83 @@ const contentSchema =
           name: authorName || "Unknown Author",
         },
         genre: "Poetry",
-        url: url.startsWith("http") ? url : `${siteUrl}${url}`,
-        datePublished: datePublished || new Date().toISOString(),
+        url: resolvedUrl,
+        datePublished: datePublished || undefined,
+        dateModified: dateModified || datePublished || undefined,
         publisher: {
-          "@type": "Organization",
-          name: "Linespedia",
-          logo: {
-            "@type": "ImageObject",
-            url: `${siteUrl}/favicon.svg`,
-          },
+          "@id": `${siteUrl}#organization`,
         },
-        copyrightNotice: "This work is in the public domain.",
         isAccessibleForFree: true,
         mainEntityOfPage: {
           "@type": "WebPage",
-          "@id": url.startsWith("http") ? url : `${siteUrl}${url}`,
+          "@id": resolvedUrl,
         },
+        image: image || undefined,
       }
     : type === "writer"
       ? {
           "@context": "https://schema.org",
           "@type": "Person",
-          "@id": url.startsWith("http") ? `${url}#person` : `${siteUrl}${url}#person`,
+          "@id": `${resolvedUrl}#person`,
           name: title,
           description: description,
           inLanguage: schemaLanguage,
-          url: url.startsWith("http") ? url : `${siteUrl}${url}`,
+          url: resolvedUrl,
+          image: image || undefined,
         }
-      : type === "story"
+      : type === "blog"
         ? {
             "@context": "https://schema.org",
-            "@type": "ShortStory",
-            "@id": url.startsWith("http") ? `${url}#story` : `${siteUrl}${url}#story`,
-            name: title,
+            "@type": "BlogPosting",
+            "@id": `${resolvedUrl}#blogposting`,
+            headline: title,
             description: description,
             inLanguage: schemaLanguage,
-            url: url.startsWith("http") ? url : `${siteUrl}${url}`,
+            url: resolvedUrl,
+            datePublished: datePublished || undefined,
+            dateModified: dateModified || datePublished || undefined,
+            author: authorName
+              ? { "@type": "Person", name: authorName }
+              : { "@type": "Organization", name: "Linespedia" },
             publisher: {
-              "@type": "Organization",
-              name: "Linespedia",
-              url: siteUrl,
+              "@id": `${siteUrl}#organization`,
             },
-            isPartOf: {
-              "@type": "CreativeWorkSeries",
-              name: "Panchatantra Tales",
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": resolvedUrl,
             },
+            image: image || undefined,
           }
-        : {
-            "@context": "https://schema.org",
-            "@type": "CollectionPage",
-            "@id": url.startsWith("http") ? `${url}#collection` : `${siteUrl}${url}#collection`,
-            name: title,
-            description: description,
-            inLanguage: schemaLanguage,
-            url: url.startsWith("http") ? url : `${siteUrl}${url}`,
-            publisher: {
-              "@type": "Organization",
-              name: "Linespedia",
-              url: siteUrl,
-            },
-          };
+        : type === "story"
+          ? {
+              "@context": "https://schema.org",
+              "@type": "ShortStory",
+              "@id": `${resolvedUrl}#story`,
+              name: title,
+              description: description,
+              inLanguage: schemaLanguage,
+              url: resolvedUrl,
+              publisher: {
+                "@id": `${siteUrl}#organization`,
+              },
+              isPartOf: {
+                "@type": "CreativeWorkSeries",
+                name: "Panchatantra Tales",
+              },
+            }
+          : {
+              "@context": "https://schema.org",
+              "@type": "CollectionPage",
+              "@id": `${resolvedUrl}#collection`,
+              name: title,
+              description: description,
+              inLanguage: schemaLanguage,
+              url: resolvedUrl,
+              publisher: {
+                "@id": `${siteUrl}#organization`,
+              },
+              image: image || undefined,
+            };
 
 // FAQ Schema
 const faqSchema =
@@ -158,18 +207,14 @@ const faqSchema =
     : null;
 ---
 
-<script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
-{
-  breadcrumbSchema && (
-    <script
-      type="application/ld+json"
-      set:html={JSON.stringify(breadcrumbSchema)}
-    />
-  )
-}
-{
-  faqSchema && (
-    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
-  )
-}
+<script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+{websiteSchema && (
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+)}
+{breadcrumbSchema && (
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+)}
+{faqSchema && (
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+)}
 <script type="application/ld+json" set:html={JSON.stringify(contentSchema)} />
