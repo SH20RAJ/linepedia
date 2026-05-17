@@ -16,6 +16,8 @@
 		"cf-typegen": "wrangler types",
 		"validate:blog-seo": "node scripts/validate-blog-seo.js",
 		"seo:qa": "node scripts/seo-qa.js",
+		"seo:audit": "node scripts/seo-audit-local.js",
+		"content:audit": "node scripts/content-quality-audit.js",
 		"lint": "eslint src --ext .astro,.ts,.tsx,.js,.jsx",
 		"lint:fix": "eslint src --ext .astro,.ts,.tsx,.js,.jsx --fix",
 		"format": "prettier --write src",

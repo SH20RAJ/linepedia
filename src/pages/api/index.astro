@@ -74,7 +74,7 @@ const meta = generatePageMetadata({
             <code class="text-sm font-mono text-primary">/api/v1/random</code>
           </div>
           <p class="text-primary/60 text-sm mb-2">Returns a random poem/line with author, categories, and meaning.</p>
-          <pre class="bg-gray-50 p-4 rounded-xl text-xs overflow-x-auto"><code>{"id": "poem-slug", "content": "...", "writer": "Poet Name", "categories": ["love", "urdu"], "meaning": "..."}</code></pre>
+          <pre class="bg-gray-50 p-4 rounded-xl text-xs overflow-x-auto"><code set:html={`{"id": "poem-slug", "content": "...", "writer": "Poet Name", "categories": ["love", "urdu"], "meaning": "..."}`} /></pre>
         </div>
 
         <div class="bg-white p-6 rounded-2xl border border-indigo-100 shadow-sm">
@@ -83,7 +83,7 @@ const meta = generatePageMetadata({
             <code class="text-sm font-mono text-primary">/api/v1/search?q=&#123;query&#125;</code>
           </div>
           <p class="text-primary/60 text-sm mb-2">Search poems by keyword, author, category, or mood.</p>
-          <pre class="bg-gray-50 p-4 rounded-xl text-xs overflow-x-auto"><code>{"results": [...], "total": 42, "page": 1}</code></pre>
+          <pre class="bg-gray-50 p-4 rounded-xl text-xs overflow-x-auto"><code set:html={`{"results": [...], "total": 42, "page": 1}`} /></pre>
         </div>
 
         <div class="bg-white p-6 rounded-2xl border border-indigo-100 shadow-sm">
