@@ -1,0 +1,91 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import { generatePageMetadata } from '../lib/seo';
+
+const siteOrigin = Astro.site?.toString()?.replace(/\/$/, '') || 'https://linespedia.com';
+const meta = generatePageMetadata({
+  pageType: 'archive',
+  data: {
+    title: 'Sponsor & Advertise',
+    description: 'Partner with Linespedia to reach poetry lovers, literary enthusiasts, and creative audiences. Sponsorship and advertising opportunities available.',
+  },
+  siteOrigin,
+  pathname: '/sponsor/',
+  fallbackTitle: 'Sponsor & Advertise on Linespedia',
+  fallbackDescription: 'Reach poetry lovers and literary enthusiasts through sponsorship and advertising on Linespedia.',
+});
+---
+
+<Layout title={meta.title} description={meta.description} canonicalURL={meta.canonicalURL} robots={meta.robots}>
+  <Navbar />
+  <main class="min-h-screen">
+    <section class="container mx-auto px-4 py-20 md:py-32 text-center max-w-3xl">
+      <span class="inline-block px-4 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold uppercase tracking-widest mb-6">Partnerships</span>
+      <h1 class="text-4xl md:text-5xl font-serif font-black text-primary mb-6 leading-tight">
+        Sponsor & Advertise on Linespedia
+      </h1>
+      <p class="text-lg text-primary/60 leading-relaxed mb-12">
+        Reach a dedicated audience of poetry lovers, writers, students, and literary enthusiasts. Linespedia offers sponsorship and advertising opportunities for brands that align with culture, education, and creativity.
+      </p>
+    </section>
+
+    <section class="bg-indigo-50/50 py-20">
+      <div class="container mx-auto px-4 max-w-4xl">
+        <h2 class="text-2xl font-serif font-black text-primary text-center mb-12">Sponsorship Options</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="bg-white p-8 rounded-2xl border border-indigo-50 shadow-sm">
+            <h3 class="font-bold text-lg text-primary mb-3">Newsletter Sponsorship</h3>
+            <p class="text-primary/60 text-sm mb-4">Feature your brand in our weekly poetry newsletter. Reach subscribers who love literature, books, and creative writing.</p>
+            <ul class="text-sm text-primary/60 space-y-2 mb-6">
+              <li>Weekly curated poetry newsletter</li>
+              <li>Dedicated sponsor section</li>
+              <li>Brand alignment with culture &amp; education</li>
+            </ul>
+            <a href="/contact/" class="text-accent font-bold text-sm hover:underline">Learn more &rarr;</a>
+          </div>
+          <div class="bg-white p-8 rounded-2xl border border-indigo-50 shadow-sm">
+            <h3 class="font-bold text-lg text-primary mb-3">Content Sponsorship</h3>
+            <p class="text-primary/60 text-sm mb-4">Sponsor educational poetry content — literary analysis, poet profiles, and writing guides that readers genuinely value.</p>
+            <ul class="text-sm text-primary/60 space-y-2 mb-6">
+              <li>Sponsored blog posts with attribution</li>
+              <li>Category sponsorship</li>
+              <li>Poet profile sponsorship</li>
+            </ul>
+            <a href="/contact/" class="text-accent font-bold text-sm hover:underline">Learn more &rarr;</a>
+          </div>
+          <div class="bg-white p-8 rounded-2xl border border-indigo-50 shadow-sm">
+            <h3 class="font-bold text-lg text-primary mb-3">API Partnership</h3>
+            <p class="text-primary/60 text-sm mb-4">Integrate Linespedia's poetry API into your product. Perfect for writing apps, educational platforms, and creative tools.</p>
+            <ul class="text-sm text-primary/60 space-y-2 mb-6">
+              <li>White-label API access</li>
+              <li>Custom endpoints</li>
+              <li>Revenue sharing options</li>
+            </ul>
+            <a href="/api/" class="text-accent font-bold text-sm hover:underline">View API &rarr;</a>
+          </div>
+          <div class="bg-white p-8 rounded-2xl border border-indigo-50 shadow-sm">
+            <h3 class="font-bold text-lg text-primary mb-3">Display Advertising</h3>
+            <p class="text-primary/60 text-sm mb-4">Contextual display ads on poem pages, category pages, and blog content. Non-intrusive placements that respect the reading experience.</p>
+            <ul class="text-sm text-primary/60 space-y-2 mb-6">
+              <li>Contextual ad placements</li>
+              <li>Non-intrusive formats</li>
+              <li>Poetry &amp; culture audience</li>
+            </ul>
+            <a href="/contact/" class="text-accent font-bold text-sm hover:underline">Learn more &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container mx-auto px-4 py-20 text-center max-w-2xl">
+      <h2 class="text-2xl font-serif font-black text-primary mb-4">Interested in partnering?</h2>
+      <p class="text-primary/60 mb-8">We work with brands in education, publishing, culture, and creative tools. Get in touch to discuss opportunities.</p>
+      <a href="/contact/" class="inline-block px-10 py-4 bg-primary text-white rounded-full font-bold hover:bg-primary/90 transition-all shadow-lg">
+        Contact Us
+      </a>
+    </section>
+  </main>
+  <Footer />
+</Layout>
