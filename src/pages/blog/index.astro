@@ -72,7 +72,7 @@ const robots = shouldNoindex
             name="q" 
             placeholder="Search articles..." 
             value={search}
-            class="w-full px-8 py-5 bg-white border-2 border-indigo-50 rounded-4xl text-lg focus:border-accent focus:outline-none transition-all shadow-xl shadow-indigo-100/20 group-hover:shadow-indigo-100/40"
+            class="w-full px-8 py-5 bg-white border-2 border-indigo-50 rounded-3xl text-lg focus:border-accent focus:outline-none transition-all shadow-xl shadow-indigo-100/20 group-hover:shadow-indigo-100/40"
           />
           <button type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-primary text-white rounded-2xl hover:bg-accent transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -94,7 +94,7 @@ const robots = shouldNoindex
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
             {posts.map((post) => (
               <article class="group">
-                <a href={`/blog/${post.id}/`} class="block mb-6 overflow-hidden rounded-4xl aspect-16/10 bg-indigo-50 shadow-lg shadow-indigo-100/20">
+                <a href={`/blog/${post.id}/`} class="block mb-6 overflow-hidden rounded-3xl aspect-[16/10] bg-indigo-50 shadow-lg shadow-indigo-100/20">
                   <img 
                     src={post.data.heroImage} 
                     alt={post.data.title}

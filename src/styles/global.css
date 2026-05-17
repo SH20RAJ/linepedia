@@ -105,3 +105,36 @@
   background: var(--color-accent);
   color: white;
 }
+
+/* Focus states for accessibility */
+:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Clean prose for blog/poem content */
+.prose-editorial {
+  max-width: 720px;
+  line-height: 1.75;
+  font-size: 1.0625rem;
+}
+.prose-editorial h1 { font-size: 2rem; margin-bottom: 0.5em; }
+.prose-editorial h2 { font-size: 1.5rem; margin-top: 2em; margin-bottom: 0.5em; }
+.prose-editorial p { margin-bottom: 1.25em; }
+.prose-editorial a { color: #4f46e5; text-decoration: underline; }
+.prose-editorial blockquote {
+  border-left: 3px solid #e0e7ff;
+  padding-left: 1em;
+  font-style: italic;
+  color: #4338ca;
+}

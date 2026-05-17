@@ -1,9 +1,8 @@
 import { getCollection } from 'astro:content';
 
-const FALLBACK_LASTMOD = new Date().toISOString().split('T')[0];
-
 export async function GET(context) {
   const site = context.site?.toString()?.replace(/\/$/, '') || 'https://linespedia.com';
+  const FALLBACK_LASTMOD = new Date().toISOString().split('T')[0];
 
   let posts = [];
   try {

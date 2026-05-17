@@ -1,13 +1,12 @@
 import { getPanchatantraStories } from '../lib/cdn';
 
-const FALLBACK_LASTMOD = new Date().toISOString().split('T')[0];
-
 function withTrailingSlash(url) {
   return url.endsWith('/') ? url : `${url}/`;
 }
 
 export async function GET(context) {
   const stories = await getPanchatantraStories();
+  const FALLBACK_LASTMOD = new Date().toISOString().split('T')[0];
   const site = withTrailingSlash(context.site?.toString() || 'https://linespedia.com');
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

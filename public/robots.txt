@@ -45,4 +45,4 @@ Disallow: /*?gclid=
 Disallow: /*?fbclid=
 
 # Sitemap reference (canonical index)
-Sitemap: https://linespedia.com/sitemap-index.xml
+Sitemap: https://linespedia.com/sitemap.xml

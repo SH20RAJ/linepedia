@@ -13,7 +13,13 @@ export default defineConfig({
     mode: 'advanced',
     nodejsCompat: true,
   }),
-  integrations: [sitemap(), mdx()],
+  integrations: [
+    sitemap({
+      // Only include non-noindex pages; custom SSR sitemaps handle the rest
+      filter: (page) => !page.includes('?lang='),
+    }),
+    mdx(),
+  ],
   markdown: {
     remarkPlugins: [remarkStripFirstH1],
   },

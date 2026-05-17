@@ -1,5 +1,5 @@
 ---
-import { Github, Twitter, Instagram } from "lucide-astro";
+import { Github } from "lucide-astro";
 
 const year = new Date().getFullYear();
 ---
@@ -7,105 +7,56 @@ const year = new Date().getFullYear();
 <footer class="bg-primary text-secondary pt-16 pb-8 px-4 mt-auto">
   <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
     <div class="col-span-1 md:col-span-2">
-      <h2 class="text-3xl font-serif font-bold text-white mb-4">Linespedia</h2>
-      <p class="max-w-xs text-secondary/80 leading-relaxed">
-        The ultimate sanctuary for poetic souls. Discover, share, and celebrate
-        the beauty of words.
+      <h2 class="text-2xl font-serif font-bold text-white mb-3">Linespedia</h2>
+      <p class="max-w-xs text-secondary/70 leading-relaxed text-sm">
+        A curated archive of shayari, poems, quotes, and poetic lines — with meanings, context, and attribution.
       </p>
     </div>
 
     <div>
       <h3 class="text-white font-bold mb-4 uppercase tracking-widest text-xs">
-        Navigation
+        Browse
       </h3>
       <ul class="space-y-2 text-sm">
-        <li>
-          <a href="/explore/" class="hover:text-accent transition-colors"
-            >Explore</a>
-        </li>
-        <li>
-          <a href="/writers/" class="hover:text-accent transition-colors"
-            >Writers</a>
-        </li>
-        <li>
-          <a href="/panchtantra/" class="hover:text-accent transition-colors font-bold text-accent"
-            >Panchatantra</a>
-        </li>
-        <li>
-          <a href="/categories/" class="hover:text-accent transition-colors"
-            >Categories</a>
-        </li>
-        <li>
-          <a href="/collections/" class="hover:text-accent transition-colors"
-            >Collections</a>
-        </li>
-        <li>
-          <a href="https://tally.so/r/vG4Wv8" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors font-bold"
-            >Contact US | IDEA | NEWSLETTER</a>
-        </li>
+        <li><a href="/explore/" class="hover:text-accent transition-colors">Explore</a></li>
+        <li><a href="/categories/" class="hover:text-accent transition-colors">Categories</a></li>
+        <li><a href="/writers/" class="hover:text-accent transition-colors">Writers</a></li>
+        <li><a href="/collections/" class="hover:text-accent transition-colors">Collections</a></li>
+        <li><a href="/blog/" class="hover:text-accent transition-colors">Blog</a></li>
       </ul>
     </div>
 
     <div>
       <h3 class="text-white font-bold mb-4 uppercase tracking-widest text-xs">
-        Information
+        Products
       </h3>
       <ul class="space-y-2 text-sm">
-        <li>
-          <a href="/about/" class="hover:text-accent transition-colors"
-            >About</a>
-        </li>
-        <li>
-          <a href="/contact/" class="hover:text-accent transition-colors"
-            >Contact</a>
-        </li>
-        <li>
-          <a href="/copyright/" class="hover:text-accent transition-colors"
-            >Copyright & Report</a>
-        </li>
-        <li>
-          <a href="/privacy/" class="hover:text-accent transition-colors"
-            >Privacy Policy</a>
-        </li>
-        <li>
-          <a href="/terms/" class="hover:text-accent transition-colors"
-            >Terms of Service</a>
-        </li>
+        <li><a href="/api/" class="hover:text-accent transition-colors">Poetry API</a></li>
+        <li><a href="/posters/" class="hover:text-accent transition-colors">Quote Posters</a></li>
+        <li><a href="/sponsor/" class="hover:text-accent transition-colors">Sponsor</a></li>
+        <li><a href="/submit/" class="hover:text-accent transition-colors">Submit Line</a></li>
       </ul>
     </div>
 
-    <!-- <div>
+    <div>
       <h3 class="text-white font-bold mb-4 uppercase tracking-widest text-xs">
-        Community
+        Legal
       </h3>
-      <div class="flex space-x-4">
-        <a
-          href="#"
-          class="p-2 bg-secondary/10 rounded-full hover:bg-accent hover:text-primary transition-all"
-        >
-          <Instagram size={20} />
-        </a>
-        <a
-          href="#"
-          class="p-2 bg-secondary/10 rounded-full hover:bg-accent hover:text-primary transition-all"
-        >
-          <Twitter size={20} />
-        </a>
-        <a
-          href="#"
-          class="p-2 bg-secondary/10 rounded-full hover:bg-accent hover:text-primary transition-all"
-        >
-          <Github size={20} />
-        </a>
-      </div>
-    </div> -->
+      <ul class="space-y-2 text-sm">
+        <li><a href="/about/" class="hover:text-accent transition-colors">About</a></li>
+        <li><a href="/contact/" class="hover:text-accent transition-colors">Contact</a></li>
+        <li><a href="/copyright/" class="hover:text-accent transition-colors">Copyright</a></li>
+        <li><a href="/privacy/" class="hover:text-accent transition-colors">Privacy</a></li>
+        <li><a href="/terms/" class="hover:text-accent transition-colors">Terms</a></li>
+      </ul>
+    </div>
   </div>
 
   <div
     class="container mx-auto border-t border-secondary/10 pt-8 flex flex-col md:flex-row justify-between items-center text-xs opacity-60"
   >
     <div class="flex flex-col items-center md:items-start space-y-4">
-      <p>&copy; {year} linespedia.com - All rights reserved. | Powered by <a href="https://30tools.com" class="hover:text-white transition-colors decoration-dotted underline-offset-4 underline">30tools.com</a></p>
+      <p>&copy; {year} Linespedia. All rights reserved.</p>
     </div>
     <div class="flex space-x-6 mt-4 md:mt-0 flex-wrap justify-center md:justify-end gap-4">
       <a href="/about/" class="hover:text-white transition-colors">About</a>
