@@ -5,6 +5,7 @@ pubDate: '2026-03-26T10:06:41.033Z'
 heroImage: '/placeholder.png'
 category: 'career_templates'
 tags: ['career_templates', 'guide', '2026']
+noindex: true
 ---
 
 # Employee Evaluation Form Sample

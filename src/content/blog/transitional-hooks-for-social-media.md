@@ -6,6 +6,7 @@ updatedDate: 2026-05-09
 heroImage: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop'
 category: 'social_media_tips'
 tags: ['social media', 'video hooks', 'short-form video', 'content workflow']
+noindex: true
 author: 'Linespedia Editorial'
 ---
 

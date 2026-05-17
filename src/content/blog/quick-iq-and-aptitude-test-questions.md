@@ -5,6 +5,7 @@ pubDate: '2026-03-26T10:06:41.038Z'
 heroImage: '/placeholder.png'
 category: 'interview_questions'
 tags: ['interview_questions', 'guide', '2026']
+noindex: true
 ---
 
 # Quick IQ and Aptitude Test Questions

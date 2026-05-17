@@ -5,6 +5,7 @@ pubDate: '2026-03-26T10:06:41.012Z'
 heroImage: '/placeholder.png'
 category: 'ai_prompts'
 tags: ['ai_prompts', 'guide', '2026']
+noindex: true
 ---
 
 # Top 50 ChatGPT Prompts for Content Writers

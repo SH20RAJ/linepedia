@@ -5,6 +5,7 @@ pubDate: 2026-03-23
 heroImage: 'https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?q=80&w=1000&auto=format&fit=crop'
 category: 'instagram_bios'
 tags: ['instagram bios', '2026', 'trends', 'poetry']
+noindex: true
 ---
 
 # Instagram Bio Ideas for Boys: The Ultimate Guide for 2026
