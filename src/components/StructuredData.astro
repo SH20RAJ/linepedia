@@ -83,13 +83,13 @@ const breadcrumbSchema =
           name: crumb.name,
           item: crumb.url.startsWith("http")
             ? crumb.url
-            : `${siteUrl}${crumb.url.startsWith('/') ? '' : '/'}${crumb.url}`,
+            : `${siteUrl}/${crumb.url.replace(/^\/+/, '')}`,
         })),
       }
     : null;
 
 // Content schema based on type
-const resolvedUrl = url.startsWith("http") ? url : `${siteUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+const resolvedUrl = url.startsWith("http") ? url : `${siteUrl}/${url.replace(/^\/+/, '')}`;
 
 const contentSchema =
   type === "line"

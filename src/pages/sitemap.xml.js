@@ -1,5 +1,4 @@
 const SHARDS_PER_LANG = 5;
-const INDEX_LASTMOD = new Date().toISOString().split('T')[0];
 
 function withTrailingSlash(url) {
   return url.endsWith('/') ? url : `${url}/`;
@@ -7,6 +6,7 @@ function withTrailingSlash(url) {
 
 export async function GET(context) {
   const site = withTrailingSlash(context.site?.toString() || 'https://linespedia.com');
+  const INDEX_LASTMOD = new Date().toISOString().split('T')[0];
 
   // Build sitemap index with segmented sitemaps. Only canonical English shards are included.
   const baseSitemaps = ['sitemap-poems.xml', 'sitemap-seo.xml', 'sitemap-stories.xml'];

@@ -12,6 +12,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
   response.headers.set('X-Frame-Options', 'SAMEORIGIN');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  response.headers.set('X-XSS-Protection', '0');
+
+  // Cache SSR HTML at Cloudflare edge for 60s, serve stale for 5min while revalidating
+  const contentType = response.headers.get('Content-Type') || '';
+  if (contentType.includes('text/html') && !contentType.includes('text/event-stream')) {
+    response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+  }
 
   return response;
 });

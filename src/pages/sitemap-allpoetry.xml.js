@@ -1,6 +1,5 @@
 const CDN_BASE = 'https://cdn.jsdelivr.net/gh/BluredCodes/linespedia-data@main';
 const SHARD_SIZE = 25000;
-const FALLBACK_LASTMOD = new Date().toISOString().split('T')[0];
 const SUPPORTED_LANGUAGES = ['en', 'es', 'fr', 'de', 'hi', 'ar', 'zh', 'ja', 'ru', 'pt', 'it'];
 
 function toPoetSlug(poem) {
@@ -25,7 +24,7 @@ function toPoemLastmod(poem) {
     return parsed.toISOString().split('T')[0];
   }
 
-  return FALLBACK_LASTMOD;
+  return new Date().toISOString().split('T')[0];
 }
 
 export async function GET({ url }) {
