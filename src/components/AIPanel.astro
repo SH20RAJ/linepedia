@@ -1,6 +1,4 @@
 ---
-import { Sparkles, Brain, Zap, MessageSquareQuote } from 'lucide-astro';
-
 interface Props {
   content: string;
   title: string;
@@ -10,204 +8,175 @@ interface Props {
 const { content, title, writer } = Astro.props;
 ---
 
-<section class="mt-12 bg-indigo-900/5 backdrop-blur-3xl rounded-[3rem] p-8 md:p-12 border border-indigo-500/10 relative overflow-hidden group">
-  <!-- Animated Background Element -->
-  <div class="absolute -top-24 -right-24 w-64 h-64 bg-indigo-500/10 blur-[100px] rounded-full group-hover:bg-indigo-500/20 transition-all duration-700"></div>
-  
-  <div class="relative z-10">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-      <div>
-        <h3 class="text-2xl font-serif font-black text-primary flex items-center gap-3">
-          <Sparkles class="text-indigo-500 animate-pulse" size={28} />
-          <span>Puter Poetic Insight</span>
-        </h3>
-        <p class="text-primary/50 text-sm mt-1">AI-powered analysis and emotional context.</p>
-      </div>
-      
-      <div class="flex flex-wrap gap-4">
-        <button 
-          id="ai-summarize"
-          class="px-6 py-3 bg-white border border-indigo-100 rounded-full text-sm font-bold text-primary hover:bg-indigo-50 transition-all flex items-center gap-2 shadow-sm"
-          data-type="summary"
-        >
-          <Zap size={16} class="text-indigo-500" />
-          <span>Explain Poem</span>
-        </button>
-        <button 
-          id="ai-eli5"
-          class="px-6 py-3 bg-white border border-indigo-100 rounded-full text-sm font-bold text-primary hover:bg-indigo-50 transition-all flex items-center gap-2 shadow-sm"
-          data-type="eli5"
-        >
-          <Brain size={16} class="text-indigo-500" />
-          <span>ELI5</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- AI Output Area -->
-    <div id="ai-output-container" class="hidden flex flex-col h-[500px]">
-      <div id="ai-messages" class="flex-grow overflow-y-auto space-y-6 pb-6 pr-2 scrollbar-thin scrollbar-thumb-indigo-100 scrollbar-track-transparent">
-        <!-- Messages will appear here -->
-      </div>
-
-      <div id="ai-loading" class="hidden flex items-center gap-3 p-4 bg-white/50 rounded-2xl border border-indigo-50 animate-pulse mb-4">
-        <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"></div>
-        <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce delay-75"></div>
-        <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce delay-150"></div>
-        <span class="text-[10px] font-bold uppercase tracking-widest text-primary/40">AI is thinking...</span>
-      </div>
-
-      <!-- Chat Input Area -->
-      <div class="mt-auto pt-6 border-t border-indigo-100">
-        <div class="relative group">
-          <textarea 
-            id="ai-chat-input"
-            rows="1"
-            placeholder="Ask a follow-up question about this poem..."
-            class="w-full bg-white/80 border border-indigo-100 rounded-3xl py-4 pl-6 pr-16 text-sm font-medium text-primary focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all resize-none shadow-sm group-hover:bg-white"
-          ></textarea>
-          <button 
-            id="ai-send"
-            class="absolute right-3 top-1/2 -translate-y-1/2 p-3 bg-indigo-600 text-white rounded-2xl hover:bg-indigo-700 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-indigo-200"
-          >
-            <Zap size={18} fill="currentColor" />
-          </button>
-        </div>
-        
-        <div class="mt-4 flex items-center justify-between text-[10px] uppercase tracking-widest font-bold text-primary/30">
-          <span>Powered by Puter AI</span>
-          <button id="ai-reset" class="hover:text-primary transition-colors">Clear Conversation</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="ai-placeholder" class="py-20 text-center border-2 border-dashed border-indigo-500/10 rounded-[3rem] bg-indigo-50/10">
-      <MessageSquareQuote size={64} class="mx-auto text-indigo-500/10 mb-6" />
-      <p class="text-primary/40 font-bold text-lg">Talk back to the AI about this poem.</p>
-      <p class="text-primary/30 text-xs mt-2 max-w-xs mx-auto mb-8 font-medium">Click a button above to start explaining, then ask anything!</p>
-    </div>
+<div id="ai-panel-root" data-content={content} data-title={title} data-writer={writer} class="mt-12">
+  <!-- Client-side only; placeholder shown during SSR -->
+  <div class="bg-indigo-50/40 backdrop-blur-md rounded-[2.5rem] p-8 md:p-12 border border-indigo-100/30 text-center">
+    <p class="text-primary/30 text-sm">AI analysis available. Enable JavaScript to interact.</p>
   </div>
-</section>
+</div>
 
 <script is:inline define:vars={{ content, title, writer }}>
-  const summarizeBtn = document.getElementById('ai-summarize');
-  const eli5Btn = document.getElementById('ai-eli5');
-  const resetBtn = document.getElementById('ai-reset');
-  const sendBtn = document.getElementById('ai-send');
-  const chatInput = document.getElementById('ai-chat-input');
-  
-  const outputContainer = document.getElementById('ai-output-container');
-  const placeholder = document.getElementById('ai-placeholder');
-  const messagesContainer = document.getElementById('ai-messages');
-  const loader = document.getElementById('ai-loading');
+  (() => {
+    const root = document.getElementById('ai-panel-root');
+    if (!root) return;
 
-  let currentHistory = [];
+    const store = { currentHistory: [] };
 
-  function addMessage(text, role = 'ai') {
-    const wrapper = document.createElement('div');
-    wrapper.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2`;
-    
-    wrapper.innerHTML = `
-      <div class="max-w-[85%] ${role === 'user' 
-        ? 'bg-indigo-600 text-white rounded-3xl rounded-tr-none px-6 py-4 shadow-lg shadow-indigo-100' 
-        : 'bg-white border border-indigo-50 rounded-3xl rounded-tl-none px-6 py-4 shadow-sm'
-      }">
-        <p class="text-sm md:text-base leading-relaxed ${role === 'ai' ? 'text-primary/80 italic' : ''}">
-          ${text.replaceAll('\n', '<br>')}
-        </p>
+    root.innerHTML = `
+      <div class="bg-indigo-900/5 backdrop-blur-3xl rounded-[3rem] p-8 md:p-12 border border-indigo-500/10 relative overflow-hidden group">
+        <div class="absolute -top-24 -right-24 w-64 h-64 bg-indigo-500/10 blur-[100px] rounded-full group-hover:bg-indigo-500/20 transition-all duration-700"></div>
+        <div class="relative z-10">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+            <div>
+              <h3 class="text-2xl font-serif font-black text-primary flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-indigo-500" style="animation:pulse 2s infinite"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                <span>Poetic Insight</span>
+              </h3>
+              <p class="text-primary/50 text-sm mt-1">AI-powered analysis and emotional context.</p>
+            </div>
+            <div class="flex flex-wrap gap-4">
+              <button id="ai-summarize" class="px-6 py-3 bg-white border border-indigo-100 rounded-full text-sm font-bold text-primary hover:bg-indigo-50 transition-all flex items-center gap-2 shadow-sm" data-type="summary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-indigo-500"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <span>Explain Poem</span>
+              </button>
+              <button id="ai-eli5" class="px-6 py-3 bg-white border border-indigo-100 rounded-full text-sm font-bold text-primary hover:bg-indigo-50 transition-all flex items-center gap-2 shadow-sm" data-type="eli5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-indigo-500"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                <span>ELI5</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="ai-output-container" class="hidden flex flex-col h-[500px]">
+            <div id="ai-messages" class="flex-grow overflow-y-auto space-y-6 pb-6 pr-2 scrollbar-thin"></div>
+            <div id="ai-loading" class="hidden flex items-center gap-3 p-4 bg-white/50 rounded-2xl border border-indigo-50 animate-pulse mb-4">
+              <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"></div>
+              <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce delay-75"></div>
+              <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce delay-150"></div>
+              <span class="text-[10px] font-bold uppercase tracking-widest text-primary/40">AI is thinking...</span>
+            </div>
+            <div class="mt-auto pt-6 border-t border-indigo-100">
+              <div class="relative group">
+                <textarea id="ai-chat-input" rows="1" placeholder="Ask a follow-up question about this poem..." class="w-full bg-white/80 border border-indigo-100 rounded-3xl py-4 pl-6 pr-16 text-sm font-medium text-primary focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all resize-none shadow-sm group-hover:bg-white"></textarea>
+                <button id="ai-send" class="absolute right-3 top-1/2 -translate-y-1/2 p-3 bg-indigo-600 text-white rounded-2xl hover:bg-indigo-700 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-indigo-200">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </button>
+              </div>
+              <div class="mt-4 flex items-center justify-between text-[10px] uppercase tracking-widest font-bold text-primary/30">
+                <span>Powered by AI</span>
+                <button id="ai-reset" class="hover:text-primary transition-colors">Clear Conversation</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="ai-placeholder" class="py-20 text-center border-2 border-dashed border-indigo-500/10 rounded-[3rem] bg-indigo-50/10">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mx-auto text-indigo-500/10 mb-6"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+            <p class="text-primary/40 font-bold text-lg">Talk to AI about this poem.</p>
+            <p class="text-primary/30 text-xs mt-2 max-w-xs mx-auto mb-8 font-medium">Click a button above to start explaining, then ask anything!</p>
+          </div>
+        </div>
       </div>
     `;
-    
-    messagesContainer.appendChild(wrapper);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    return wrapper.querySelector('p');
-  }
 
-  async function generateAI(typeOrText, role = 'system') {
-    if (typeof puter === 'undefined') {
-       await new Promise(r => setTimeout(r, 1000));
-       if (typeof puter === 'undefined') { return; }
+    const summarizeBtn = document.getElementById('ai-summarize');
+    const eli5Btn = document.getElementById('ai-eli5');
+    const resetBtn = document.getElementById('ai-reset');
+    const sendBtn = document.getElementById('ai-send');
+    const chatInput = document.getElementById('ai-chat-input');
+    const outputContainer = document.getElementById('ai-output-container');
+    const placeholder = document.getElementById('ai-placeholder');
+    const messagesContainer = document.getElementById('ai-messages');
+    const loader = document.getElementById('ai-loading');
+
+    function addMessage(text, role = 'ai') {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex ' + (role === 'user' ? 'justify-end' : 'justify-start') + ' animate-in fade-in slide-in-from-bottom-2';
+      wrapper.innerHTML = role === 'user'
+        ? '<div class="max-w-[85%] bg-indigo-600 text-white rounded-3xl rounded-tr-none px-6 py-4 shadow-lg shadow-indigo-100"><p class="text-sm md:text-base leading-relaxed">' + text.replaceAll('\n', '<br>') + '</p></div>'
+        : '<div class="max-w-[85%] bg-white border border-indigo-50 rounded-3xl rounded-tl-none px-6 py-4 shadow-sm"><p class="text-sm md:text-base leading-relaxed text-primary/80 italic">' + text.replaceAll('\n', '<br>') + '</p></div>';
+      messagesContainer.appendChild(wrapper);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      return wrapper.querySelector('p');
     }
 
-    placeholder.classList.add('hidden');
-    outputContainer.classList.remove('hidden');
-    loader.classList.remove('hidden');
+    async function generateAI(typeOrText, role = 'system') {
+      if (typeof puter === 'undefined') {
+        await new Promise(r => setTimeout(r, 1000));
+        if (typeof puter === 'undefined') return;
+      }
+      placeholder.classList.add('hidden');
+      outputContainer.classList.remove('hidden');
+      loader.classList.remove('hidden');
 
-    let prompt = "";
-    if (role === 'system') {
-      if (typeOrText === 'summary') {
-        prompt = `You are a poetic expert. Provide a beautiful, insightful 3-sentence analysis of this poem titled "${title}" by ${writer}. Focus on its emotional weight.\n\nPoem Content:\n${content}`;
+      let prompt = '';
+      if (role === 'system') {
+        prompt = typeOrText === 'summary'
+          ? 'You are a poetic expert. Provide a beautiful, insightful 3-sentence analysis of this poem titled "' + title + '" by ' + writer + '. Focus on its emotional weight.\n\nPoem Content:\n' + content
+          : 'Explain the meaning of this poem titled "' + title + '" by ' + writer + ' like I\'m 5 years old.\n\nPoem Content:\n' + content;
       } else {
-        prompt = `Explain the meaning of this poem titled "${title}" by ${writer} like I'm 5 years old.\n\nPoem Content:\n${content}`;
+        prompt = typeOrText;
+        addMessage(prompt, 'user');
       }
-    } else {
-      prompt = typeOrText;
-      addMessage(prompt, 'user');
-    }
 
-    // Prepare history for prompt
-    let fullPrompt = `Poem Title: ${title}\nPoem Writer: ${writer}\n\n${prompt}`;
-    if (currentHistory.length > 0) {
-       fullPrompt = `Continue our conversation about the poem. History:\n${currentHistory.map(h => `${h.role}: ${h.text}`).join('\n')}\n\nUser: ${prompt}\nAI:`;
-    }
+      let fullPrompt = 'Poem Title: ' + title + '\nPoem Writer: ' + writer + '\n\n' + prompt;
+      if (store.currentHistory.length > 0) {
+        fullPrompt = 'Continue our conversation about the poem. History:\n' + store.currentHistory.map(h => h.role + ': ' + h.text).join('\n') + '\n\nUser: ' + prompt + '\nAI:';
+      }
 
-    try {
-      const gpt4 = (await puter.ai.getModels()).find(m => m.name.includes('gpt-4'));
-      const response = await puter.ai.chat(fullPrompt, { stream: true, model: gpt4 || 'gpt-4o' });
-      loader.classList.add('hidden');
-      
-      const aiMsgEl = addMessage('', 'ai');
-      let aiResponseText = "";
-
-      for await (const part of response) {
-        if (part?.text) {
-          aiResponseText += part.text;
-          aiMsgEl.innerHTML = aiResponseText.replaceAll('\n', '<br>');
-          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      try {
+        const models = await puter.ai.getModels();
+        const gpt4 = models.find(m => m.name.includes('gpt-4'));
+        const response = await puter.ai.chat(fullPrompt, { stream: true, model: gpt4 || 'gpt-4o' });
+        loader.classList.add('hidden');
+        const aiMsgEl = addMessage('', 'ai');
+        let aiResponseText = '';
+        for await (const part of response) {
+          if (part?.text) {
+            aiResponseText += part.text;
+            aiMsgEl.innerHTML = aiResponseText.replaceAll('\n', '<br>');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+          }
         }
+        store.currentHistory.push({ role: role === 'system' ? 'initial' : 'user', text: prompt });
+        store.currentHistory.push({ role: 'ai', text: aiResponseText });
+      } catch (e) {
+        console.error('AI Error:', e);
+        addMessage('Sorry, I encountered an issue. Please try again.', 'ai');
+        loader.classList.add('hidden');
       }
-
-      currentHistory.push({ role: role === 'system' ? 'initial' : 'user', text: prompt });
-      currentHistory.push({ role: 'ai', text: aiResponseText });
-
-    } catch (e) {
-      console.error("Puter AI Error:", e);
-      addMessage("Sorry, I encountered an issue. Please try again.", "ai");
-      loader.classList.add('hidden');
     }
-  }
 
-  summarizeBtn?.addEventListener('click', () => {
-    messagesContainer.innerHTML = '';
-    currentHistory = [];
-    generateAI('summary');
-  });
-  
-  eli5Btn?.addEventListener('click', () => {
-    messagesContainer.innerHTML = '';
-    currentHistory = [];
-    generateAI('eli5');
-  });
+    summarizeBtn?.addEventListener('click', () => {
+      messagesContainer.innerHTML = '';
+      store.currentHistory = [];
+      generateAI('summary');
+    });
 
-  sendBtn?.addEventListener('click', () => {
-    const text = chatInput.value.trim();
-    if (text) {
-      chatInput.value = '';
-      generateAI(text, 'user');
-    }
-  });
+    eli5Btn?.addEventListener('click', () => {
+      messagesContainer.innerHTML = '';
+      store.currentHistory = [];
+      generateAI('eli5');
+    });
 
-  chatInput?.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendBtn.click();
-    }
-  });
+    sendBtn?.addEventListener('click', () => {
+      const text = chatInput ? chatInput.value.trim() : '';
+      if (text && chatInput) {
+        chatInput.value = '';
+        generateAI(text, 'user');
+      }
+    });
 
-  resetBtn?.addEventListener('click', () => {
-    placeholder.classList.remove('hidden');
-    outputContainer.classList.add('hidden');
-    messagesContainer.innerHTML = '';
-    currentHistory = [];
-  });
+    chatInput?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendBtn?.click();
+      }
+    });
+
+    resetBtn?.addEventListener('click', () => {
+      placeholder.classList.remove('hidden');
+      outputContainer.classList.add('hidden');
+      messagesContainer.innerHTML = '';
+      store.currentHistory = [];
+    });
+  })();
 </script>

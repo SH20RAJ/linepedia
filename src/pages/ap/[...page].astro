@@ -131,7 +131,7 @@ const archiveMeta = generatePageMetadata({
             <PoemCard 
               id={poem.id}
               slug={`ap/${poem.writerSlug}/${poem.slug}`}
-              content={poem.content || `Discover the soul-stirring poetry of ${poem.writer}. A featured work from our extended library.`}
+              content={poem.content || ''}
               writer={`poet/${poem.writerSlug}`}
               writerName={poem.writer}
             />

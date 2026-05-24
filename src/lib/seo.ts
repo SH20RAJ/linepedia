@@ -97,6 +97,188 @@ export interface PageMetadataOutput {
 	h1: string;
 }
 
+// ── Content Quality Guards ──────────────────────────────────────
+
+/** Categories expected to contain Hindi/Urdu/Hinglish shayari content */
+export const SHAYARI_INTENT_SLUGS = new Set([
+  'sad-shayari',
+  'love-shayari',
+  'shayari',
+  'attitude-shayari',
+  'shayari-in-hindi',
+  'sad-shayari-in-hindi',
+  'love-shayari-in-hindi',
+  '2-line-sad-shayari',
+  'heart-touching-shayari',
+  'breakup-shayari',
+  'hindi-shayari',
+  'urdu-shayari',
+  'romantic-shayari',
+  'best-shayari',
+  'emotional-shayari',
+  'friendship-shayari',
+  'shayari-in-english',
+  'poetry',
+  'motivational-quotes',
+  'life-quotes',
+  'instagram-captions',
+  'quotes',
+]);
+
+/** Check if text contains Devanagari (Hindi) or Urdu script characters */
+export function containsSouthAsianScript(text: string): boolean {
+  return /[\u0900-\u097F\u0600-\u06FF\u0750-\u077F]/.test(text);
+}
+
+/** Check if text looks like Hinglish (Romanized Hindi with common words) */
+export function containsHinglish(text: string): boolean {
+  const hinglishWords = /\b(dil|ishq|pyaar|mohabbat|yaad|dard|sad|aashiqui|khwab|dilbar|sanam|jaan|tum|tere|meri|tera|hai|hain|kaun|kya|nahi|hoon|hum|aap|zindagi|rooh|chain|sukoon|aankh|nazar|dhadkan|saans|tanha|bewafa|intezaar|fir|bhi|kyun|bas|dil|baar)\b/i;
+  return hinglishWords.test(text);
+}
+
+/** Check if content is predominantly Hindi/Urdu shayari (not English classic poetry) */
+export function isHindiShayariContent(content: string): boolean {
+  if (!content) return false;
+  return containsSouthAsianScript(content) || containsHinglish(content);
+}
+
+/** Author is indexable: must have at least 3 meaningful lines */
+export function isIndexableAuthor(poemCount: number): boolean {
+  return poemCount >= 3;
+}
+
+/** Category is indexable: must have at least 10 lines, and for shayari-intent slugs the content should match intent */
+export function isIndexableCategory(
+  categorySlug: string,
+  poemCount: number,
+  poems?: { content: string }[],
+): boolean {
+  if (poemCount < 10) return false;
+
+  // For shayari-intent slugs, verify at least some poems are actual shayari (Hindi/Urdu/Hinglish)
+  if (SHAYARI_INTENT_SLUGS.has(categorySlug)) {
+    if (!poems || poems.length === 0) return poemCount >= 10; // can't verify, index anyway
+    const shayariCount = poems.filter(p => isHindiShayariContent(p.content)).length;
+    // At least 20% of visible poems should be shayari
+    const sample = poems.slice(0, 40);
+    const shayariRatio = shayariCount / Math.max(sample.length, 1);
+    return shayariRatio >= 0.15 && poemCount >= 10;
+  }
+
+  return poemCount >= 10;
+}
+
+/** Line page is indexable: must have meaningful unique textual content */
+export function isIndexableLine(poem: { content?: string; title?: string; meaning?: string } | null): boolean {
+  if (!poem) return false;
+  const content = (poem.content || '').trim();
+  if (!content) return false;
+  // Must have at least a meaningful phrase (> 15 chars of real content)
+  if (content.length < 15) return false;
+  // Must not just be a number or timestamp
+  if (/^[\d\s.,!?]+$/.test(content)) return false;
+  return true;
+}
+
+/** Blog post topics that are on-topic for Linespedia (poetry/shayari/quotes/literature) */
+const TOPICAL_CATEGORIES = new Set([
+  'poetry',
+  'shayari',
+  'poem',
+  'quotes',
+  'captions',
+  'poets',
+  'literature',
+  'writing',
+  'instagram_captions',
+  'emotional_expression',
+  'meaning',
+  'language',
+  'translation',
+  'creative_writing',
+  'poem_explanation',
+]);
+
+const TOPICAL_KEYWORDS = [
+  'poem', 'poetry', 'poet', 'shayari', 'shayar', 'quote', 'quotes',
+  'caption', 'captions', 'instagram', 'writer', 'writing', 'literature',
+  'meaning', 'explanation', 'translation', 'emotional', 'love', 'sad',
+  'romantic', 'attitude', 'motivational', 'inspirational', 'life',
+  'relationship', 'breakup', 'heart', 'feelings', 'express',
+];
+
+export function isTopicalBlogPost(post: {
+  data?: { category?: string; tags?: string[]; title?: string; description?: string };
+  slug?: string;
+}): boolean {
+  const cat = (post.data?.category || '').toLowerCase().replace(/\s+/g, '_');
+  if (TOPICAL_CATEGORIES.has(cat)) return true;
+
+  const title = (post.data?.title || '').toLowerCase();
+  const desc = (post.data?.description || '').toLowerCase();
+  const tags = (post.data?.tags || []).map(t => t.toLowerCase());
+  const slug = (post.slug || '').toLowerCase();
+
+  const allText = `${title} ${desc} ${tags.join(' ')} ${slug}`;
+  return TOPICAL_KEYWORDS.some(kw => allText.includes(kw));
+}
+
+/** Get the appropriate robots meta for a page type */
+export function getRobotsForPage(params: {
+  type: 'author' | 'category' | 'line' | 'blog' | 'archive';
+  poemCount?: number;
+  poems?: { content: string }[];
+  categorySlug?: string;
+  poem?: { content?: string; title?: string; meaning?: string } | null;
+  blogPost?: { data?: { category?: string; tags?: string[]; title?: string; description?: string }; slug?: string };
+}): { indexable: boolean; robots: string } {
+  const { type, poemCount = 0, poems, categorySlug, poem, blogPost } = params;
+
+  if (type === 'author') {
+    return {
+      indexable: isIndexableAuthor(poemCount),
+      robots: isIndexableAuthor(poemCount)
+        ? 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1'
+        : 'noindex,follow',
+    };
+  }
+
+  if (type === 'category' && categorySlug) {
+    const indexable = isIndexableCategory(categorySlug, poemCount, poems);
+    return {
+      indexable,
+      robots: indexable
+        ? 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1'
+        : 'noindex,follow',
+    };
+  }
+
+  if (type === 'line') {
+    const indexable = isIndexableLine(poem);
+    return {
+      indexable,
+      robots: indexable
+        ? 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1'
+        : 'noindex,follow',
+    };
+  }
+
+  if (type === 'blog' && blogPost) {
+    const topical = isTopicalBlogPost(blogPost);
+    return {
+      indexable: topical,
+      robots: topical
+        ? 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1'
+        : 'noindex,follow',
+    };
+  }
+
+  return {
+    indexable: true,
+    robots: 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1',
+  };
+}
+
 function cleanText(value: unknown): string {
 	return String(value ?? '')
 		.replace(/<[^>]+>/g, ' ')

@@ -11,6 +11,7 @@ interface Props {
   image?: string;
   breadcrumbs?: { name: string; url: string }[];
   faqs?: { q: string; a: string }[];
+  itemCount?: number;
 }
 
 const {
@@ -25,6 +26,7 @@ const {
   image,
   breadcrumbs = [],
   faqs = [],
+  itemCount,
 } = Astro.props;
 const siteUrl = Astro.site?.toString()?.replace(/\/$/, '') || "https://linespedia.com";
 const inferredLanguage = String(Astro.url.searchParams.get("lang") || "en").toLowerCase();
@@ -186,6 +188,12 @@ const contentSchema =
                 "@id": `${siteUrl}#organization`,
               },
               image: image || undefined,
+              ...(itemCount ? { numberOfItems: itemCount } : {}),
+              mainEntity: {
+                "@type": "ItemList",
+                itemListElement: [],
+                ...(itemCount ? { numberOfItems: itemCount } : {}),
+              },
             };
 
 // FAQ Schema
