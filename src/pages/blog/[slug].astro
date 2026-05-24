@@ -16,34 +16,30 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 
-// Extract headings for TOC
 const headings = post.body?.match(/^#{2,3} .+$/gm)?.map((h) => {
   const level = h.startsWith('###') ? 3 : 2;
   const text = h.replace(/^#{2,3} /, '');
   const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   return { level, text, id };
 }) || [];
-const allPosts = await getCollection("blog");
 
+const allPosts = await getCollection("blog");
 const authorName = post.data.author || "Linespedia Editorial";
 const publishedISO = post.data.pubDate.toISOString();
-const updatedISO = post.data.updatedDate
-  ? post.data.updatedDate.toISOString()
-  : publishedISO;
+const updatedISO = post.data.updatedDate ? post.data.updatedDate.toISOString() : publishedISO;
 const canonicalURL = new URL(`/blog/${post.id}/`, Astro.site).toString();
+const wordCount = post.body?.split(/\s+/).filter(Boolean).length || 0;
+const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+const siteUrl = Astro.site?.toString()?.replace(/\/$/, '') || "https://linespedia.com";
 
 const relatedPosts = allPosts
-  .filter((item) => item.id !== post.id)
+  .filter((item) => item.id !== post.id && !item.data.noindex)
   .map((item) => {
     const currentTags = post.data.tags || [];
     const itemTags = item.data.tags || [];
     const sharedTags = itemTags.filter((tag) => currentTags.includes(tag));
     const categoryMatch = item.data.category === post.data.category ? 1 : 0;
-
-    return {
-      post: item,
-      score: sharedTags.length * 2 + categoryMatch,
-    };
+    return { post: item, score: sharedTags.length * 2 + categoryMatch };
   })
   .filter((item) => item.score > 0)
   .sort((a, b) => b.score - a.score)
@@ -57,19 +53,11 @@ const articleSchema = {
   description: post.data.description,
   datePublished: publishedISO,
   dateModified: updatedISO,
-  author: {
-    "@type": "Organization",
-    name: authorName,
-  },
-  publisher: {
-    "@type": "Organization",
-    name: "Linespedia",
-    url: "https://linespedia.com",
-  },
-  mainEntityOfPage: {
-    "@type": "WebPage",
-    "@id": canonicalURL,
-  },
+  wordCount,
+  author: { "@type": "Organization", name: authorName, url: siteUrl },
+  publisher: { "@type": "Organization", name: "Linespedia", url: siteUrl, logo: { "@type": "ImageObject", url: siteUrl + "/favicon.svg" } },
+  mainEntityOfPage: { "@type": "WebPage", "@id": canonicalURL },
+  image: post.data.heroImage || undefined,
 };
 
 const breadcrumbs = [
@@ -77,6 +65,8 @@ const breadcrumbs = [
   { name: "Blog", href: "/blog/" },
   { name: post.data.title, href: `/blog/${post.id}/` },
 ];
+
+const categorySlug = post.data.category?.toLowerCase().replace(/\s+/g, '-').replace(/_/g, '-');
 export const prerender = true;
 ---
 
@@ -91,45 +81,48 @@ export const prerender = true;
   section={post.data.category}
   tags={post.data.tags || []}
 >
-  <script
-    slot="head"
-    type="application/ld+json"
-    set:html={JSON.stringify(articleSchema)}
-  />
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
 
   <Navbar />
   <main class="min-h-screen">
     <div class="relative h-[40vh] md:h-[45vh] flex items-center justify-center overflow-hidden">
-        <div class="absolute inset-0 bg-primary/40 z-10"></div>
-        <img 
-            src={post.data.heroImage} 
-            alt={post.data.title}
-            class="absolute inset-0 w-full h-full object-cover"
-        />
-        <div class="container mx-auto px-4 relative z-20 text-center">
-            <Breadcrumb items={breadcrumbs} />
-            <h1 class="text-4xl md:text-7xl font-serif font-black text-white mb-8 max-w-4xl mx-auto leading-tight">
-                {post.data.title}
-            </h1>
-            <div class="flex items-center justify-center space-x-6 text-white/90">
-                <div class="flex items-center space-x-2">
-                    <span class="text-xs uppercase font-bold tracking-widest text-white/50">Author</span>
-                    <span class="font-bold">{authorName}</span>
-                </div>
-                <div class="w-1 h-1 bg-white/30 rounded-full"></div>
-                <time class="font-bold">
-                    {post.data.pubDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
-                </time>
-                {post.data.updatedDate && (
-                    <>
-                        <div class="w-1 h-1 bg-white/30 rounded-full"></div>
-                        <time class="font-bold">
-                            Updated {post.data.updatedDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
-                        </time>
-                    </>
-                )}
-            </div>
+      <div class="absolute inset-0 bg-primary/40 z-10"></div>
+      <img src={post.data.heroImage} alt={post.data.title} class="absolute inset-0 w-full h-full object-cover" />
+      <div class="container mx-auto px-4 relative z-20 text-center">
+        <Breadcrumb items={breadcrumbs} />
+        <h1 class="text-4xl md:text-7xl font-serif font-black text-white mb-8 max-w-4xl mx-auto leading-tight">
+          {post.data.title}
+        </h1>
+        <div class="flex items-center justify-center flex-wrap gap-x-6 gap-y-2 text-white/90">
+          <div class="flex items-center space-x-2">
+            <span class="text-xs uppercase font-bold tracking-widest text-white/50">Author</span>
+            <span class="font-bold">{authorName}</span>
+          </div>
+          <div class="w-1 h-1 bg-white/30 rounded-full"></div>
+          <time class="font-bold" datetime={publishedISO}>
+            {post.data.pubDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+          </time>
+          <div class="w-1 h-1 bg-white/30 rounded-full"></div>
+          <span class="text-white/70 text-sm">{readingTime} min read</span>
+          {post.data.updatedDate && (
+            <>
+              <div class="w-1 h-1 bg-white/30 rounded-full"></div>
+              <time class="font-bold text-sm">Updated {post.data.updatedDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}</time>
+            </>
+          )}
         </div>
+        {/* Category badge */}
+        {post.data.category && (
+          <div class="mt-6">
+            <a
+              href={`/blog/?q=${encodeURIComponent(post.data.category.replace(/_/g, ' '))}`}
+              class="inline-block px-4 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-xs font-bold uppercase tracking-widest text-white hover:bg-white/20 transition-all"
+            >
+              {post.data.category.replace(/_/g, ' ')}
+            </a>
+          </div>
+        )}
+      </div>
     </div>
 
     <article class="container mx-auto px-4 py-12">
@@ -146,32 +139,114 @@ export const prerender = true;
             </ul>
           </nav>
         )}
+
         <div class="prose prose-lg prose-indigo prose-headings:font-serif prose-headings:font-black prose-headings:scroll-mt-20 text-primary/80">
           <p class="lead text-lg text-primary/70 not-prose mb-8">{post.data.description}</p>
           <Content />
         </div>
+
+        {/* Tags */}
+        {(post.data.tags?.length > 0) && (
+          <div class="mt-10 pt-8 border-t border-indigo-50">
+            <h3 class="text-xs font-bold uppercase tracking-widest text-primary/30 mb-4">Tags</h3>
+            <div class="flex flex-wrap gap-2">
+              {post.data.tags.map((tag: string) => (
+                <a
+                  href={`/blog/?q=${encodeURIComponent(tag)}`}
+                  class="px-4 py-2 bg-white border border-indigo-100 rounded-full text-xs font-bold text-primary/50 hover:text-accent hover:border-accent transition-all"
+                >
+                  #{tag}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Share */}
+        <div class="mt-8 pt-8 border-t border-indigo-50">
+          <h3 class="text-xs font-bold uppercase tracking-widest text-primary/30 mb-4">Share this article</h3>
+          <div class="flex flex-wrap gap-3">
+            <a
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.data.title)}&url=${encodeURIComponent(canonicalURL)}`}
+              target="_blank" rel="noopener noreferrer"
+              class="px-5 py-3 bg-primary text-white rounded-full text-xs font-bold hover:bg-accent transition-all"
+            >
+              Share on Twitter
+            </a>
+            <a
+              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonicalURL)}`}
+              target="_blank" rel="noopener noreferrer"
+              class="px-5 py-3 bg-[#1877F2] text-white rounded-full text-xs font-bold hover:bg-blue-700 transition-all"
+            >
+              Share on Facebook
+            </a>
+            <a
+              href={`https://api.whatsapp.com/send?text=${encodeURIComponent(post.data.title + ' ' + canonicalURL)}`}
+              target="_blank" rel="noopener noreferrer"
+              class="px-5 py-3 bg-[#25D366] text-white rounded-full text-xs font-bold hover:bg-green-600 transition-all"
+            >
+              Share on WhatsApp
+            </a>
+            <button
+              id="copy-link-btn"
+              class="px-5 py-3 bg-white border border-indigo-100 rounded-full text-xs font-bold text-primary/60 hover:border-accent hover:text-accent transition-all"
+              data-url={canonicalURL}
+            >
+              Copy Link
+            </button>
+          </div>
+        </div>
+
+        {/* Internal links to main site sections */}
+        <div class="mt-10 p-8 rounded-2xl bg-indigo-50/60 border border-indigo-100">
+          <h2 class="text-2xl font-serif font-black text-primary mb-4">Explore More on Linespedia</h2>
+          <p class="text-primary/70 mb-6">Continue your journey through poetry, shayari, and quotes.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <a href="/sad-shayari/" class="p-4 bg-white rounded-xl border border-indigo-100 hover:border-accent transition-all">
+              <strong class="text-primary block">Sad Shayari</strong>
+              <span class="text-sm text-primary/50">Heart-touching emotional verses</span>
+            </a>
+            <a href="/love-shayari/" class="p-4 bg-white rounded-xl border border-indigo-100 hover:border-accent transition-all">
+              <strong class="text-primary block">Love Shayari</strong>
+              <span class="text-sm text-primary/50">Romantic poetry collection</span>
+            </a>
+            <a href="/life-quotes/" class="p-4 bg-white rounded-xl border border-indigo-100 hover:border-accent transition-all">
+              <strong class="text-primary block">Life Quotes</strong>
+              <span class="text-sm text-primary/50">Wisdom and inspiration</span>
+            </a>
+            <a href="/writers/" class="p-4 bg-white rounded-xl border border-indigo-100 hover:border-accent transition-all">
+              <strong class="text-primary block">Famous Poets</strong>
+              <span class="text-sm text-primary/50">Writer profiles and biographies</span>
+            </a>
+            <a href="/motivational-quotes/" class="p-4 bg-white rounded-xl border border-indigo-100 hover:border-accent transition-all">
+              <strong class="text-primary block">Motivational Quotes</strong>
+              <span class="text-sm text-primary/50">Daily inspiration</span>
+            </a>
+            <a href="/attitude-shayari/" class="p-4 bg-white rounded-xl border border-indigo-100 hover:border-accent transition-all">
+              <strong class="text-primary block">Attitude Shayari</strong>
+              <span class="text-sm text-primary/50">Bold attitude lines</span>
+            </a>
+          </div>
+        </div>
       </div>
 
-      <div class="max-w-3xl mx-auto mt-12 p-6 rounded-2xl bg-indigo-50/60 border border-indigo-100">
-        <h2 class="text-2xl font-serif font-black text-primary mb-4">Read Next on Linespedia</h2>
-        <p class="text-primary/70 mb-6">Explore related lines, collections, and editorial guides to continue your reading.</p>
-        <ul class="space-y-3 text-primary/90">
-          <li><a class="hover:text-accent font-semibold" href="/explore/">Browse trending lines and quotes</a></li>
-          <li><a class="hover:text-accent font-semibold" href="/collections/">Explore thematic line collections</a></li>
-          <li><a class="hover:text-accent font-semibold" href="/categories/">Find posts by category</a></li>
-          <li><a class="hover:text-accent font-semibold" href="/writers/">Read writer profiles and featured poets</a></li>
-          <li><a class="hover:text-accent font-semibold" href="/blog/">Visit the full blog archive</a></li>
-        </ul>
-      </div>
-
+      {/* Related Posts */}
       {relatedPosts.length > 0 && (
-        <section class="max-w-3xl mx-auto mt-10">
-          <h2 class="text-2xl font-serif font-black text-primary mb-5">Related Posts</h2>
-          <div class="grid gap-4">
+        <section class="max-w-5xl mx-auto mt-16">
+          <h2 class="text-2xl font-serif font-black text-primary mb-8 text-center">Related Articles</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             {relatedPosts.map((relatedPost) => (
-              <a href={`/blog/${relatedPost.id}/`} class="block rounded-2xl border border-indigo-100 p-5 hover:border-accent transition-colors bg-white/80">
-                <h3 class="font-bold text-lg text-primary mb-1">{relatedPost.data.title}</h3>
-                <p class="text-primary/70 text-sm">{relatedPost.data.description}</p>
+              <a href={`/blog/${relatedPost.id}/`} class="group block rounded-2xl border border-indigo-100 overflow-hidden bg-white/80 hover:shadow-lg transition-all">
+                {relatedPost.data.heroImage && (
+                  <div class="aspect-[16/9] overflow-hidden">
+                    <img src={relatedPost.data.heroImage} alt={relatedPost.data.title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                  </div>
+                )}
+                <div class="p-5">
+                  <span class="text-[10px] font-bold uppercase tracking-widest text-accent">{relatedPost.data.category?.replace(/_/g, ' ')}</span>
+                  <h3 class="font-bold text-primary mt-2 group-hover:text-accent transition-colors">{relatedPost.data.title}</h3>
+                  <p class="text-primary/50 text-sm mt-2 line-clamp-2">{relatedPost.data.description}</p>
+                </div>
               </a>
             ))}
           </div>
@@ -179,25 +254,35 @@ export const prerender = true;
       )}
     </article>
 
-    {/* Shared Section */}
     <div class="bg-indigo-50 py-20 px-4">
-        <div class="container mx-auto max-w-4xl text-center">
-            <h2 class="text-3xl font-serif font-black text-primary mb-6">Found inspiration in these words?</h2>
-            <p class="text-primary/60 mb-10">Explore our curated collection of poems and shayari to share with your audience.</p>
-            <a href="/explore" class="inline-flex items-center space-x-2 bg-primary text-white px-10 py-5 rounded-full font-bold hover:bg-accent transition-all shadow-2xl">
-                <span>Start Exploring</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-            </a>
-        </div>
+      <div class="container mx-auto max-w-4xl text-center">
+        <h2 class="text-3xl font-serif font-black text-primary mb-6">Found inspiration in these words?</h2>
+        <p class="text-primary/60 mb-10">Explore our curated collection of poems and shayari to share with your audience.</p>
+        <a href="/explore" class="inline-flex items-center space-x-2 bg-primary text-white px-10 py-5 rounded-full font-bold hover:bg-accent transition-all shadow-2xl">
+          <span>Start Exploring</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </a>
+      </div>
     </div>
   </main>
   <Footer />
 </Layout>
 
+<script>
+  const copyBtn = document.getElementById('copy-link-btn');
+  copyBtn?.addEventListener('click', () => {
+    const url = copyBtn.getAttribute('data-url') || window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      const txt = copyBtn.textContent;
+      copyBtn.textContent = 'Copied!';
+      setTimeout(() => { copyBtn.textContent = txt; }, 2000);
+    });
+  });
+</script>
+
 <style is:global>
-    /* Custom prose styles for a more poetic feel */
     .prose blockquote {
         border-left-width: 4px;
         border-color: var(--color-accent);

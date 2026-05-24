@@ -81,3 +81,15 @@ Short, clean lines for minimalist aesthetics:
 #shayari #urdupoetry #poetrylovers #instagramcaptions #sadshayari #loveshayari #quotes #linespedia #poetrycommunity
 
 Find more caption-ready lines in our [Instagram captions](/instagram-captions/) collection or browse [best shayari](/best-shayari/) for timeless verses.
+
+---
+
+## More Caption Ideas
+
+- [Instagram captions](/instagram-captions/) — full collection of caption-ready lines
+- [Best shayari](/best-shayari/) — top-rated verses for any occasion
+- [Sad shayari](/sad-shayari/) — emotional captions for melancholic posts
+- [Love shayari](/love-shayari/) — romantic captions for couple photos
+- [Attitude shayari](/attitude-shayari/) — bold captions for confidence
+- [Life quotes](/life-quotes/) — reflective captions for everyday moments
+- [Motivational quotes](/motivational-quotes/) — inspiring lines for your feed

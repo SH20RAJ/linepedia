@@ -52,3 +52,15 @@ Read poets like Mirza Ghalib, Faiz Ahmed Faiz, and Ahmad Faraz to internalize rh
 ## 7. Practice Every Day
 
 The best way to learn shayari is to write one couplet every day. Share your verses on Instagram, WhatsApp, or Twitter with hashtags like #shayari and #urdupoetry. Explore [sad shayari](/sad-shayari/) or [love shayari](/love-shayari/) for inspiration from classical and contemporary poets.
+
+---
+
+## Explore More Poetry
+
+- Browse [sad shayari](/sad-shayari/) for emotional, heart-touching verses
+- Discover [love shayari](/love-shayari/) for romantic poetry
+- Read [attitude shayari](/attitude-shayari/) for bold and confident lines
+- Find [life quotes](/life-quotes/) for daily inspiration
+- Explore [motivational quotes](/motivational-quotes/) to stay inspired
+- Check [Instagram captions](/instagram-captions/) for social media posts
+- Learn about [famous poets](/writers/) and their literary contributions

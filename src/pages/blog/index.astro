@@ -4,20 +4,19 @@ import Navbar from "../../components/Navbar.astro";
 import Footer from "../../components/Footer.astro";
 import Breadcrumb from "../../components/Breadcrumb.astro";
 import Pagination from "../../components/Pagination.astro";
+import StructuredData from "../../components/StructuredData.astro";
 import { buildCanonicalUrl, getNormalizedLang, getSiteOrigin, shouldNoindexForLanguageParam } from '../../lib/seo';
 import { getCollection } from "astro:content";
 
 const allPosts = (await getCollection("blog"))
   .filter((post) => !post.data.noindex)
-  .sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-  );
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 const search = Astro.url.searchParams.get('q') || '';
 const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
 const pageSize = 12;
 
-const filteredPosts = allPosts.filter(post => 
+const filteredPosts = allPosts.filter(post =>
   post.data.title.toLowerCase().includes(search.toLowerCase()) ||
   post.data.description.toLowerCase().includes(search.toLowerCase())
 );
@@ -30,7 +29,6 @@ const breadcrumbs = [
   { name: "Blog", href: "/blog/" },
 ];
 
-// Language detection
 const supportedLanguages: string[] = ["en", "es", "fr", "de", "hi", "ar", "zh", "ja", "ru", "pt", "it"];
 const requestedLang = Astro.url.searchParams.get("lang") || "en";
 const lang = supportedLanguages.includes(requestedLang) ? requestedLang : "en";
@@ -41,36 +39,50 @@ const isTranslationParamPage = shouldNoindexForLanguageParam(Astro.url.searchPar
 const robots = shouldNoindex
   ? 'noindex,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1'
   : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1';
+
+const prevPageUrl = currentPage > 1 ? `/blog/?page=${currentPage - 1}` : undefined;
+const nextPageUrl = currentPage < totalPages ? `/blog/?page=${currentPage + 1}` : undefined;
+
+const topicCategories = [...new Set(allPosts.slice(0, 50).map(p => p.data.category))].slice(0, 10);
 ---
 
 <Layout
-  title="Poetry & Shayari Blog | Linespedia"
-  description="Explore the Linespedia blog for insights into the world of poetry, shayari trends, and writing guides."
+  title="Poetry &amp; Shayari Blog | Linespedia"
+  description="Explore the Linespedia blog for insights into the world of poetry, shayari trends, writing guides, and literary analysis. Discover curated collections and poet profiles."
   lang={lang}
   canonicalURL={canonicalURL}
   robots={robots}
-  keywords="poetry blog, shayari articles, writing guides, poetic trends, literary insights"
+  keywords="poetry blog, shayari articles, writing guides, poetic trends, literary insights, urdu poetry blog"
+  prevURL={prevPageUrl}
+  nextURL={nextPageUrl}
 >
   {!isTranslationParamPage && <meta slot="head" name="lang-trigger" content={lang} />}
+
+  <StructuredData
+    type="category"
+    title="Poetry &amp; Shayari Blog | Linespedia"
+    description="Insights, trends, and guides from the world of poetry, shayari, and literary expression."
+    url="/blog/"
+    breadcrumbs={breadcrumbs}
+  />
 
   <Navbar />
   <main class="min-h-screen">
     <div class="py-16 border-b border-indigo-50">
       <div class="container mx-auto px-4 max-w-4xl text-center">
         <Breadcrumb items={breadcrumbs} />
-        <h1 class="text-3xl md:text-4xl font-serif font-black text-primary mb-4">
+        <h1 class="text-3xl md:text-5xl font-serif font-black text-primary mb-4">
           The <span class="text-accent">Poetic</span> Journal
         </h1>
-        <p class="text-base text-primary/60 max-w-2xl mx-auto mb-8">
-          Insights, trends, and guides from the intersection of tradition and modern expression.
+        <p class="text-base md:text-lg text-primary/60 max-w-3xl mx-auto mb-8 leading-relaxed">
+          Insights, guides, and deep dives into poetry, shayari, quotes, Urdu literature, and the art of writing. Discover curated collections, poet profiles, and creative inspiration.
         </p>
 
-        <!-- Search Bar -->
         <form action="/blog/" class="relative max-w-2xl mx-auto group">
-          <input 
-            type="text" 
-            name="q" 
-            placeholder="Search articles..." 
+          <input
+            type="text"
+            name="q"
+            placeholder="Search articles..."
             value={search}
             class="w-full px-8 py-5 bg-white border-2 border-indigo-50 rounded-3xl text-lg focus:border-accent focus:outline-none transition-all shadow-xl shadow-indigo-100/20 group-hover:shadow-indigo-100/40"
           />
@@ -80,6 +92,26 @@ const robots = shouldNoindex
             </svg>
           </button>
         </form>
+
+        {!search && topicCategories.length > 0 && (
+          <div class="mt-8 flex flex-wrap justify-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-widest text-primary/30 mr-2">Topics:</span>
+            {topicCategories.map((cat) => (
+              <a
+                href={`/blog/?q=${encodeURIComponent(cat.replace(/_/g, ' '))}`}
+                class="px-4 py-2 bg-white border border-indigo-100 rounded-full text-[10px] font-bold uppercase tracking-wider text-primary/50 hover:text-accent hover:border-accent transition-all"
+              >
+                {cat.replace(/_/g, ' ')}
+              </a>
+            ))}
+          </div>
+        )}
+
+        {filteredPosts.length > 0 && !search && (
+          <p class="mt-6 text-sm text-primary/30 font-bold uppercase tracking-widest">
+            {allPosts.length} Articles &middot; Updated {new Date(allPosts[0].data.pubDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+          </p>
+        )}
       </div>
     </div>
 
@@ -87,48 +119,67 @@ const robots = shouldNoindex
       {filteredPosts.length === 0 ? (
         <div class="text-center py-20 bg-indigo-50/30 rounded-[3rem] border border-dashed border-indigo-100">
            <h3 class="text-2xl font-serif font-black text-primary/40">No articles found matching your search.</h3>
-           <a href="/blog/" class="text-accent font-bold mt-4 inline-block">Clear Search</a>
+           <p class="text-primary/40 mt-2 text-sm">Try browsing <a href="/blog/" class="text-accent font-bold">all articles</a> or explore our <a href="/explore/" class="text-accent font-bold">poetry collection</a>.</p>
         </div>
       ) : (
         <>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
             {posts.map((post) => (
-              <article class="group">
+              <article class="group" itemScope itemType="https://schema.org/BlogPosting">
                 <a href={`/blog/${post.id}/`} class="block mb-6 overflow-hidden rounded-3xl aspect-[16/10] bg-indigo-50 shadow-lg shadow-indigo-100/20">
-                  <img 
-                    src={post.data.heroImage} 
+                  <img
+                    src={post.data.heroImage}
                     alt={post.data.title}
                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    loading="lazy"
+                    itemProp="image"
                   />
                 </a>
                 <div class="flex items-center space-x-4 mb-4">
                   <span class="px-3 py-1 bg-accent/10 text-accent text-[10px] font-black uppercase tracking-widest rounded-full">
-                    {post.data.category.replace('_', ' ')}
+                    {post.data.category.replace(/_/g, ' ')}
                   </span>
-                  <time class="text-xs text-primary/30 font-bold uppercase tracking-widest">
+                  <time class="text-xs text-primary/30 font-bold uppercase tracking-widest" itemProp="datePublished" datetime={post.data.pubDate.toISOString()}>
                     {post.data.pubDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </time>
                 </div>
-                <h2 class="text-2xl font-serif font-black text-primary mb-4 group-hover:text-accent transition-colors leading-tight">
+                <h2 class="text-2xl font-serif font-black text-primary mb-4 group-hover:text-accent transition-colors leading-tight" itemProp="headline">
                   <a href={`/blog/${post.id}/`}>{post.data.title}</a>
                 </h2>
-                <p class="text-primary/50 text-sm line-clamp-3 mb-6">
+                <p class="text-primary/50 text-sm line-clamp-3 mb-6" itemProp="description">
                   {post.data.description}
                 </p>
-                <a href={`/blog/${post.id}/`} class="inline-flex items-center text-primary font-bold group/link text-sm">
-                  <span class="border-b-2 border-accent/30 group-hover/link:border-accent transition-all">Read Full Article</span>
-                </a>
+                <div class="flex items-center justify-between">
+                  <a href={`/blog/${post.id}/`} class="inline-flex items-center text-primary font-bold group/link text-sm">
+                    <span class="border-b-2 border-accent/30 group-hover/link:border-accent transition-all">Read Full Article</span>
+                  </a>
+                  <span class="text-[10px] text-primary/20 uppercase tracking-widest font-bold">
+                    ~{Math.ceil((post.body?.split(/\s+/).length || 200) / 200)} min read
+                  </span>
+                </div>
               </article>
             ))}
           </div>
 
           {totalPages > 1 && (
             <div class="mt-20">
-              <Pagination 
-                currentPage={currentPage} 
-                totalPages={totalPages} 
-                baseUrl="/blog/" 
-              />
+              <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/blog/" />
+            </div>
+          )}
+
+          {!search && (
+            <div class="mt-20 text-center">
+              <div class="border-t border-indigo-50 pt-12">
+                <h3 class="text-lg font-serif font-bold text-primary/40 mb-6">Explore More Poetry</h3>
+                <div class="flex flex-wrap justify-center gap-3">
+                  <a href="/sad-shayari/" class="px-5 py-3 bg-white border border-indigo-50 rounded-full text-sm font-bold text-primary/60 hover:text-accent hover:border-accent transition-all">Sad Shayari</a>
+                  <a href="/love-shayari/" class="px-5 py-3 bg-white border border-indigo-50 rounded-full text-sm font-bold text-primary/60 hover:text-accent hover:border-accent transition-all">Love Shayari</a>
+                  <a href="/attitude-shayari/" class="px-5 py-3 bg-white border border-indigo-50 rounded-full text-sm font-bold text-primary/60 hover:text-accent hover:border-accent transition-all">Attitude Shayari</a>
+                  <a href="/life-quotes/" class="px-5 py-3 bg-white border border-indigo-50 rounded-full text-sm font-bold text-primary/60 hover:text-accent hover:border-accent transition-all">Life Quotes</a>
+                  <a href="/writers/" class="px-5 py-3 bg-white border border-indigo-50 rounded-full text-sm font-bold text-primary/60 hover:text-accent hover:border-accent transition-all">Famous Poets</a>
+                  <a href="/categories/" class="px-5 py-3 bg-white border border-indigo-50 rounded-full text-sm font-bold text-primary/60 hover:text-accent hover:border-accent transition-all">All Categories</a>
+                </div>
+              </div>
             </div>
           )}
         </>

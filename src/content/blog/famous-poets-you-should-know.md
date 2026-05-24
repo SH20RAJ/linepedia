@@ -63,3 +63,15 @@ Every line on Linespedia includes the poet's name and attribution. Browse our [w
 - [Deep lines](/deep-lines/) — philosophical and thought-provoking poetry
 - [Motivational quotes](/motivational-quotes/) — inspirational lines for daily life
 - [Life quotes](/life-quotes/) — wisdom from the world's greatest writers
+
+---
+
+## Discover More Poetry
+
+- Browse [sad shayari](/sad-shayari/) from classic and contemporary poets
+- Explore [love shayari](/love-shayari/) by Ghalib, Faiz, and modern writers
+- Read [attitude shayari](/attitude-shayari/) for bold poetic expressions
+- Discover [life quotes](/life-quotes/) and wisdom from famous writers
+- Find [motivational quotes](/motivational-quotes/) for daily inspiration
+- Check [best shayari](/best-shayari/) for top-rated couplets
+- Visit our [writers page](/writers/) for the complete poet directory

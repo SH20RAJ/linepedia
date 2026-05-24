@@ -55,3 +55,14 @@ These techniques transform simple statements into art. A line like "her eyes are
 ## Explore Urdu Poetry
 
 Browse our [Urdu poetry](/categories/) collections or explore [sad shayari](/sad-shayari/) and [love shayari](/love-shayari/) to see these devices in action. Each line on Linespedia includes attribution so you can explore more work by the same poet.
+
+---
+
+## Explore Shayari Collections
+
+- [Sad shayari](/sad-shayari/) — verses using dard, gham, and emotional imagery
+- [Love shayari](/love-shayari/) — romantic poetry with ishq and mohabbat
+- [Best shayari](/best-shayari/) — top-rated couplets from classic poets
+- [Deep lines](/deep-lines/) — philosophical and introspective poetry
+- [Emotional shayari](/emotional-shayari/) — heartfelt expressions of feeling
+- [Writers page](/writers/) — explore the masters who use these devices

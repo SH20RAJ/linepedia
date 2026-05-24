@@ -85,3 +85,14 @@ Imagination or visualization. Deeper than khayal — the ability to see what doe
 The beauty of Urdu poetry lies in how these words combine. A line using just "dil" (heart) and "yaad" (memory) can capture an entire relationship. Explore [deep lines](/deep-lines/) to see how poets weave these words into memorable verse.
 
 Practice by writing your own couplets using 2-3 of these words. The more you read, the more naturally the vocabulary will come. Browse our [writers page](/writers/) for poets who mastered each of these words in their work.
+
+---
+
+## Continue Learning
+
+- Browse [sad shayari](/sad-shayari/) — see dard and gham in action
+- Explore [love shayari](/love-shayari/) — ishq, mohabbat, and romantic vocabulary
+- Read [attitude shayari](/attitude-shayari/) — bold Urdu expressions
+- Discover [life quotes](/life-quotes/) — zindagi and waqt themed poetry
+- Find [motivational quotes](/motivational-quotes/) — inspirational Urdu lines
+- Check out [famous poets](/writers/) who mastered Urdu vocabulary
