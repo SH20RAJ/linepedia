@@ -36,3 +36,5 @@ src/data/kv-chunks/
 src/data/kv-chunks-tiny/
 !src/data/*.json
 linespedia-data/
+linespedia-data
+linespedia-data/
