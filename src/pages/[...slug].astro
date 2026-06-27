@@ -8,6 +8,7 @@ import Breadcrumb from "../components/Breadcrumb.astro";
 import AIPanel from "../components/AIPanel.astro";
 import RightsNotice from "../components/RightsNotice.astro";
 import ScriptlyFeaturedAd from "../components/ScriptlyFeaturedAd.astro";
+import SopkitBacklink from "../components/SopkitBacklink.astro";
 import { generatePageMetadata, SUPPORTED_LANGUAGES, shouldNoindexForLanguageParam, getRobotsForPage, isHindiShayariContent } from "../lib/seo";
 import {
   Share2,
@@ -818,6 +819,8 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
               </div>
 
               <ScriptlyFeaturedAd />
+              
+              <SopkitBacklink />
             </aside>
           </div>
 

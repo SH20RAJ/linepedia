@@ -6,6 +6,7 @@ import Hero from '../components/Hero.astro';
 import PoemCard from '../components/PoemCard.astro';
 import StructuredData from '../components/StructuredData.astro';
 import ScriptlyFeaturedAd from '../components/ScriptlyFeaturedAd.astro';
+import SopkitBacklink from '../components/SopkitBacklink.astro';
 import { Quote } from 'lucide-astro';
 
 import { getAllWriters, getAllCollections, getAllCategories, getFeaturedPoems } from '../lib/cdn';
@@ -365,6 +366,10 @@ const homeMeta = generatePageMetadata({
 				</p>
 			</div>
 		</section>
+        
+        <section class="container mx-auto px-4 pb-16">
+            <SopkitBacklink />
+        </section>
 	</main>
 
 	<Footer />
