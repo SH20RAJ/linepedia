@@ -7,6 +7,7 @@ import StructuredData from "../components/StructuredData.astro";
 import Breadcrumb from "../components/Breadcrumb.astro";
 import AIPanel from "../components/AIPanel.astro";
 import RightsNotice from "../components/RightsNotice.astro";
+import ScriptlyFeaturedAd from "../components/ScriptlyFeaturedAd.astro";
 import { generatePageMetadata, SUPPORTED_LANGUAGES, shouldNoindexForLanguageParam, getRobotsForPage, isHindiShayariContent } from "../lib/seo";
 import {
   Share2,
@@ -815,6 +816,8 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
                   ))}
                 </div>
               </div>
+
+              <ScriptlyFeaturedAd />
             </aside>
           </div>
 

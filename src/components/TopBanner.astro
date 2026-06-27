@@ -1,0 +1,49 @@
+---
+import { X, Rocket } from "lucide-astro";
+---
+
+<div id="scriptlystore-top-banner" class="hidden relative bg-[#58CC02] text-white px-4 py-2 sm:px-6 lg:px-8 z-[60]">
+  <div class="container mx-auto flex items-center justify-between">
+    <div class="flex flex-1 items-center justify-center">
+      <p class="text-xs sm:text-sm font-bold flex items-center space-x-2 text-center">
+        <Rocket size={16} class="hidden sm:inline-block animate-bounce" />
+        <span>
+          Ship 10x faster with premium SaaS templates & developer scripts at 
+          <a href="https://scriptly.store?ref=linespedia" target="_blank" rel="noopener noreferrer" class="underline hover:text-white/80 transition-colors ml-1 font-black">
+            ScriptlyStore!
+          </a>
+        </span>
+      </p>
+    </div>
+    <div class="flex items-center">
+      <button
+        type="button"
+        id="close-scriptly-banner"
+        class="-m-3 p-3 focus-visible:outline-offset-[-4px] hover:bg-white/20 rounded-full transition-colors cursor-pointer"
+      >
+        <span class="sr-only">Dismiss</span>
+        <X size={16} />
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Script runs on client side to check local storage
+  const banner = document.getElementById('scriptlystore-top-banner');
+  const closeBtn = document.getElementById('close-scriptly-banner');
+  
+  if (banner && closeBtn) {
+    // Check if user previously closed it
+    const isDismissed = localStorage.getItem('scriptlyBannerDismissed');
+    
+    if (!isDismissed) {
+      banner.classList.remove('hidden');
+    }
+    
+    closeBtn.addEventListener('click', () => {
+      banner.classList.add('hidden');
+      localStorage.setItem('scriptlyBannerDismissed', 'true');
+    });
+  }
+</script>

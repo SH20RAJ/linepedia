@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import Hero from '../components/Hero.astro';
 import PoemCard from '../components/PoemCard.astro';
 import StructuredData from '../components/StructuredData.astro';
+import ScriptlyFeaturedAd from '../components/ScriptlyFeaturedAd.astro';
 import { Quote } from 'lucide-astro';
 
 import { getAllWriters, getAllCollections, getAllCategories, getFeaturedPoems } from '../lib/cdn';
@@ -223,6 +224,11 @@ const homeMeta = generatePageMetadata({
 					<p class="text-primary/60 text-sm leading-relaxed">Download beautiful quote posters for Instagram, WhatsApp, and Pinterest.</p>
 				</div>
 			</div>
+		</section>
+
+		{/* Featured Sponsor */}
+		<section class="container mx-auto px-4 pb-16">
+			<ScriptlyFeaturedAd />
 		</section>
 
 		{/* Trending Now Sidebar/Section — Internal Linking Boost */}

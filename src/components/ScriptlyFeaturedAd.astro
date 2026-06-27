@@ -1,0 +1,95 @@
+---
+// src/components/ScriptlyFeaturedAd.astro
+import { Sparkles, ArrowRight } from "lucide-astro";
+
+let products = [];
+try {
+  // Fetch products from the API
+  const res = await fetch("https://scriptly.store/api/products.json", {
+    next: { revalidate: 3600 } // Cache for 1 hour if supported by adapter
+  });
+  const data = await res.json();
+  if (data.success && data.products && data.products.length > 0) {
+    products = data.products.filter((p: any) => p.featured || p.thumbnail);
+  }
+} catch (e) {
+  console.error("Failed to fetch ScriptlyStore products", e);
+}
+
+// Fallback to a hardcoded product if fetch fails
+if (products.length === 0) {
+  products = [
+    {
+      title: "🦷 SmileFlow — Premium Next.js 16 Dental Practice Template",
+      shortDescription: "SmileFlow is an elite, conversion-optimized website template designed specifically for modern dental clinics.",
+      thumbnail: "https://dev-to-uploads.s3.us-east-2.amazonaws.com/uploads/articles/dtxlpqos5xb2bupgbahv.png",
+      previewGif: "https://dev-to-uploads.s3.us-east-2.amazonaws.com/uploads/articles/mg9cudxnyl4k7b67o5a3.gif",
+      priceFormatted: "129.00",
+      url: "https://scriptly.store/products/smileflow-premium-next-js-16-dental-practice-template"
+    }
+  ];
+}
+
+// Select a random product
+const randomProduct = products[Math.floor(Math.random() * products.length)];
+const mediaUrl = randomProduct.previewGif || randomProduct.thumbnail;
+---
+
+{randomProduct && (
+  <div class="my-10 max-w-4xl mx-auto rounded-3xl overflow-hidden border border-[#58CC02]/20 shadow-2xl bg-gradient-to-br from-white to-[#f4fdf0] group hover:shadow-[#58CC02]/20 transition-all duration-500 relative">
+    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 group-hover:opacity-20 transition-all duration-500 pointer-events-none">
+      <Sparkles size={120} class="text-[#58CC02]" />
+    </div>
+    
+    <div class="flex flex-col md:flex-row relative z-10">
+      <div class="md:w-5/12 aspect-[4/3] md:aspect-auto relative overflow-hidden bg-gray-100">
+        <a href={`${randomProduct.url}?ref=linespedia`} target="_blank" rel="noopener noreferrer" class="block w-full h-full">
+          <img 
+            src={mediaUrl} 
+            alt={randomProduct.title} 
+            class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700" 
+            loading="lazy"
+          />
+        </a>
+      </div>
+      
+      <div class="md:w-7/12 p-6 md:p-8 flex flex-col justify-center">
+        <div class="flex items-center space-x-2 mb-3">
+          <span class="px-3 py-1 bg-[#58CC02]/10 text-[#58CC02] text-[10px] font-black uppercase tracking-widest rounded-full border border-[#58CC02]/20">
+            Sponsored
+          </span>
+          <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+            ScriptlyStore
+          </span>
+        </div>
+        
+        <h3 class="text-xl md:text-2xl font-serif font-black text-gray-900 mb-3 leading-tight group-hover:text-[#58CC02] transition-colors">
+          <a href={`${randomProduct.url}?ref=linespedia`} target="_blank" rel="noopener noreferrer">
+            {randomProduct.title}
+          </a>
+        </h3>
+        
+        <p class="text-gray-600 text-sm leading-relaxed mb-6 line-clamp-3">
+          {randomProduct.shortDescription}
+        </p>
+        
+        <div class="mt-auto flex items-center justify-between">
+          <div class="flex flex-col">
+            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Price</span>
+            <span class="text-lg font-black text-gray-900">${randomProduct.priceFormatted}</span>
+          </div>
+          
+          <a 
+            href={`${randomProduct.url}?ref=linespedia`} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="flex items-center space-x-2 px-6 py-3 bg-[#58CC02] text-white rounded-full font-bold text-sm hover:bg-[#4ab002] hover:-translate-y-1 hover:shadow-lg transition-all"
+          >
+            <span>View Product</span>
+            <ArrowRight size={16} />
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
