@@ -114,11 +114,11 @@ export async function getSeoCombos(): Promise<SeoCombo[]> {
     const poems = await getCategoryPoems(category.slug);
     
     // We only create combinations if the category has enough base poems
-    if (poems.length < 15) continue;
+    if (poems.length < 20) continue;
 
     for (const modifier of MODIFIERS) {
       const filteredForModifier = pickIntentPoems(poems, modifier);
-      if (filteredForModifier.length >= 5) {
+      if (filteredForModifier.length >= 15) {
         combos.push({
           categorySlug: category.slug,
           categoryName: category.name,
@@ -129,7 +129,7 @@ export async function getSeoCombos(): Promise<SeoCombo[]> {
         // Also add platform combinations randomly or fully
         for (const platform of PLATFORMS) {
             const filteredForPlatform = pickIntentPoems(poems, modifier, platform);
-            if (filteredForPlatform.length >= 5) {
+            if (filteredForPlatform.length >= 15) {
                combos.push({
                   categorySlug: category.slug,
                   categoryName: category.name,

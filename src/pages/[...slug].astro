@@ -367,7 +367,7 @@ const pageMeta = generatePageMetadata({
   isTranslationParamPage,
   pageNumber: pageNum,
   itemCount: type === "line" ? 1 : poems.length || (pageData as any)?.itemCount || 0,
-  minimumItems: type === "line" ? 1 : (type === "writer" ? 3 : 10),
+  minimumItems: type === "line" ? 1 : (type === "writer" ? 3 : (type === "programmatic-seo" ? 15 : 10)),
   maxIndexablePage: type === "archive" ? 20 : Number.POSITIVE_INFINITY,
   fallbackTitle:
     type === "line"
@@ -385,16 +385,6 @@ const pageMeta = generatePageMetadata({
     type === "line"
       ? "Read a curated poetic line on Linespedia."
       : "Browse curated poetry on Linespedia.",
-});
-
-const xDefaultUrl = new URL(Astro.url.pathname, siteOrigin);
-if (shouldIncludePageParam) xDefaultUrl.searchParams.set('page', String(pageNum));
-
-const alternateLanguageUrls = supportedLanguages.map((code) => {
-  const href = new URL(Astro.url.pathname, siteOrigin);
-  if (shouldIncludePageParam) href.searchParams.set('page', String(pageNum));
-  if (code !== 'en') href.searchParams.set('lang', code);
-  return { code, href: href.toString() };
 });
 
 const totalPages = Math.ceil(poems.length / pageSize);
@@ -459,13 +449,8 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
       return null;
     })()
   }
-  {
-    !isTranslationParamPage && alternateLanguageUrls.map(({ code, href }) => (
-      <link slot="head" rel="alternate" hreflang={code} href={href} />
-    ))
-  }
-  {!isTranslationParamPage && <link slot="head" rel="alternate" hreflang="x-default" href={xDefaultUrl.toString()} />}
-  {!isTranslationParamPage && <meta slot="head" name="lang-trigger" content={lang} />}
+  {/* hreflang removed: translations are client-side only, noindex. Including hreflang pointing to noindex pages is a spam signal. */}
+  <meta slot="head" name="lang-trigger" content={lang} />
 
   {
     type === "line" && (

@@ -28,7 +28,7 @@ interface Props {
 const {
 	title,
 	description = "Linespedia - Your source for the best shayari, poems, and inspiring lines.",
-	image = "/og-image.png", // Default OG image
+	image = "/favicon.svg", // Default OG image
 	canonicalURL = Astro.url.href,
 	robotsMeta = undefined,
 	type = 'website',
@@ -78,7 +78,7 @@ const alternateLocales = supportedLanguages
 ---
 
 <!DOCTYPE html>
-<html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+<html lang="en" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
 	<head>
 		<meta charset="UTF-8" />
  		<meta name="viewport" content="width=device-width, initial-scale=1" />

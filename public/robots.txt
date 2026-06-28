@@ -43,6 +43,7 @@ Disallow: /*?tag=
 Disallow: /*?utm_
 Disallow: /*?gclid=
 Disallow: /*?fbclid=
+Disallow: /*?lang=
 
 # Sitemap reference (canonical index)
 Sitemap: https://linespedia.com/sitemap.xml
