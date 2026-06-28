@@ -1,0 +1,9 @@
+Starting local SEO audit for sitemap: https://linespedia.com/sitemap.xml
+Discovered 0 pages from sitemap(s)
+
+Audit summary:
+- Pages checked: 0
+- Pages with errors: 0
+- Pages with warnings: 0
+PASS: SEO audit OK
+=== AUDIT TIMESTAMP: 2026-06-28T15:29:08Z EXIT=0 ===

@@ -2,7 +2,7 @@
 // Local SEO audit script
 // Usage: node scripts/seo-audit-local.js --url http://localhost:3000/sitemap.xml
 
-const { argv } = require('process');
+import { argv } from 'process';
 
 function argValue(flag, fallback) {
   const idx = argv.indexOf(flag);
