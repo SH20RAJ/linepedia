@@ -24,7 +24,7 @@ async function fetchText(url) {
 }
 
 function extractTags(xml, tag) {
-  const re = new RegExp(`<${tag}[^>]*>([\s\S]*?)<\/${tag}>`, 'gi');
+  const re = new RegExp(`<${tag}[^>]*>([^]*?)<\/${tag}>`, 'gi');
   const out = [];
   let m;
   while ((m = re.exec(xml))) out.push(m[1].trim());

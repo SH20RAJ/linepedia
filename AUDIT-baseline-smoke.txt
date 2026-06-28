@@ -1,0 +1,71 @@
+Starting local SEO audit for sitemap: https://linespedia.com/sitemap-stories.xml
+Discovered 61 pages from sitemap(s)
+[OK] https://linespedia.com/panchtantra/
+[OK] https://linespedia.com/panchtantra/the-bug-and-the-poor-flea/
+[OK] https://linespedia.com/panchtantra/the-cave-that-talked/
+[OK] https://linespedia.com/panchtantra/the-dog-who-went-abroad/
+[OK] https://linespedia.com/panchtantra/the-bird-pair-and-the-sea/
+[OK] https://linespedia.com/panchtantra/the-brahmin-and-the-cobra/
+[OK] https://linespedia.com/panchtantra/the-brahmin-the-thief-and-the-demon/
+[OK] https://linespedia.com/panchtantra/of-crows-and-owls/
+[OK] https://linespedia.com/panchtantra/the-cobra-and-the-crows/
+[OK] https://linespedia.com/panchtantra/the-brahmin-and-the-crooks/
+[OK] https://linespedia.com/panchtantra/the-bird-and-the-monkey/
+[OK] https://linespedia.com/panchtantra/the-donkey-and-the-washerman/
+[OK] https://linespedia.com/panchtantra/the-story-of-the-blue-jackal/
+[OK] https://linespedia.com/panchtantra/the-elephant-and-the-sparrow/
+[OK] https://linespedia.com/panchtantra/the-bharunda-bird-with-two-heads/
+[OK] https://linespedia.com/panchtantra/the-cunning-mediator/
+[OK] https://linespedia.com/panchtantra/the-dove-and-the-hunter/
+[OK] https://linespedia.com/panchtantra/the-crafty-crane-and-the-craftier-crab/
+[OK] https://linespedia.com/panchtantra/elephants-and-the-king-of-mice/
+[OK] https://linespedia.com/panchtantra/elephants-and-hares/
+[OK] https://linespedia.com/panchtantra/the-fall-and-rise-of-a-merchant/
+[OK] https://linespedia.com/panchtantra/fighting-goats-and-the-jackal/
+[OK] https://linespedia.com/panchtantra/the-brahmani-and-the-mongoose/
+[OK] https://linespedia.com/panchtantra/the-four-treasure-seekers/
+[OK] https://linespedia.com/panchtantra/the-tale-of-the-golden-droppings/
+[OK] https://linespedia.com/panchtantra/the-jackal-and-the-drum/
+[OK] https://linespedia.com/panchtantra/the-four-learned-fools/
+[OK] https://linespedia.com/panchtantra/the-greedy-cobra-and-the-king-of-frogs/
+[OK] https://linespedia.com/panchtantra/the-jackals-strategy/
+[OK] https://linespedia.com/panchtantra/the-hermit-and-the-mouse/
+[OK] https://linespedia.com/panchtantra/the-foolish-sage/
+[OK] https://linespedia.com/panchtantra/the-king-and-the-foolish-monkey/
+[OK] https://linespedia.com/panchtantra/the-foolish-crane-and-the-mongoose/
+[OK] https://linespedia.com/panchtantra/frogs-that-rode-a-snake/
+[OK] https://linespedia.com/panchtantra/the-cunning-hare-and-the-witless-lion/
+[OK] https://linespedia.com/panchtantra/the-lion-and-the-jackal/
+[OK] https://linespedia.com/panchtantra/the-lioness-and-the-young-jackal/
+[OK] https://linespedia.com/panchtantra/the-lion-and-the-foolish-donkey/
+[OK] https://linespedia.com/panchtantra/the-lion-that-sprang-to-life/
+[OK] https://linespedia.com/panchtantra/the-story-of-the-merchants-son/
+[OK] https://linespedia.com/panchtantra/the-lion-the-camel-the-jackal-and-the-crow/
+[OK] https://linespedia.com/panchtantra/the-rat-that-ate-iron/
+[OK] https://linespedia.com/panchtantra/the-musical-donkey/
+[OK] https://linespedia.com/panchtantra/the-price-of-indiscretion/
+[OK] https://linespedia.com/panchtantra/right-mind-and-wrong-mind/
+[OK] https://linespedia.com/panchtantra/the-monkey-and-the-wedge/
+[OK] https://linespedia.com/panchtantra/how-a-sparrow-came-to-grief/
+[OK] https://linespedia.com/panchtantra/the-story-of-the-potter/
+[OK] https://linespedia.com/panchtantra/the-old-man-his-young-wife-and-the-thief/
+[OK] https://linespedia.com/panchtantra/the-thief-and-the-brahmins/
+[OK] https://linespedia.com/panchtantra/shandili-and-the-sesame-seeds/
+[OK] https://linespedia.com/panchtantra/tale-of-the-three-fishes/
+[OK] https://linespedia.com/panchtantra/the-turtle-that-fell-off-the-stick/
+[OK] https://linespedia.com/panchtantra/the-monkey-and-the-crocodile/
+[OK] https://linespedia.com/panchtantra/the-tale-of-two-snakes/
+[OK] https://linespedia.com/panchtantra/the-wedding-of-the-mouse/
+[OK] https://linespedia.com/panchtantra/the-unlucky-weaver/
+[OK] https://linespedia.com/panchtantra/the-war-of-crows-and-owls/
+[OK] https://linespedia.com/panchtantra/the-unforgiving-monkey/
+[OK] https://linespedia.com/panchtantra/the-tale-of-two-fishes-and-a-frog/
+[OK] https://linespedia.com/panchtantra/the-brahmins-dream/
+
+Audit summary:
+- Pages checked: 61
+- Pages with errors: 0
+- Pages with warnings: 0
+PASS: SEO audit OK
+
+=== SOURCE: smoke test of scripts/seo-audit-local.js against sitemap-stories.xml (61 URLs) at 2026-06-28 ===
