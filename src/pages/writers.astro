@@ -5,7 +5,8 @@ import Footer from '../components/Footer.astro';
 import { getAllWriters } from '../lib/cdn';
 import { buildCanonicalUrl, generatePageMetadata, getNormalizedLang, getSiteOrigin, SUPPORTED_LANGUAGES, shouldNoindexForLanguageParam } from '../lib/seo';
 
-const writersData = await getAllWriters();
+const writersDataRaw = await getAllWriters();
+const writersData = writersDataRaw.filter(w => (w.stats?.poems ?? 0) > 0);
 
 // Language detection
 const supportedLanguages: string[] = [...SUPPORTED_LANGUAGES];

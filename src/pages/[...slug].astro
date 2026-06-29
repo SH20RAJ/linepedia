@@ -999,6 +999,9 @@ const posterUrl = type === "line" ? getPosterUrl(data.slug) : null;
             <div class="mt-8 text-sm text-primary/40 font-bold uppercase tracking-widest">
               {poems.length} Lines Found {totalPages > 1 && `(Page ${pageNum} of ${totalPages})`}
             </div>
+            {type === "writer" && poems.length < 5 && (
+              <p class="mt-2 text-sm text-primary/50 font-medium italic">More poems being added soon.</p>
+            )}
           </div>
 
           <div class="container mx-auto px-4 mt-20">

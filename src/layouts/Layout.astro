@@ -114,6 +114,15 @@ const alternateLocales = supportedLanguages
  		<meta name="description" content={description} />
  		{keywords && <meta name="keywords" content={keywords} />}
  		<link rel="canonical" href={canonicalURL} />
+		<!-- Hreflang Tags -->
+		{supportedLanguages.map(l => (
+			<link 
+				rel="alternate" 
+				hreflang={l} 
+				href={l === 'en' ? new URL(Astro.url.pathname, Astro.url.origin).href : `${new URL(Astro.url.pathname, Astro.url.origin).href}?lang=${l}`} 
+			/>
+		))}
+		<link rel="alternate" hreflang="x-default" href={new URL(Astro.url.pathname, Astro.url.origin).href} />
 		{prevURL && <link rel="prev" href={prevURL} />}
 		{nextURL && <link rel="next" href={nextURL} />}
 
@@ -124,6 +133,8 @@ const alternateLocales = supportedLanguages
 	  	<meta property="og:title" content={resolvedOgTitle} />
 	  	<meta property="og:description" content={resolvedOgDescription} />
   		<meta property="og:image" content={new URL(image, Astro.url)} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
   		<meta property="og:locale" content={currentLocale} />
  		{alternateLocales.map((locale) => (
  			<meta property="og:locale:alternate" content={locale} />

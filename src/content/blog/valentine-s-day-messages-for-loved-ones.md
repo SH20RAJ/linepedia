@@ -5,6 +5,7 @@ pubDate: '2026-03-26T10:06:41.000Z'
 heroImage: '/placeholder.png'
 category: 'festival_wishes'
 tags: ['festival_wishes', 'guide', '2026']
+noindex: true
 ---
 
 # Valentine's Day Messages for Loved Ones and Close Friends

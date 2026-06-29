@@ -5,6 +5,7 @@ pubDate: 2026-03-23
 heroImage: 'https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?q=80&w=1000&auto=format&fit=crop'
 category: 'festival_wishes'
 tags: ['festival wishes', '2026', 'trends', 'poetry']
+noindex: true
 ---
 
 # Happy New Year 2027 Wishes and Goals: The Ultimate Guide for 2026
