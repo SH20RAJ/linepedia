@@ -5,7 +5,7 @@ function withTrailingSlash(url) {
 }
 
 export async function GET(context) {
-  const site = withTrailingSlash(context.site?.toString() || 'https://linespedia.com');
+  const site = withTrailingSlash(context.site?.toString() || 'https://library.linespedia.com');
   const INDEX_LASTMOD = new Date().toISOString().split('T')[0];
 
   // Build sitemap index with segmented sitemaps. Only canonical English shards are included.

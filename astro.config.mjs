@@ -6,7 +6,7 @@ import remarkStripFirstH1 from './src/utils/remark-strip-first-h1.mjs';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://linespedia.com',
+  site: 'https://library.linespedia.com',
   output: 'server',
   trailingSlash: 'always',
   adapter: cloudflare({

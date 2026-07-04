@@ -394,7 +394,7 @@ export function generatePageMetadata(input: PageMetadataInput): PageMetadataOutp
 	const {
 		pageType,
 		data = {},
-		siteOrigin = 'https://linespedia.com',
+		siteOrigin = 'https://library.linespedia.com',
 		pathname = '/',
 		lang = 'en',
 		translationsServerSide = false,

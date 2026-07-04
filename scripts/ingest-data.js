@@ -180,12 +180,12 @@ async function ingest() {
     
     // Legacy Sitemap (/line/)
     for (const poem of legacyMap.values()) {
-        sitemap += `  <url>\n    <loc>https://linespedia.com/line/${poem.slug}/</loc>\n    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n    <priority>0.8</priority>\n  </url>\n`;
+        sitemap += `  <url>\n    <loc>https://library.linespedia.com/line/${poem.slug}/</loc>\n    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n    <priority>0.8</priority>\n  </url>\n`;
     }
 
     // New Enriched Sitemap (/p/)
     for (const poem of results) {
-        sitemap += `  <url>\n    <loc>https://linespedia.com/p/${poem.slug}/</loc>\n    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n    <priority>0.6</priority>\n  </url>\n`;
+        sitemap += `  <url>\n    <loc>https://library.linespedia.com/p/${poem.slug}/</loc>\n    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n    <priority>0.6</priority>\n  </url>\n`;
     }
 
     sitemap += '</urlset>';

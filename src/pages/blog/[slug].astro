@@ -30,7 +30,7 @@ const updatedISO = post.data.updatedDate ? post.data.updatedDate.toISOString() :
 const canonicalURL = new URL(`/blog/${post.id}/`, Astro.site).toString();
 const wordCount = post.body?.split(/\s+/).filter(Boolean).length || 0;
 const readingTime = Math.max(1, Math.ceil(wordCount / 200));
-const siteUrl = Astro.site?.toString()?.replace(/\/$/, '') || "https://linespedia.com";
+const siteUrl = Astro.site?.toString()?.replace(/\/$/, '') || "https://library.linespedia.com";
 
 const relatedPosts = allPosts
   .filter((item) => item.id !== post.id && !item.data.noindex)

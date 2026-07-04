@@ -4,6 +4,9 @@
 	"compatibility_flags": [
 		"global_fetch_strictly_public"
 	],
+	"routes": [
+		{ "pattern": "library.linespedia.com", "custom_domain": true }
+	],
 	"assets": {
 		"directory": "./dist/client",
 		"binding": "ASSETS"

@@ -28,7 +28,7 @@ const {
   faqs = [],
   itemCount,
 } = Astro.props;
-const siteUrl = Astro.site?.toString()?.replace(/\/$/, '') || "https://linespedia.com";
+const siteUrl = Astro.site?.toString()?.replace(/\/$/, '') || "https://library.linespedia.com";
 const inferredLanguage = String(Astro.url.searchParams.get("lang") || "en").toLowerCase();
 const schemaLanguage = language || inferredLanguage;
 

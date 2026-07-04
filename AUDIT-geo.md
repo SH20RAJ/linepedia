@@ -2,7 +2,7 @@
 
 **Audit Date:** 2026-05-17
 **Auditor:** OpenClaude GEO Specialist
-**Site:** https://linespedia.com
+**Site:** https://library.linespedia.com
 **Framework:** Astro v6.0.8 (SSR) on Cloudflare Workers
 
 ---
@@ -24,7 +24,7 @@
 
 ### The Problem
 
-The live `robots.txt` at https://linespedia.com/robots.txt contains a **Cloudflare-managed section** that blocks every major AI crawler:
+The live `robots.txt` at https://library.linespedia.com/robots.txt contains a **Cloudflare-managed section** that blocks every major AI crawler:
 
 ```
 # BEGIN Cloudflare Managed content
@@ -128,7 +128,7 @@ The site correctly uses `<meta name="robots" content="index,follow,max-snippet:-
 ### Status: EXISTS locally, NOT accessible by AI crawlers
 
 **File:** `/Users/shaswatraj/Desktop/earn/linepedia/public/llms.txt`
-**Live URL:** https://linespedia.com/llms.txt (returns 404 HTML page -- the SSR app catches the route instead of serving the static file)
+**Live URL:** https://library.linespedia.com/llms.txt (returns 404 HTML page -- the SSR app catches the route instead of serving the static file)
 
 ### llms.txt Quality Assessment
 

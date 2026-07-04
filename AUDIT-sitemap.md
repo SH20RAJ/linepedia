@@ -2,7 +2,7 @@
 
 **Date:** 2026-05-17
 **Auditor:** OpenClaude Sitemap Architecture Specialist
-**Site:** https://linespedia.com (programmatic SEO, ~150k-200k target URLs)
+**Site:** https://library.linespedia.com (programmatic SEO, ~150k-200k target URLs)
 
 ---
 
@@ -65,14 +65,14 @@ In Cloudflare Workers SSR mode, module-scope code evaluates at bundle time, not 
 **File:** `/public/robots.txt` (line 48)
 
 ```
-Sitemap: https://linespedia.com/sitemap-index.xml
+Sitemap: https://library.linespedia.com/sitemap-index.xml
 ```
 
 **Problem:** `sitemap-index.xml` is a **Cloudflare auto-generated stub** that returns:
 
 ```xml
 <sitemapindex>
-  <sitemap><loc>https://linespedia.com/sitemap-0.xml</loc></sitemap>
+  <sitemap><loc>https://library.linespedia.com/sitemap-0.xml</loc></sitemap>
 </sitemapindex>
 ```
 
@@ -80,7 +80,7 @@ This points to `sitemap-0.xml`, which does not exist in the source code and is d
 
 **Impact:** Google Search Console and other crawlers follow the robots.txt reference and discover a dead-end sitemap index pointing to a non-existent file. The actual sitemap at `sitemap.xml` with 74,642 URLs is never discovered via this path.
 
-**Fix:** Change robots.txt to reference `https://linespedia.com/sitemap.xml` instead.
+**Fix:** Change robots.txt to reference `https://library.linespedia.com/sitemap.xml` instead.
 
 ---
 
@@ -191,8 +191,8 @@ The `sitemap-index.xml.js` source does not exist -- the live `sitemap-index.xml`
 ### M3. AllPoetry Shard Mixing Poet and Poem URLs
 
 `sitemap-allpoetry.xml?shard=1` mixes two different page types:
-- **Poet profile pages:** `https://linespedia.com/poet/{slug}/` (with `priority=0.8`, `changefreq=weekly`)
-- **Poem pages:** `https://linespedia.com/line/ap/{poet}/{poem}/` (with `priority=0.5`, `changefreq=monthly`)
+- **Poet profile pages:** `https://library.linespedia.com/poet/{slug}/` (with `priority=0.8`, `changefreq=weekly`)
+- **Poem pages:** `https://library.linespedia.com/line/ap/{poet}/{poem}/` (with `priority=0.5`, `changefreq=monthly`)
 
 While not a bug, mixing page types in a single sitemap file makes it harder to analyze crawl performance per page type in Google Search Console.
 
@@ -236,7 +236,7 @@ All sitemaps correctly return `Content-Type: application/xml; charset=utf-8`. Th
 
 1. **[CRITICAL]** Move `FALLBACK_LASTMOD` and `INDEX_LASTMOD` inside `GET()` handlers to fix the epoch date bug across all sitemaps.
 
-2. **[CRITICAL]** Update `robots.txt` to reference `https://linespedia.com/sitemap.xml` instead of `sitemap-index.xml`.
+2. **[CRITICAL]** Update `robots.txt` to reference `https://library.linespedia.com/sitemap.xml` instead of `sitemap-index.xml`.
 
 3. **[HIGH]** Add hreflang annotations for the 11 supported languages, either in sitemaps or via `<link>` tags in page HTML.
 

@@ -7,7 +7,7 @@ function withTrailingSlash(url) {
 export async function GET(context) {
   const stories = await getPanchatantraStories();
   const FALLBACK_LASTMOD = new Date().toISOString().split('T')[0];
-  const site = withTrailingSlash(context.site?.toString() || 'https://linespedia.com');
+  const site = withTrailingSlash(context.site?.toString() || 'https://library.linespedia.com');
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

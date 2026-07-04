@@ -53,7 +53,7 @@ Either create `public/placeholder.png` or update blog post frontmatter to use a 
 ### 6. Fix Schema URL Double-Slash Bug
 **File:** `src/components/StructuredData.astro`
 **Effort:** 30 minutes
-**Impact:** Every page's structured data has URLs like `https://linespedia.com//explore/`.
+**Impact:** Every page's structured data has URLs like `https://library.linespedia.com//explore/`.
 
 Fix the `siteUrl` construction to not add trailing slash when the path already starts with `/`.
 

@@ -2,7 +2,7 @@ import { getCollection } from 'astro:content';
 import { getSeoUrls } from '../utils/programmatic-seo';
 
 export async function GET(context) {
-  const site = context.site?.toString()?.replace(/\/$/, '') || 'https://linespedia.com';
+  const site = context.site?.toString()?.replace(/\/$/, '') || 'https://library.linespedia.com';
   const FALLBACK_LASTMOD = new Date().toISOString().split('T')[0];
 
   let posts = [];

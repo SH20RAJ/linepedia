@@ -3,7 +3,7 @@ import type { APIRoute } from 'astro';
 export const prerender = true;
 
 const LLMS_CONTENT = `# Linespedia - AI-Friendly Content Index
-# https://linespedia.com
+# https://library.linespedia.com
 
 > Linespedia is a curated archive of shayari, poems, quotes, and poetic lines with meanings, translations, and attribution.
 
@@ -50,7 +50,7 @@ REST API available at \`/api/v1/\` with endpoints for random poems, search, cate
 
 ## Contact
 
-- Website: https://linespedia.com
+- Website: https://library.linespedia.com
 - GitHub: https://github.com/SH20RAJ/linepedia
 `;
 

@@ -1,7 +1,7 @@
 # Linespedia Content Quality & E-E-A-T Audit
 
 **Audit Date:** 2026-05-17
-**Site:** https://linespedia.com
+**Site:** https://library.linespedia.com
 **Framework:** Astro SSR on Cloudflare Workers
 **Auditor:** OpenClaude Content Quality Specialist (Sept 2025 QRG criteria)
 
@@ -116,7 +116,7 @@ Linespedia has a solid technical foundation and a genuinely valuable core poetry
 **Issues:**
 - The SEO content block at the bottom is good but generic. It mentions Shakespeare, Emily Dickinson, and Edgar Allan Poe but provides no unique insight.
 - Homepage title is well-optimized: "Linespedia -- Shayari, Poems, Quotes & Poetic Lines"
-- Schema has double-slash URL issue: `"url":"https://linespedia.com//"` and `"item":"https://linespedia.com//explore/"` -- this is a bug in `StructuredData.astro` where the site origin already has a trailing slash
+- Schema has double-slash URL issue: `"url":"https://library.linespedia.com//"` and `"item":"https://library.linespedia.com//explore/"` -- this is a bug in `StructuredData.astro` where the site origin already has a trailing slash
 
 **Severity: LOW** -- Homepage is solid for a programmatic site.
 
@@ -321,7 +321,7 @@ No unique description, no editorial context, no historical background on the cat
 
 1. **Noindex or remove all thin blog posts.** The "Timeless Legacy" series and "AI Prompts" series should be noindexed or deleted. Keep only posts with genuine editorial value (the Shayari guide, transitional hooks, festival quotes, etc.). This reduces indexed blog posts from ~90 to ~25-30 quality posts.
 
-2. **Fix the schema URL double-slash bug.** In `StructuredData.astro`, the `siteUrl` construction or the `resolvedUrl` logic is producing URLs like `https://linespedia.com//explore/`. This affects every page's structured data.
+2. **Fix the schema URL double-slash bug.** In `StructuredData.astro`, the `siteUrl` construction or the `resolvedUrl` logic is producing URLs like `https://library.linespedia.com//explore/`. This affects every page's structured data.
 
 ### P1 -- High Priority (E-E-A-T Foundation)
 

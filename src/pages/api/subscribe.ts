@@ -44,7 +44,7 @@ export const POST: APIRoute = async ({ request }) => {
                             </ul>
                         </p>
                         <div style="text-align: center; margin-top: 40px;">
-                            <a href="https://linespedia.com/explore" style="background: #4f46e5; color: white; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: bold;">Explore the Sanctuary</a>
+                            <a href="https://library.linespedia.com/explore" style="background: #4f46e5; color: white; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: bold;">Explore the Sanctuary</a>
                         </div>
                         <hr style="margin-top: 40px; border: 0; border-top: 1px solid #e5e7eb;" />
                         <p style="font-size: 12px; color: #9ca3af; text-align: center;">Linespedia — Where every line tells a story.</p>

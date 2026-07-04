@@ -5,7 +5,7 @@ function toLastmod() {
 }
 
 export async function GET(context) {
-  const site = context.site?.toString()?.replace(/\/$/, '') || 'https://linespedia.com';
+  const site = context.site?.toString()?.replace(/\/$/, '') || 'https://library.linespedia.com';
   const FALLBACK_LASTMOD = toLastmod();
 
   let slugMap = {};

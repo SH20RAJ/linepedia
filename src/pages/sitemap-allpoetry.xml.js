@@ -59,7 +59,7 @@ export async function GET({ url }) {
       // Exclude entries that are missing critical content
       if (!poem.content || String(poem.content || '').trim().length < 20) return '';
 
-      const poemUrl = `https://linespedia.com/line/ap/${poetSlug}/${poemSlug}/`;
+      const poemUrl = `https://library.linespedia.com/line/ap/${poetSlug}/${poemSlug}/`;
 
       // Always include canonical (English) URLs in the sitemap; do not include ?lang params
       return `
@@ -93,7 +93,7 @@ export async function GET({ url }) {
       .map(
         ([slug, lastmod]) => `
   <url>
-    <loc>https://linespedia.com/poet/${slug}/</loc>
+    <loc>https://library.linespedia.com/poet/${slug}/</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
