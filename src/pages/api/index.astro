@@ -8,13 +8,13 @@ const siteOrigin = Astro.site?.toString()?.replace(/\/$/, '') || 'https://librar
 const meta = generatePageMetadata({
   pageType: 'archive',
   data: {
-    title: 'Poetry API',
-    description: 'Access shayari, poems, and quotes programmatically. Free tier available. Perfect for apps, bots, and websites.',
+    title: 'Linespedia API',
+    description: 'Access shayari, poems, and quotes via our API. Free tier available. Perfect for apps, bots, and websites.',
   },
   siteOrigin,
   pathname: '/api/',
-  fallbackTitle: 'Poetry API — Linespedia',
-  fallbackDescription: 'Access shayari, poems, and quotes programmatically. Free tier available for developers.',
+  fallbackTitle: 'Linespedia API | For Developers',
+  fallbackDescription: 'Access shayari, poems, and quotes via our API. Free tier available for developers.',
 });
 ---
 
@@ -27,8 +27,8 @@ const meta = generatePageMetadata({
       <h1 class="text-4xl md:text-6xl font-serif font-black text-primary mb-6 leading-tight">
         Poetry API for Developers
       </h1>
-      <p class="text-lg md:text-xl text-primary/60 leading-relaxed max-w-2xl mx-auto mb-10">
-        Access thousands of shayari, poems, and quotes programmatically. Build poetry features into your apps, bots, and websites.
+      <p class="text-xl text-primary/60 mb-8 max-w-2xl mx-auto leading-relaxed">
+        Access thousands of shayari, poems, and quotes via our API. Build poetry features into your apps, bots, and websites.
       </p>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
         <a href="#endpoints" class="px-8 py-4 bg-primary text-white rounded-full font-bold hover:bg-primary/90 transition-all shadow-lg">

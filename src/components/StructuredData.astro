@@ -1,6 +1,6 @@
 ---
 interface Props {
-  type: "line" | "writer" | "category" | "collection" | "story" | "blog";
+  type: "line" | "writer" | "category" | "collection" | "story" | "blog" | "programmatic-seo" | "programmatic" | "archive" | "home";
   title: string;
   description: string;
   url: string;
@@ -51,9 +51,8 @@ const organizationSchema = {
   ],
 };
 
-// WebSite schema with SearchAction (sitewide, only on homepage)
-const isHomepage = Astro.url.pathname === '/' || Astro.url.pathname === '';
-const websiteSchema = isHomepage ? {
+// WebSite schema with SearchAction (sitewide)
+const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "@id": `${siteUrl}#website`,
@@ -71,7 +70,25 @@ const websiteSchema = isHomepage ? {
     },
     "query-input": "required name=search_term_string",
   },
-} : null;
+};
+
+const resolvedUrl = url.startsWith("http") ? url : `${siteUrl}/${url.replace(/^\/+/, '')}`;
+
+// WebPage schema (sitewide)
+const webPageSchema = {
+  "@context": "https://schema.org",
+  "@type": type === "writer" ? "ProfilePage" : (type === "category" || type === "collection" || type === "programmatic-seo" || type === "programmatic") ? "CollectionPage" : "WebPage",
+  "@id": `${resolvedUrl}#webpage`,
+  url: resolvedUrl,
+  name: title,
+  description: description,
+  isPartOf: {
+    "@id": `${siteUrl}#website`,
+  },
+  inLanguage: schemaLanguage,
+  datePublished: datePublished || undefined,
+  dateModified: dateModified || datePublished || undefined,
+};
 
 // Breadcrumb schema
 const breadcrumbSchema =
@@ -91,8 +108,6 @@ const breadcrumbSchema =
     : null;
 
 // Content schema based on type
-const resolvedUrl = url.startsWith("http") ? url : `${siteUrl}/${url.replace(/^\/+/, '')}`;
-
 const contentSchema =
   type === "line"
     ? {
@@ -135,6 +150,9 @@ const contentSchema =
           inLanguage: schemaLanguage,
           url: resolvedUrl,
           image: image || undefined,
+          mainEntityOfPage: {
+            "@id": `${resolvedUrl}#webpage`,
+          },
         }
       : type === "blog"
         ? {
@@ -176,24 +194,15 @@ const contentSchema =
                 name: "Panchatantra Tales",
               },
             }
-          : {
+          : type === "blog" || type === "line" || type === "home" || type === "writer" || type === "story" ? null : {
               "@context": "https://schema.org",
-              "@type": "CollectionPage",
-              "@id": `${resolvedUrl}#collection`,
+              "@type": "ItemList",
+              "@id": `${resolvedUrl}#itemlist`,
               name: title,
               description: description,
-              inLanguage: schemaLanguage,
               url: resolvedUrl,
-              publisher: {
-                "@id": `${siteUrl}#organization`,
-              },
-              image: image || undefined,
               ...(itemCount ? { numberOfItems: itemCount } : {}),
-              mainEntity: {
-                "@type": "ItemList",
-                itemListElement: [],
-                ...(itemCount ? { numberOfItems: itemCount } : {}),
-              },
+              itemListElement: [],
             };
 
 // FAQ Schema
@@ -216,13 +225,14 @@ const faqSchema =
 ---
 
 <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
-{websiteSchema && (
-  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
-)}
+<script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+<script type="application/ld+json" set:html={JSON.stringify(webPageSchema)} />
 {breadcrumbSchema && (
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 )}
 {faqSchema && (
   <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 )}
-<script type="application/ld+json" set:html={JSON.stringify(contentSchema)} />
+{contentSchema && (
+  <script type="application/ld+json" set:html={JSON.stringify(contentSchema)} />
+)}
