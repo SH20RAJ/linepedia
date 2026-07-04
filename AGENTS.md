@@ -1,6 +1,6 @@
-# AI Agent Protocol: Linespedia Content Engine
+# AI Agent Protocol: Linespedia Library
 
-Welcome, Agent. This document outlines the architecture, scaling logic, and maintenance protocols for **Linespedia**, a high-performance programmatic SEO (pSEO) platform.
+Welcome, Agent. This document outlines the architecture, scaling logic, and maintenance protocols for **Linespedia**, a high-performance, beautifully crafted digital poetry library.
 
 ## 🚀 Core Architecture
 
@@ -12,9 +12,9 @@ Linespedia is built for extreme scale (200,000+ indexable URLs) using a serverle
 - **AI Engine**: Puter.js v2 (Chat, Insight, Translation)
 - **Data Source**: External GitHub repository (`linespedia-data`) served via JSDelivr CDN.
 
-## 🕸️ Programmatic SEO (pSEO) Expansion
+## 🕸️ Dynamic Content Expansion
 
-The project maintains a **10x Link Expansion** strategy to dominate international search results.
+The project maintains a dynamic localization strategy to serve beautiful poetry to readers worldwide.
 
 ### 1. Language Localization
 We target 11 major languages via the `?lang=xx` query parameter.
@@ -37,7 +37,7 @@ We use a **Codebase-Driven Submission** strategy via `scripts/submit-indexnow.js
 
 All poetry metadata and writer profiles are decoupled from the main app.
 - **Resolver**: `src/lib/cdn.ts` contains the logic for resolving slugs and fetching JSON batches.
-- **JSON Structure**: Uses `all-poems-metadata.json` for pSEO mapping and specific writer batches for performance.
+- **JSON Structure**: Uses `all-poems-metadata.json` for content mapping and specific writer batches for performance.
 
 ## 🧠 AI Integration
 

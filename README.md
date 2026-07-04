@@ -1,6 +1,6 @@
-# 🖋️ Library.Linespedia.com — Programmatic SEO Poetry Engine
+# 🖋️ Library.Linespedia.com — A Library of Creativity
 
-Linespedia is a high-performance, production-ready programmatic SEO website built with **Astro 6** and **Tailwind CSS**. It is designed to capture massive search traffic across thousands of poetic long-tail keywords (shayari, poems, quotes) through automated content ingestion and keyword multiplication.
+Linespedia is a beautifully crafted digital sanctuary for poetry, quotes, and shayari. Built to inspire, it curates the finest expressions of human emotion, bringing timeless words from global masters and contemporary writers into an elegant, distraction-free reading experience.
 
 ## 🚀 Key Features
 
@@ -76,13 +76,13 @@ Then open DevTools > Application and verify:
 - Service Worker is active at `/sw.js`
 - Offline page is available at `/offline.html`
 
-## 📈 SEO Strategy
+## 📈 Content Strategy
 
-Linespedia uses a **Programmatic SEO** approach:
+Linespedia uses a **Dynamic Content** approach:
 1. **Core Entities**: Writers, Categories, and Individual Lines.
 2. **Intent Pairs**: Category + Use-case (e.g., "Love Shayari" + "Instagram Captions").
-3. **Internal Linking**: Every page is within 3 clicks of the homepage to ensure 100% crawl coverage.
-4. **Visual SEO**: B&W posters are designed to be indexed by Google Images and shared on Pinterest.
+3. **Internal Linking**: Every page is within 3 clicks of the homepage to ensure 100% reading coverage.
+4. **Visual Aesthetics**: B&W posters are designed to be beautiful and shared on social media.
 
 ---
 

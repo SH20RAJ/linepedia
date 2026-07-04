@@ -4,17 +4,17 @@
 
 **Product Name:** Linespedia
 **Domain:** library.linespedia.com
-**Category:** Programmatic SEO Content Platform
+**Category:** Digital Poetry Library
 **Primary Goal:**
-Build a massive-scale poetry / quotes / shayari / captions discovery website that ranks on Google and generates passive income via search traffic + ads.
+Build a massive-scale poetry, quotes, shayari, and captions discovery platform that curates creativity and emotion for readers globally.
 
 **Core Philosophy:**
 
-- Content scale > manual writing
+- Curated scale over manual limits
 - Ultra fast static pages
-- Structured topical authority
+- Thematic content organization
 - Infinite internal discovery loop
-- Automation driven growth
+- Community driven growth
 
 ---
 
@@ -63,14 +63,14 @@ User → Google Search → Static Astro Pages → CDN → Ads + Internal Links �
 
 - Static Site Generation (SSG)
 - Edge CDN hosting
-- Programmatic route generation
+- Dynamic route generation
 - JSON / CSV based content database
 
 ---
 
 ## 🧰 Tech Stack
 
-### Frontend / SEO Engine
+### Frontend / UI Engine
 
 - Astro (latest)
 - TailwindCSS
@@ -281,7 +281,7 @@ Cards:
 
 ---
 
-## ⚙️ Programmatic SEO Engine
+## ⚙️ Dynamic Content Engine
 
 Utility: `generateRoutes()`
 
