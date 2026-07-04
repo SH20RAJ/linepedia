@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 const DEFAULT_INDEXNOW_KEY = '2f3a29d127b84110a911375a73d97702';
-const DEFAULT_HOST = 'linespedia.com';
+const DEFAULT_HOST = 'library.linespedia.com';
 const DEFAULT_PROTOCOL = 'https://';
 const DEFAULT_BATCH_SIZE = 9000;
 const DEFAULT_CHANGED_WINDOW_HOURS = 72;
