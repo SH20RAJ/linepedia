@@ -1,8 +1,8 @@
-# Generative Engine Optimization (GEO) Audit -- linespedia.com
+# Generative Engine Optimization (GEO) Audit -- library.linespedia.com
 
 **Audit Date:** 2026-05-17
 **Auditor:** OpenClaude GEO Specialist
-**Site:** https://library.linespedia.com
+**Site:** https://library.library.linespedia.com
 **Framework:** Astro v6.0.8 (SSR) on Cloudflare Workers
 
 ---
@@ -24,7 +24,7 @@
 
 ### The Problem
 
-The live `robots.txt` at https://library.linespedia.com/robots.txt contains a **Cloudflare-managed section** that blocks every major AI crawler:
+The live `robots.txt` at https://library.library.linespedia.com/robots.txt contains a **Cloudflare-managed section** that blocks every major AI crawler:
 
 ```
 # BEGIN Cloudflare Managed content
@@ -76,10 +76,10 @@ Disallow: /
 ### Why This Is Catastrophic for GEO
 
 - **Google AI Overviews** cannot index content for AI-generated summaries
-- **ChatGPT search** cannot retrieve or cite any linespedia.com content
-- **Perplexity** cannot ground answers in linespedia.com data
-- **Bing Copilot** cannot reference linespedia.com poems
-- **Meta AI** cannot surface linespedia.com content on WhatsApp, Instagram, or Facebook
+- **ChatGPT search** cannot retrieve or cite any library.linespedia.com content
+- **Perplexity** cannot ground answers in library.linespedia.com data
+- **Bing Copilot** cannot reference library.linespedia.com poems
+- **Meta AI** cannot surface library.linespedia.com content on WhatsApp, Instagram, or Facebook
 - The `llms.txt` file is rendered useless because no AI crawler can reach it
 
 ### Root Cause
@@ -128,7 +128,7 @@ The site correctly uses `<meta name="robots" content="index,follow,max-snippet:-
 ### Status: EXISTS locally, NOT accessible by AI crawlers
 
 **File:** `/Users/shaswatraj/Desktop/earn/linepedia/public/llms.txt`
-**Live URL:** https://library.linespedia.com/llms.txt (returns 404 HTML page -- the SSR app catches the route instead of serving the static file)
+**Live URL:** https://library.library.linespedia.com/llms.txt (returns 404 HTML page -- the SSR app catches the route instead of serving the static file)
 
 ### llms.txt Quality Assessment
 

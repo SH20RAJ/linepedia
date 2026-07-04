@@ -1,7 +1,7 @@
 # Linespedia Content Quality & E-E-A-T Audit
 
 **Audit Date:** 2026-05-17
-**Site:** https://library.linespedia.com
+**Site:** https://library.library.linespedia.com
 **Framework:** Astro SSR on Cloudflare Workers
 **Auditor:** OpenClaude Content Quality Specialist (Sept 2025 QRG criteria)
 
@@ -85,7 +85,7 @@ Linespedia has a solid technical foundation and a genuinely valuable core poetry
 - HTTPS everywhere (Cloudflare)
 - Proper robots.txt with crawl trap protection
 - Translation pages correctly marked noindex (prevents thin content indexing)
-- Copyright notice: "2026 linespedia.com - All rights reserved"
+- Copyright notice: "2026 library.linespedia.com - All rights reserved"
 - Public domain works correctly identified in Poem schema (`copyrightNotice: "This work is in the public domain"`)
 - `isAccessibleForFree: true` in poem schema
 
@@ -116,7 +116,7 @@ Linespedia has a solid technical foundation and a genuinely valuable core poetry
 **Issues:**
 - The SEO content block at the bottom is good but generic. It mentions Shakespeare, Emily Dickinson, and Edgar Allan Poe but provides no unique insight.
 - Homepage title is well-optimized: "Linespedia -- Shayari, Poems, Quotes & Poetic Lines"
-- Schema has double-slash URL issue: `"url":"https://library.linespedia.com//"` and `"item":"https://library.linespedia.com//explore/"` -- this is a bug in `StructuredData.astro` where the site origin already has a trailing slash
+- Schema has double-slash URL issue: `"url":"https://library.library.linespedia.com//"` and `"item":"https://library.library.linespedia.com//explore/"` -- this is a bug in `StructuredData.astro` where the site origin already has a trailing slash
 
 **Severity: LOW** -- Homepage is solid for a programmatic site.
 
@@ -306,7 +306,7 @@ No unique description, no editorial context, no historical background on the cat
 | 2 | All writer profile bios are identical generic templates | CRITICAL | Missed ranking opportunities, thin content at scale |
 | 3 | Category page descriptions are identical templates | HIGH | Thin content for high-value landing pages |
 | 4 | No named authors, editors, or team members anywhere | HIGH | E-E-A-T failure across all content |
-| 5 | Schema URLs contain double-slash bug (`linespedia.com//explore/`) | MEDIUM | Structured data parsing issues |
+| 5 | Schema URLs contain double-slash bug (`library.linespedia.com//explore/`) | MEDIUM | Structured data parsing issues |
 | 6 | About page lacks specific credentials or founding story | MEDIUM | Trust signal weakness |
 | 7 | "Timeless Legacy" blog series is near-duplicate content at scale | HIGH | Scaled content abuse signal |
 | 8 | "AI Prompts for [Topic]" posts have nothing to do with poetry | MEDIUM | Topical irrelevance dilutes site focus |
@@ -321,7 +321,7 @@ No unique description, no editorial context, no historical background on the cat
 
 1. **Noindex or remove all thin blog posts.** The "Timeless Legacy" series and "AI Prompts" series should be noindexed or deleted. Keep only posts with genuine editorial value (the Shayari guide, transitional hooks, festival quotes, etc.). This reduces indexed blog posts from ~90 to ~25-30 quality posts.
 
-2. **Fix the schema URL double-slash bug.** In `StructuredData.astro`, the `siteUrl` construction or the `resolvedUrl` logic is producing URLs like `https://library.linespedia.com//explore/`. This affects every page's structured data.
+2. **Fix the schema URL double-slash bug.** In `StructuredData.astro`, the `siteUrl` construction or the `resolvedUrl` logic is producing URLs like `https://library.library.linespedia.com//explore/`. This affects every page's structured data.
 
 ### P1 -- High Priority (E-E-A-T Foundation)
 
@@ -362,4 +362,4 @@ No unique description, no editorial context, no historical background on the cat
 
 ## Methodology
 
-This audit evaluated live pages fetched from linespedia.com against Google's September 2025 Quality Rater Guidelines, with specific focus on E-E-A-T signals, content depth thresholds, AI content quality markers, structured data correctness, and AI citation readiness. Pages were evaluated using the content minimums framework (Homepage: 500 words, About: 500 words, Blog: 1,500 words, Writer profiles: 500+ words recommended). Word counts include visible rendered text only, not HTML/JS.
+This audit evaluated live pages fetched from library.linespedia.com against Google's September 2025 Quality Rater Guidelines, with specific focus on E-E-A-T signals, content depth thresholds, AI content quality markers, structured data correctness, and AI citation readiness. Pages were evaluated using the content minimums framework (Homepage: 500 words, About: 500 words, Blog: 1,500 words, Writer profiles: 500+ words recommended). Word counts include visible rendered text only, not HTML/JS.

@@ -3,7 +3,7 @@
 ## 🧭 Product Overview
 
 **Product Name:** Linespedia
-**Domain:** linespedia.com
+**Domain:** library.linespedia.com
 **Category:** Programmatic SEO Content Platform
 **Primary Goal:**
 Build a massive-scale poetry / quotes / shayari / captions discovery website that ranks on Google and generates passive income via search traffic + ads.

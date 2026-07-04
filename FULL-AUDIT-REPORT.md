@@ -1,7 +1,7 @@
 # Linespedia Full SEO Audit Report
 
 **Audit Date:** 2026-05-17
-**Site:** https://library.linespedia.com
+**Site:** https://library.library.linespedia.com
 **Stack:** Astro SSR v6.0.8 on Cloudflare Workers | Tailwind CSS v4
 **Auditor:** OpenClaude SEO Orchestrator + 6 Specialist Subagents
 
@@ -211,7 +211,7 @@ Linespedia is a programmatic SEO platform serving ~65,000 poetry/shayari/quotes 
 - FAQ schema support (via props)
 
 **Issues:**
-- **Double-slash URL bug:** `StructuredData.astro` produces URLs like `https://library.linespedia.com//explore/` -- affects every page
+- **Double-slash URL bug:** `StructuredData.astro` produces URLs like `https://library.library.linespedia.com//explore/` -- affects every page
 - No `speakable` schema for voice assistants
 - No `HowTo` schema on guide blog posts
 - Blog author is Organization instead of Person (less authoritative)

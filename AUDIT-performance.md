@@ -1,4 +1,4 @@
-# Performance & Core Web Vitals Audit -- linespedia.com
+# Performance & Core Web Vitals Audit -- library.linespedia.com
 
 **Date**: 2026-05-17
 **Framework**: Astro SSR (Cloudflare Workers, `advanced` mode)

@@ -1,7 +1,7 @@
-# Technical SEO Audit -- Linespedia.com
+# Technical SEO Audit -- Library.Linespedia.com
 
 **Audit Date:** 2026-05-17
-**Site:** https://library.linespedia.com
+**Site:** https://library.library.linespedia.com
 **Stack:** Astro SSR (v6.0.8) on Cloudflare Workers
 **Auditor:** OpenClaude Technical SEO
 
@@ -100,7 +100,7 @@ In Cloudflare Workers SSR, module-level constants are evaluated once at worker i
 
 **Evidence (live):**
 ```
-curl -s 'https://library.linespedia.com/' | grep -oi '<link rel="alternate"[^>]*hreflang[^>]*>'
+curl -s 'https://library.library.linespedia.com/' | grep -oi '<link rel="alternate"[^>]*hreflang[^>]*>'
 ```
 Returns: (empty -- no hreflang tags found)
 
@@ -108,7 +108,7 @@ Returns: (empty -- no hreflang tags found)
 - `og:locale` = `en_US` (correct)
 - `og:locale:alternate` for all 10 other languages (correct for OG, insufficient for SEO)
 - `html lang="en"` attribute (correct)
-- Canonical tag: `<link rel="canonical" href="https://library.linespedia.com/">` (correct)
+- Canonical tag: `<link rel="canonical" href="https://library.library.linespedia.com/">` (correct)
 
 **Consideration:** Since translations are client-side (Puter.js AI translates in-browser), the `?lang=xx` pages are correctly set to `noindex,follow` (confirmed: `?lang=es` returns `<meta name="robots" content="noindex,follow">`). This means hreflang is NOT appropriate for the current architecture since there are no server-side translated pages to alternate between. However, this should be documented as a deliberate architectural decision, and the `og:locale:alternate` tags should be removed to avoid confusion, OR the translation strategy should be moved to server-side to unlock hreflang benefits.
 
@@ -127,7 +127,7 @@ Returns: (empty -- no hreflang tags found)
 
 **Evidence (live):**
 ```
-curl -sI https://library.linespedia.com | grep -i strict-transport
+curl -sI https://library.library.linespedia.com | grep -i strict-transport
 ```
 Returns: (empty)
 
@@ -153,17 +153,17 @@ Note: Cloudflare can also set this via the dashboard under SSL/TLS > Edge Certif
 
 **Local file** (`/Users/shaswatraj/Desktop/earn/linepedia/public/robots.txt`, line 48):
 ```
-Sitemap: https://library.linespedia.com/sitemap-index.xml
+Sitemap: https://library.library.linespedia.com/sitemap-index.xml
 ```
 
 **Live file** (Cloudflare-managed):
 ```
-Sitemap: https://library.linespedia.com/sitemap.xml
+Sitemap: https://library.library.linespedia.com/sitemap.xml
 ```
 
 **Additional mismatch:** The local robots.txt has more detailed rules (Allow/Disallow for `/blog/`, `/api/`, `/posters/`, `/sponsor/`, query param blocking) that are NOT present in the live version. The live version appears to be Cloudflare's managed robots.txt with only basic rules plus AI crawler blocks.
 
-**Fix:** Reconcile the local and live robots.txt. The live Cloudflare-managed version should include the more comprehensive rules from the local file, and the sitemap reference should consistently point to `https://library.linespedia.com/sitemap.xml`.
+**Fix:** Reconcile the local and live robots.txt. The live Cloudflare-managed version should include the more comprehensive rules from the local file, and the sitemap reference should consistently point to `https://library.library.linespedia.com/sitemap.xml`.
 
 ---
 
@@ -201,13 +201,13 @@ Sitemap: https://library.linespedia.com/sitemap.xml
 
 **Evidence (live):**
 ```
-curl -s 'https://library.linespedia.com/?utm_source=test' | grep -oi 'noindex'
+curl -s 'https://library.library.linespedia.com/?utm_source=test' | grep -oi 'noindex'
 ```
 Returns: (empty -- no noindex found)
 
 The `seo.ts` module has `shouldNoindexForParams()` that correctly detects UTM parameters, and the `[...slug].astro` page likely calls it, but the homepage (`index.astro`) does NOT call this function. It only calls `shouldNoindexForLanguageParam()`.
 
-**Fix:** In `/Users/shaswatraj/Desktop/earn/linepedia/src/pages/index.astro`, add a check for tracking/search parameters and merge the noindex result into the `isTranslationParamPage` logic. The canonical tag is correctly set to `https://library.linespedia.com/` (without params), which is good, but `noindex` should accompany it.
+**Fix:** In `/Users/shaswatraj/Desktop/earn/linepedia/src/pages/index.astro`, add a check for tracking/search parameters and merge the noindex result into the `isTranslationParamPage` logic. The canonical tag is correctly set to `https://library.library.linespedia.com/` (without params), which is good, but `noindex` should accompany it.
 
 ---
 
@@ -219,7 +219,7 @@ The `seo.ts` module has `shouldNoindexForParams()` that correctly detects UTM pa
 **Fix:** Add to robots.txt:
 ```
 # IndexNow
-Sitemap: https://library.linespedia.com/sitemap.xml
+Sitemap: https://library.library.linespedia.com/sitemap.xml
 ```
 (The sitemap reference already exists. The IndexNow key file at `/.well-known/` or root is auto-discovered, but documenting it in robots.txt is best practice.)
 

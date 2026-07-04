@@ -1,4 +1,4 @@
-# SEO Action Plan -- Linespedia.com
+# SEO Action Plan -- Library.Linespedia.com
 
 **Generated:** 2026-05-17
 **Overall Health Score:** 48/100
@@ -53,7 +53,7 @@ Either create `public/placeholder.png` or update blog post frontmatter to use a 
 ### 6. Fix Schema URL Double-Slash Bug
 **File:** `src/components/StructuredData.astro`
 **Effort:** 30 minutes
-**Impact:** Every page's structured data has URLs like `https://library.linespedia.com//explore/`.
+**Impact:** Every page's structured data has URLs like `https://library.library.linespedia.com//explore/`.
 
 Fix the `siteUrl` construction to not add trailing slash when the path already starts with `/`.
 

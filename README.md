@@ -1,4 +1,4 @@
-# 🖋️ Linespedia.com — Programmatic SEO Poetry Engine
+# 🖋️ Library.Linespedia.com — Programmatic SEO Poetry Engine
 
 Linespedia is a high-performance, production-ready programmatic SEO website built with **Astro 6** and **Tailwind CSS**. It is designed to capture massive search traffic across thousands of poetic long-tail keywords (shayari, poems, quotes) through automated content ingestion and keyword multiplication.
 
